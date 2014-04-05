@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<persistence xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd"
+        version="2.0" xmlns="http://java.sun.com/xml/ns/persistence">
+        
+        	
+	<!--  -->
+	<persistence-unit name="PU_ACUERDOS" transaction-type="RESOURCE_LOCAL">
+        <class>telefonica.aaee.model.Tarea</class>
+        <class>telefonica.aaee.model.TareaPK</class>
+		<properties>
+			<property name="javax.persistence.jdbc.url" value="jdbc:mysql://10.66.130.131:3306/acuerdos" />
+			<property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver" />
+			<property name="javax.persistence.jdbc.user" value="umodplanas" />
+			<property name="javax.persistence.jdbc.password" value="aaeet4bcn" />
+			<property name="javax.persistence.jdbc.ddl-generation.output-mode" value="database" />
+			
+			<!-- Optimize database writes to use batching. -->
+            <property name="eclipselink.jdbc.batch-writing" value="JDBC" />
+           
+            <!-- Avoids flush being triggered before every query execution. -->
+            <property name="eclipselink.persistence-context.flush-mode" value="COMMIT" />
+
+            <!-- Configure connection pool. -->
+            <property name="eclipselink.jdbc.connections.initial" value="1" />
+            <property name="eclipselink.jdbc.connections.min" value="64" />
+            <property name="eclipselink.jdbc.connections.max" value="64" />
+		</properties>
+	</persistence-unit>
+
+	<persistence-unit name="PU_MOFA" transaction-type="RESOURCE_LOCAL">
+        <class>telefonica.aaee.model.DatosCliente</class>
+		<properties>
+			<property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver" />
+			<property name="javax.persistence.jdbc.url" value="jdbc:mysql://10.66.130.131:3306/mofa" />
+			<property name="javax.persistence.jdbc.user" value="umodplanas" />
+			<property name="javax.persistence.jdbc.password" value="aaeet4bcn" />
+			<property name="javax.persistence.ddl-generation.output-mode" value="database" />
+			
+			<!-- Optimize database writes to use batching. -->
+            <property name="eclipselink.jdbc.batch-writing" value="JDBC" />
+           
+            <!-- Avoids flush being triggered before every query execution. -->
+            <property name="eclipselink.persistence-context.flush-mode" value="COMMIT" />
+
+            <!-- Configure connection pool. -->
+            <property name="eclipselink.jdbc.connections.initial" value="1" />
+            <property name="eclipselink.jdbc.connections.min" value="64" />
+            <property name="eclipselink.jdbc.connections.max" value="64" />
+		</properties>
+	</persistence-unit>
+
+
+
+
+
+    <persistence-unit name="PU_MERCURIO" transaction-type="RESOURCE_LOCAL">
+        <class>telefonica.aaee.model.DatosHorus</class>
+        <properties>
+            <property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver" />
+            <property name="javax.persistence.jdbc.url" value="jdbc:mysql://10.66.130.131:3306/mercurio" />
+            <property name="javax.persistence.jdbc.user" value="umodplanas" />
+            <property name="javax.persistence.jdbc.password" value="aaeet4bcn" />
+            <property name="javax.persistence.ddl-generation.output-mode" value="database" />
+            
+            <!-- Optimize database writes to use batching. -->
+            <property name="eclipselink.jdbc.batch-writing" value="JDBC" />
+           
+            <!-- Avoids flush being triggered before every query execution. -->
+            <property name="eclipselink.persistence-context.flush-mode" value="COMMIT" />
+
+            <!-- Configure connection pool. -->
+            <property name="eclipselink.jdbc.connections.initial" value="1" />
+            <property name="eclipselink.jdbc.connections.min" value="64" />
+            <property name="eclipselink.jdbc.connections.max" value="64" />
+        </properties>
+    </persistence-unit>
+
+
+    <persistence-unit name="977R" transaction-type="RESOURCE_LOCAL">
+    
+    	<!--ESTE ES OBLIGATORIO DE ECLISELINK, ES SU IMPLEMENTACION-->
+        <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
+    
+        <class>telefonica.aaee.model.model977r.Informe</class>
+        <class>telefonica.aaee.model.model977r.Pestanya</class>
+        <class>telefonica.aaee.model.model977r.ConsultaSQL</class>
+        <properties>
+            <property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver" />
+            <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/977r" />
+            <property name="javax.persistence.jdbc.user" value="root" />
+            <property name="javax.persistence.jdbc.password" value="illuminatti" />
+            <property name="javax.persistence.ddl-generation.output-mode" value="database" />
+            
+            
+            <!-- Optimize database writes to use batching. -->
+            <property name="eclipselink.jdbc.batch-writing" value="JDBC" />
+           
+            <!-- Avoids flush being triggered before every query execution. -->
+            <property name="eclipselink.persistence-context.flush-mode" value="COMMIT" />
+
+            <!-- Configure connection pool. -->
+            <property name="eclipselink.jdbc.connections.initial" value="1" />
+            <property name="eclipselink.jdbc.connections.min" value="64" />
+            <property name="eclipselink.jdbc.connections.max" value="64" />
+        </properties>
+    </persistence-unit>
+
+
+</persistence>

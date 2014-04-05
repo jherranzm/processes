@@ -5,11 +5,9 @@
 
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>telefonica.aaee</groupId>
-	<artifactId>informes</artifactId>
+	<artifactId>informes-webapp</artifactId>
 
 	<packaging>war</packaging>
-	<version>0.0.1-SNAPSHOT</version>
 
 	<name>informes Maven Webapp</name>
 
@@ -297,4 +295,11 @@
 
 	</repositories>
 
+	<parent>
+		<groupId>telefonica.aaee.informes</groupId>
+		<artifactId>informes</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+		<relativePath>../informes</relativePath>
+	</parent>
+	<version>v20140405</version>
 </project>
