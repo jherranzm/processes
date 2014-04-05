@@ -1,0 +1,65 @@
+
+<!-- Docs master nav -->
+<div class="navbar navbar-inverse navbar-fixed-top bs-docs-nav">
+	<div class="container">
+		<a href="${pageContext.request.contextPath}/index.jsp"
+			class="navbar-brand"> 
+			<spring:message code="app.name" text="missing" />
+		</a>
+
+		<button class="navbar-toggle" type="button" data-toggle="collapse"
+			data-target=".bs-navbar-collapse">
+			<span class="icon-bar"></span> 
+			<span class="icon-bar"></span> 
+			<span class="icon-bar"></span>
+		</button>
+
+		<div class="nav-collapse collapse bs-js-navbar-collapse">
+			<ul class="nav navbar-nav">
+				<li class="active"><a
+					href="${pageContext.request.contextPath}/index.jsp"> <spring:message
+							code="go.home" text="missing" />
+				</a></li>
+				<li><a href="#about"> <spring:message code="go.about"
+							text="missing" />
+				</a></li>
+				<li><a href="#contact"> <spring:message code="go.contact"
+							text="missing" />
+				</a></li>
+			</ul>
+
+
+			<ul class="nav navbar-nav pull-right">
+				<li>
+					<a href="?lang=en"><img src="${pageContext.request.contextPath}/img/icons/lang_en.png"></a>
+				</li>
+				<li>
+					<a href="?lang=es"><img src="${pageContext.request.contextPath}/img/icons/lang_es.png"></a>
+				</li>
+				<li>
+					<a href="?lang=ca"><img src="${pageContext.request.contextPath}/img/icons/lang_ca.png"></a>
+				</li>
+				
+				<li>
+<!-- 					<sec:authorize access="hasRole('USER') and isAuthenticated()"> -->
+					<a href="#user"> 
+<!-- 					<sec:authentication property="principal.username"/>  -->
+					</a>
+<!-- 					</sec:authorize> -->
+				</li>
+				
+				<li>
+					<form class="form-inline" action="${pageContext.request.contextPath}/logout" method="POST">
+						<input type="submit" value="Log out" class="btn btn-mini" />
+<%-- 						<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/> --%>
+					</form>
+				</li>
+				
+
+			</ul>
+			
+			
+		</div>
+	</div>
+</div>
+
