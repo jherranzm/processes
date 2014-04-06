@@ -5,8 +5,7 @@
   <version>0.0.1-SNAPSHOT</version>
   <packaging>pom</packaging>
   <modules>
-  	
-  	<module>../../generaExcel-app/generaExcel-app</module>
+  	<module>../generaExcel-app</module>
   	<module>../informes-webapp</module>
   </modules>
 </project>
