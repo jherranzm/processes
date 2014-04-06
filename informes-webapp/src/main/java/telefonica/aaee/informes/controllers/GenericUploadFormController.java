@@ -1,7 +1,6 @@
 package telefonica.aaee.informes.controllers;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
@@ -18,6 +17,8 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.core.env.Environment;
 import org.springframework.web.multipart.MultipartFile;
 
+import telefonica.aaee.informes.helpers.FileHelper;
+
 public class GenericUploadFormController {
 
 	protected static final int MAX_BUFFER = 10000000;
@@ -31,30 +32,7 @@ public class GenericUploadFormController {
 	}
 
 	protected String createUploadDirIfNotExists(String tempDir) {
-		/**
-		 * Si no está la carpeta del día creada, se crea con el formato yyyy-MM-dd
-		 */
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-		Date now = new Date();
-		String nowString = sdf.format(now);
-		nowString += System.getProperty("file.separator");
-		logger.info("file.separator:**" + System.getProperty("file.separator") + "**");
-		logger.info("nowString:**" + nowString + "**");
-		
-		
-		if (!tempDir.endsWith("/") || tempDir.endsWith("\\")){
-			tempDir.concat(System.getProperty("file.separator"));
-		}
-		logger.info("tempDir:**" + tempDir + "**");
-		
-		tempDir += nowString;
-		
-		File dir = new File(tempDir);
-		if(!dir.exists()){
-			logger.info("Creando directorio..." + tempDir);
-			dir.mkdir();
-		}
-		return tempDir;
+		return FileHelper.createUploadDirIfNotExists(tempDir);
 	}
 
 	protected int getLinesFromFile(String fileName) {

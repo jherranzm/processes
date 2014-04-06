@@ -30,5 +30,6 @@
 			<attribute name="owner.project.facets" value="java"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="src" path="/generaExcel-app"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

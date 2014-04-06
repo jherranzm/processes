@@ -275,4 +275,10 @@
 
 	</repositories>
 
+	<parent>
+		<groupId>telefonica.aaee.informes</groupId>
+		<artifactId>informes</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+		<relativePath>../informes</relativePath>
+	</parent>
 </project>

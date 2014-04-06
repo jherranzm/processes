@@ -7,5 +7,6 @@
   <modules>
   	<module>../generaExcel-app</module>
   	<module>../informes-webapp</module>
+  	<module>../capture-977r-app</module>
   </modules>
 </project>

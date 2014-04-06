@@ -24,7 +24,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import telefonica.aaee.app.GeneraREGFicheroExcel;
 import telefonica.aaee.informes.form.GeneraInformeForm;
+import telefonica.aaee.informes.helpers.FileHelper;
 import telefonica.aaee.informes.model.Informe;
 import telefonica.aaee.informes.model.condiciones.Acuerdo;
 import telefonica.aaee.informes.services.InformeService;
@@ -99,8 +101,24 @@ public class GeneraInformeController {
 		logger.info("Acuerdo:" + acuerdo.toString());
 
 		List<String> urls = new ArrayList<String>();
-		urls.add(informe.getNombre());
-		urls.add(acuerdo.getAcuerdo());
+//		urls.add(informe.getNombre());
+//		urls.add(acuerdo.getAcuerdo());
+		
+		String tempDir = environment.getProperty("uploadfiles.temporary.path");
+		logger.info(environment.getProperty("uploadfiles.temporary.path"));
+
+    	tempDir = FileHelper.createUploadDirIfNotExists(tempDir);
+		
+		GeneraREGFicheroExcel grfe = new GeneraREGFicheroExcel();
+		
+		grfe.setAcuerdo(acuerdo.getAcuerdo());
+		grfe.setInforme(informe.getNombre());
+		grfe.setRuta(tempDir);
+		
+		grfe.generaExcel();
+		
+		urls.add(grfe.getExcelFile());
+		
 
 		generaInformeForm.setUrls(urls);
 		

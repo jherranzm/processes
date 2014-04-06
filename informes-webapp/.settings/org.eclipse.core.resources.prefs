@@ -1,4 +1,6 @@
 eclipse.preferences.version=1
+encoding//src/main/java/telefonica/aaee/informes/controllers/GenericUploadFormController.java=UTF-8
+encoding//src/main/java/telefonica/aaee/informes/helpers/FileHelper.java=UTF-8
 encoding//src/main/resources/application.properties=UTF-8
 encoding//src/main/resources/messages.properties=UTF-8
 encoding//src/main/resources/messages_ca.properties=UTF-8

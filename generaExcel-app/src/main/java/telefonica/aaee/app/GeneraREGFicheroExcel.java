@@ -25,9 +25,10 @@ public class GeneraREGFicheroExcel {
 
 	private static final Logger LOGGER = Logger.getLogger(GeneraREGFicheroExcel.class.getCanonicalName());
 	
-	private String informe = "LHOSPITALET";
-	private String acuerdo = "LHOSP_2013_1S";
-	private String ruta = "V:/Clientes/a/AJUNTAMENT_DE_LHOSPITALET/REGs/2013/REG_2013_1T/";
+	private String informe = "";
+	private String acuerdo = "";
+	private String ruta = "";
+	private String excelFile = "";
 	
 	
 	private InformeService infService = null;
@@ -187,6 +188,8 @@ public class GeneraREGFicheroExcel {
 				sb.append("El tamaño del fichero es de :[").append(excelGen.getFileSize()).append("] bytes.\n");
 				LOGGER.info(sb.toString());
 				
+				this.setExcelFile(excelGen.getFile());
+				
 			} else {
 				LOGGER.fatal("Algún error...");
 				// EnvioCorreoError.envioCorreo("sqlToXLS Error!");
@@ -255,5 +258,13 @@ public class GeneraREGFicheroExcel {
 	 */
 	public void setRuta(String ruta) {
 		this.ruta = ruta;
+	}
+
+	public String getExcelFile() {
+		return excelFile;
+	}
+
+	public void setExcelFile(String excelFile) {
+		this.excelFile = excelFile;
 	}
 }

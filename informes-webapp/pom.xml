@@ -25,6 +25,8 @@
 		<validation.version>1.1.0.Final</validation.version>
 		<hibernate.validator.version>5.0.1.Final</hibernate.validator.version>
 		<poi.version>3.9</poi.version>
+		
+		<javax.persistence.version>2.1.0</javax.persistence.version>
 	</properties>
 
 	<dependencies>
@@ -104,7 +106,7 @@
 		<dependency>
 			<groupId>org.eclipse.persistence</groupId>
 			<artifactId>javax.persistence</artifactId>
-			<version>2.0.0</version>
+			<version>${javax.persistence.version}</version>
 		</dependency>
 
 
@@ -225,12 +227,17 @@
 		</dependency>
 
 
+<!-- 		<dependency> -->
+<!-- 			<groupId>telefonica.aaee</groupId> -->
+<!-- 			<artifactId>Capture977App</artifactId> -->
+<!-- 			<version>1.1</version> -->
+<!-- 		</dependency> -->
+
 		<dependency>
 			<groupId>telefonica.aaee</groupId>
-			<artifactId>Capture977App</artifactId>
+			<artifactId>generaExcel-app</artifactId>
 			<version>1.1</version>
 		</dependency>
-
 
 	</dependencies>
 	<build>

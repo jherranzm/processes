@@ -28,7 +28,7 @@
 			</div>
 
 			<form:form method="post"
-				action="${pageContext.request.contextPath}/MFileUploadIIFilesForm.htm?${_csrf.parameterName}=${_csrf.token}"
+				action="${pageContext.request.contextPath}/ii?${_csrf.parameterName}=${_csrf.token}"
 				modelAttribute="uploadForm" enctype="multipart/form-data">
 
 				<p>

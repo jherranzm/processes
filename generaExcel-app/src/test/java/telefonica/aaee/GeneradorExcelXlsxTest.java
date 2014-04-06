@@ -19,6 +19,8 @@ public class GeneradorExcelXlsxTest {
 		generador.setRuta(ruta);
 		
 		generador.generaExcel();
+		
+		System.out.println(generador.getExcelFile());
 	}
 
 	@Test

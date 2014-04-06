@@ -1,11 +1,8 @@
 package telefonica.aaee.informes.controllers;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -20,6 +17,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
+
+import telefonica.aaee.informes.helpers.FileHelper;
 
 @Controller
 @RequestMapping("/getFile")
@@ -37,13 +36,16 @@ public class DownloadFileController {
             HttpServletResponse response,
             @PathVariable String fileName,
             @PathVariable String ext) throws Exception {
+		
+		logger.info(fileName);
+		logger.info(ext);
  
         try {
             String nombreFichero = fileName;
             String tempDir = environment.getProperty("uploadfiles.temporary.path");
     		logger.info(environment.getProperty("uploadfiles.temporary.path"));
 
-        	tempDir = createUploadDirIfNotExists(tempDir);
+        	tempDir = FileHelper.createUploadDirIfNotExists(tempDir);
         	
             logger.info(nombreFichero);
             
@@ -70,30 +72,4 @@ public class DownloadFileController {
     }
 
 
-	protected String createUploadDirIfNotExists(String tempDir) {
-		/**
-		 * Si no está la carpeta del día creada, se crea con el formato yyyy-MM-dd
-		 */
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-		Date now = new Date();
-		String nowString = sdf.format(now);
-		nowString += System.getProperty("file.separator");
-		logger.info("file.separator:**" + System.getProperty("file.separator") + "**");
-		logger.info("nowString:**" + nowString + "**");
-		
-		
-		if (!tempDir.endsWith("/") || tempDir.endsWith("\\")){
-			tempDir.concat(System.getProperty("file.separator"));
-		}
-		logger.info("tempDir:**" + tempDir + "**");
-		
-		tempDir += nowString;
-		
-		File dir = new File(tempDir);
-		if(!dir.exists()){
-			logger.info("Creando directorio..." + tempDir);
-			dir.mkdir();
-		}
-		return tempDir;
-	}
 }

@@ -53,7 +53,6 @@ public class JPAMySQLDB977RDAO
 
 	@Override
 	public CachedRowSet getCachedRowSetFromSQL(
-//			EntityManager em, 
 			String sql, 
 			String[] params) {
 		
@@ -67,8 +66,6 @@ public class JPAMySQLDB977RDAO
 	    	LOGGER.debug("El entityManager está abierto? " + em.isOpen());
 
 	    	em.getTransaction().begin();
-			LOGGER.debug("El entityManager está en Transacción? " + em.isJoinedToTransaction());
-			
 
 			LOGGER.debug("Recuperamos la conexión del EntityManager... ");
 			Connection con = em.unwrap(java.sql.Connection.class);
