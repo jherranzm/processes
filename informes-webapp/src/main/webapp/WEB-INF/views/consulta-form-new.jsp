@@ -32,7 +32,7 @@
 			
  	       <div class="panel-heading">
 	          <h3 class="panel-title">
-					<spring:message text="missing"  key="consulta.form.new.title" />
+					<spring:message text="missing"  code="consulta.form.new.title" />
 	          </h3>
  	       </div>
         
@@ -67,11 +67,11 @@
 						<div class="col-md-offset-4 col-md-4">
 							<p class="text-center">
 								<button id="btn-save" type="submit" class="btn btn-primary">
-									<spring:message text="missing"  key="consulta.form.btn.save" />
+									<spring:message text="missing"  code="consulta.form.btn.save" />
 								</button>
 								<a href="${pageContext.request.contextPath}/consulta/pages/1"
 									id="btn-back" class="btn btn-default"> <spring:message text="missing" 
-										key="consulta.form.btn.back" />
+										code="consulta.form.btn.back" />
 								</a>
 							</p>
 						</div>

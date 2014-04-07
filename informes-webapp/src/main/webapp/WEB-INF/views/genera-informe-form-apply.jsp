@@ -32,7 +32,7 @@
 			
  	       <div class="panel-heading">
 	          <h3 class="panel-title">
-					<spring:message text="missing"  key="genera.informe.form.new.title" />
+					<spring:message text="missing"  code="genera.informe.form.new.title" />
 	          </h3>
  	       </div>
         
@@ -59,11 +59,11 @@
 						<div class="col-md-offset-4 col-md-4">
 							<p class="text-center">
 								<button id="btn-save" type="submit" class="btn btn-primary">
-									<spring:message text="missing"  key="genera.informe.form.btn.apply" />
+									<spring:message text="missing"  code="genera.informe.form.btn.apply" />
 								</button>
 								<a href="${pageContext.request.contextPath}/"
 									id="btn-back" class="btn btn-default"> <spring:message text="missing" 
-										key="genera.informe.form.btn.back" />
+										code="genera.informe.form.btn.back" />
 								</a>
 							</p>
 						</div>
