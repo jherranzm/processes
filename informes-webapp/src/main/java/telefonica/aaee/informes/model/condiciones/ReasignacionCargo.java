@@ -31,7 +31,7 @@ public class ReasignacionCargo implements Serializable{
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	private long id;
+	private Long id;
 	
 	@Column(name="acuerdo")
 	private String acuerdo;
@@ -78,7 +78,7 @@ public class ReasignacionCargo implements Serializable{
 	 */
 	
 
-	public long getId() {
+	public Long getId() {
 		return id;
 	}
 
@@ -123,7 +123,7 @@ public class ReasignacionCargo implements Serializable{
 	}
 
 
-	public void setId(long id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 
@@ -201,45 +201,6 @@ public class ReasignacionCargo implements Serializable{
 	 */
 
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((acuerdo == null) ? 0 : acuerdo.hashCode());
-		result = prime
-				* result
-				+ ((agrupacionFacturable == null) ? 0 : agrupacionFacturable
-						.hashCode());
-		result = prime
-				* result
-				+ ((agrupacionFacturableReasignado == null) ? 0
-						: agrupacionFacturableReasignado.hashCode());
-		result = prime * result + ((cif == null) ? 0 : cif.hashCode());
-		result = prime * result
-				+ ((cifReasignado == null) ? 0 : cifReasignado.hashCode());
-		result = prime * result
-				+ ((grupoDeGasto == null) ? 0 : grupoDeGasto.hashCode());
-		result = prime
-				* result
-				+ ((grupoDeGastoReasignado == null) ? 0
-						: grupoDeGastoReasignado.hashCode());
-		result = prime * result + (int) (id ^ (id >>> 32));
-		result = prime * result
-				+ ((nombreCliente == null) ? 0 : nombreCliente.hashCode());
-		result = prime
-				* result
-				+ ((nombreClienteReasignado == null) ? 0
-						: nombreClienteReasignado.hashCode());
-		result = prime * result + ((tipoDoc == null) ? 0 : tipoDoc.hashCode());
-		result = prime
-				* result
-				+ ((tipoDocReasignado == null) ? 0 : tipoDocReasignado
-						.hashCode());
-		return result;
-	}
 
 	public String getComentarios() {
 		return comentarios;
@@ -247,80 +208,6 @@ public class ReasignacionCargo implements Serializable{
 
 	public void setComentarios(String comentarios) {
 		this.comentarios = comentarios;
-	}
-
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		ReasignacionCargo other = (ReasignacionCargo) obj;
-		if (acuerdo == null) {
-			if (other.acuerdo != null)
-				return false;
-		} else if (!acuerdo.equals(other.acuerdo))
-			return false;
-		if (agrupacionFacturable == null) {
-			if (other.agrupacionFacturable != null)
-				return false;
-		} else if (!agrupacionFacturable.equals(other.agrupacionFacturable))
-			return false;
-		if (agrupacionFacturableReasignado == null) {
-			if (other.agrupacionFacturableReasignado != null)
-				return false;
-		} else if (!agrupacionFacturableReasignado
-				.equals(other.agrupacionFacturableReasignado))
-			return false;
-		if (cif == null) {
-			if (other.cif != null)
-				return false;
-		} else if (!cif.equals(other.cif))
-			return false;
-		if (cifReasignado == null) {
-			if (other.cifReasignado != null)
-				return false;
-		} else if (!cifReasignado.equals(other.cifReasignado))
-			return false;
-		if (grupoDeGasto == null) {
-			if (other.grupoDeGasto != null)
-				return false;
-		} else if (!grupoDeGasto.equals(other.grupoDeGasto))
-			return false;
-		if (grupoDeGastoReasignado == null) {
-			if (other.grupoDeGastoReasignado != null)
-				return false;
-		} else if (!grupoDeGastoReasignado.equals(other.grupoDeGastoReasignado))
-			return false;
-		if (id != other.id)
-			return false;
-		if (nombreCliente == null) {
-			if (other.nombreCliente != null)
-				return false;
-		} else if (!nombreCliente.equals(other.nombreCliente))
-			return false;
-		if (nombreClienteReasignado == null) {
-			if (other.nombreClienteReasignado != null)
-				return false;
-		} else if (!nombreClienteReasignado
-				.equals(other.nombreClienteReasignado))
-			return false;
-		if (tipoDoc == null) {
-			if (other.tipoDoc != null)
-				return false;
-		} else if (!tipoDoc.equals(other.tipoDoc))
-			return false;
-		if (tipoDocReasignado == null) {
-			if (other.tipoDocReasignado != null)
-				return false;
-		} else if (!tipoDocReasignado.equals(other.tipoDocReasignado))
-			return false;
-		return true;
 	}
 
 	/* (non-Javadoc)
@@ -357,6 +244,124 @@ public class ReasignacionCargo implements Serializable{
 		builder.append(comentarios);
 		builder.append("]");
 		return builder.toString();
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((acuerdo == null) ? 0 : acuerdo.hashCode());
+		result = prime
+				* result
+				+ ((agrupacionFacturable == null) ? 0 : agrupacionFacturable
+						.hashCode());
+		result = prime
+				* result
+				+ ((agrupacionFacturableReasignado == null) ? 0
+						: agrupacionFacturableReasignado.hashCode());
+		result = prime * result + ((cif == null) ? 0 : cif.hashCode());
+		result = prime * result
+				+ ((cifReasignado == null) ? 0 : cifReasignado.hashCode());
+		result = prime * result
+				+ ((comentarios == null) ? 0 : comentarios.hashCode());
+		result = prime * result
+				+ ((grupoDeGasto == null) ? 0 : grupoDeGasto.hashCode());
+		result = prime
+				* result
+				+ ((grupoDeGastoReasignado == null) ? 0
+						: grupoDeGastoReasignado.hashCode());
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		result = prime * result
+				+ ((nombreCliente == null) ? 0 : nombreCliente.hashCode());
+		result = prime
+				* result
+				+ ((nombreClienteReasignado == null) ? 0
+						: nombreClienteReasignado.hashCode());
+		result = prime * result + ((tipoDoc == null) ? 0 : tipoDoc.hashCode());
+		result = prime
+				* result
+				+ ((tipoDocReasignado == null) ? 0 : tipoDocReasignado
+						.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ReasignacionCargo other = (ReasignacionCargo) obj;
+		if (acuerdo == null) {
+			if (other.acuerdo != null)
+				return false;
+		} else if (!acuerdo.equals(other.acuerdo))
+			return false;
+		if (agrupacionFacturable == null) {
+			if (other.agrupacionFacturable != null)
+				return false;
+		} else if (!agrupacionFacturable.equals(other.agrupacionFacturable))
+			return false;
+		if (agrupacionFacturableReasignado == null) {
+			if (other.agrupacionFacturableReasignado != null)
+				return false;
+		} else if (!agrupacionFacturableReasignado
+				.equals(other.agrupacionFacturableReasignado))
+			return false;
+		if (cif == null) {
+			if (other.cif != null)
+				return false;
+		} else if (!cif.equals(other.cif))
+			return false;
+		if (cifReasignado == null) {
+			if (other.cifReasignado != null)
+				return false;
+		} else if (!cifReasignado.equals(other.cifReasignado))
+			return false;
+		if (comentarios == null) {
+			if (other.comentarios != null)
+				return false;
+		} else if (!comentarios.equals(other.comentarios))
+			return false;
+		if (grupoDeGasto == null) {
+			if (other.grupoDeGasto != null)
+				return false;
+		} else if (!grupoDeGasto.equals(other.grupoDeGasto))
+			return false;
+		if (grupoDeGastoReasignado == null) {
+			if (other.grupoDeGastoReasignado != null)
+				return false;
+		} else if (!grupoDeGastoReasignado.equals(other.grupoDeGastoReasignado))
+			return false;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
+		if (nombreCliente == null) {
+			if (other.nombreCliente != null)
+				return false;
+		} else if (!nombreCliente.equals(other.nombreCliente))
+			return false;
+		if (nombreClienteReasignado == null) {
+			if (other.nombreClienteReasignado != null)
+				return false;
+		} else if (!nombreClienteReasignado
+				.equals(other.nombreClienteReasignado))
+			return false;
+		if (tipoDoc == null) {
+			if (other.tipoDoc != null)
+				return false;
+		} else if (!tipoDoc.equals(other.tipoDoc))
+			return false;
+		if (tipoDocReasignado == null) {
+			if (other.tipoDocReasignado != null)
+				return false;
+		} else if (!tipoDocReasignado.equals(other.tipoDocReasignado))
+			return false;
+		return true;
 	}
 
 

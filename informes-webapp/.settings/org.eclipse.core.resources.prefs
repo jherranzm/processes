@@ -6,6 +6,7 @@ encoding//src/main/java/telefonica/aaee/informes/process/GestorEscenarios.java=U
 encoding//src/main/java/telefonica/aaee/informes/services/InformeService.java=UTF-8
 encoding//src/main/java/telefonica/aaee/informes/services/condiciones/AcuerdoService.java=UTF-8
 encoding//src/main/java/telefonica/aaee/informes/services/condiciones/ConceptoFacturableService.java=UTF-8
+encoding//src/main/java/telefonica/aaee/informes/services/condiciones/ReasignacionCargoService.java=UTF-8
 encoding//src/main/java/telefonica/aaee/informes/services/condiciones/TraficoInternacionalPorNivelService.java=UTF-8
 encoding//src/main/java/telefonica/aaee/informes/services/condiciones/TraficoInternacionalService.java=UTF-8
 encoding//src/main/java/telefonica/aaee/informes/services/condiciones/TraficoService.java=UTF-8

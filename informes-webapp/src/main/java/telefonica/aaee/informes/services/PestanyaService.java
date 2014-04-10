@@ -19,6 +19,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import telefonica.aaee.informes.exceptions.PestanyaNotFoundException;
+import telefonica.aaee.informes.helpers.Constants;
 import telefonica.aaee.informes.model.Pestanya;
 
 @Repository
@@ -155,13 +156,9 @@ public class PestanyaService {
         JpaEntityInformation<Pestanya, Long> entityInfo = new JpaMetamodelEntityInformation<Pestanya, Long>(Pestanya.class, em.getMetamodel());
         repo = new SimpleJpaRepository<Pestanya, Long>(entityInfo, em);
         
-        logger.info("\n\n\n");
-        logger.info("Número de pestanyes:" + repo.findAll().size());
-        logger.info("\n\n\n");
+        logger.info(Constants.SEP_V + "Número de Pestanya:[" + repo.findAll().size() + "]" + Constants.SEP_V);
 
-        logger.info("\n\n\n");
-        logger.info("Número de pestanyes:" + repo.findAll(new PageRequest(0, 5)).getNumberOfElements());
-        logger.info("\n\n\n");
+        logger.info(Constants.SEP_V + "Número de Pestanya por Página:[" + repo.findAll(new PageRequest(0, PAGE_SIZE)).getNumberOfElements() + "]" + Constants.SEP_V);
 	
 	}
 }

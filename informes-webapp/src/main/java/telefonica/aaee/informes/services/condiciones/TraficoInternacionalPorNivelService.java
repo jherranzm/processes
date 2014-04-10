@@ -19,6 +19,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import telefonica.aaee.informes.exceptions.TraficoInternacionalPorNivelNotFoundException;
+import telefonica.aaee.informes.helpers.Constants;
 import telefonica.aaee.informes.model.condiciones.TraficoInternacionalPorNivel;
 
 @Repository
@@ -51,13 +52,9 @@ public class TraficoInternacionalPorNivelService {
         JpaEntityInformation<TraficoInternacionalPorNivel, Long> entityInfo = new JpaMetamodelEntityInformation<TraficoInternacionalPorNivel, Long>(TraficoInternacionalPorNivel.class, em.getMetamodel());
         repo = new SimpleJpaRepository<TraficoInternacionalPorNivel, Long>(entityInfo, em);
         
-        logger.info("\n\n\n");
-        logger.info("Número de TraficoInternacionalPorNivel:" + repo.findAll().size());
-        logger.info("\n\n\n");
+        logger.info(Constants.SEP_V + "Número de TraficoInternacionalPorNivel:[" + repo.findAll().size() + "]" + Constants.SEP_V);
 
-        logger.info("\n\n\n");
-        logger.info("Número de TraficoInternacionalPorNivel:" + repo.findAll(new PageRequest(0, 5)).getNumberOfElements());
-        logger.info("\n\n\n");
+        logger.info(Constants.SEP_V + "Número de TraficoInternacionalPorNivel por Página:[" + repo.findAll(new PageRequest(0, PAGE_SIZE)).getNumberOfElements() + "]" + Constants.SEP_V);
 	
 	}
 	

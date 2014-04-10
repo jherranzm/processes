@@ -19,6 +19,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import telefonica.aaee.informes.exceptions.TraficoNotFoundException;
+import telefonica.aaee.informes.helpers.Constants;
 import telefonica.aaee.informes.model.condiciones.Trafico;
 
 @Repository
@@ -51,13 +52,9 @@ public class TraficoService {
         JpaEntityInformation<Trafico, Long> conceptoFacturableEntityInfo = new JpaMetamodelEntityInformation<Trafico, Long>(Trafico.class, em.getMetamodel());
         repo = new SimpleJpaRepository<Trafico, Long>(conceptoFacturableEntityInfo, em);
         
-        logger.info("\n\n\n");
-        logger.info("Número de Trafico:" + repo.findAll().size());
-        logger.info("\n\n\n");
+        logger.info(Constants.SEP_V + "Número de Trafico:[" + repo.findAll().size() + "]" + Constants.SEP_V);
 
-        logger.info("\n\n\n");
-        logger.info("Número de Trafico:" + repo.findAll(new PageRequest(0, 5)).getNumberOfElements());
-        logger.info("\n\n\n");
+        logger.info(Constants.SEP_V + "Número de Trafico por Página:[" + repo.findAll(new PageRequest(0, PAGE_SIZE)).getNumberOfElements() + "]" + Constants.SEP_V);
 	
 	}
 	

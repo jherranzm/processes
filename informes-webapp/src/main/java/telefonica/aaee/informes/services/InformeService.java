@@ -19,6 +19,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import telefonica.aaee.informes.exceptions.InformeNotFoundException;
+import telefonica.aaee.informes.helpers.Constants;
 import telefonica.aaee.informes.model.Informe;
 import telefonica.aaee.informes.model.InformePestanya;
 
@@ -192,13 +193,9 @@ public class InformeService {
         JpaEntityInformation<Informe, Long> entityInfo = new JpaMetamodelEntityInformation<Informe, Long>(Informe.class, em.getMetamodel());
         repo = new SimpleJpaRepository<Informe, Long>(entityInfo, em);
         
-        logger.info("\n\n\n");
-        logger.info("Número de informes:" + repo.findAll().size());
-        logger.info("\n\n\n");
+        logger.info(Constants.SEP_V + "Número de Informe:[" + repo.findAll().size() + "]" + Constants.SEP_V);
 
-        logger.info("\n\n\n");
-        logger.info("Número de informes:" + repo.findAll(new PageRequest(0, 5)).getNumberOfElements());
-        logger.info("\n\n\n");
+        logger.info(Constants.SEP_V + "Número de Informe por Página:[" + repo.findAll(new PageRequest(0, PAGE_SIZE)).getNumberOfElements() + "]" + Constants.SEP_V);
 	
 	}
 }

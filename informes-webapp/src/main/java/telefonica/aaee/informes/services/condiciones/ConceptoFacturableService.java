@@ -19,6 +19,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import telefonica.aaee.informes.exceptions.ConceptoFacturableNotFoundException;
+import telefonica.aaee.informes.helpers.Constants;
 import telefonica.aaee.informes.model.condiciones.ConceptoFacturable;
 
 @Repository
@@ -28,7 +29,6 @@ public class ConceptoFacturableService {
 	private static final int PAGE_SIZE = 5;
 	
 	private static final String CF_FIND_ALL = "CF.findAll";
-
 	protected final Log logger = LogFactory.getLog(getClass());
 		
 	@PersistenceContext
@@ -51,13 +51,9 @@ public class ConceptoFacturableService {
         JpaEntityInformation<ConceptoFacturable, Long> conceptoFacturableEntityInfo = new JpaMetamodelEntityInformation<ConceptoFacturable, Long>(ConceptoFacturable.class, em.getMetamodel());
         repo = new SimpleJpaRepository<ConceptoFacturable, Long>(conceptoFacturableEntityInfo, em);
         
-        logger.info("\n\n\n");
-        logger.info("Número de ConceptoFacturable:" + repo.findAll().size());
-        logger.info("\n\n\n");
+        logger.info(Constants.SEP_V + "Número de ConceptoFacturable:[" + repo.findAll().size() + "]" + Constants.SEP_V);
 
-        logger.info("\n\n\n");
-        logger.info("Número de ConceptoFacturable:" + repo.findAll(new PageRequest(0, 5)).getNumberOfElements());
-        logger.info("\n\n\n");
+        logger.info(Constants.SEP_V + "Número de ConceptoFacturable por Página:[" + repo.findAll(new PageRequest(0, PAGE_SIZE)).getNumberOfElements() + "]" + Constants.SEP_V);
 	
 	}
 	

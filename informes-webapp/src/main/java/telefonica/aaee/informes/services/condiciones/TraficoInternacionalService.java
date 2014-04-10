@@ -19,6 +19,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import telefonica.aaee.informes.exceptions.TraficoInternacionalNotFoundException;
+import telefonica.aaee.informes.helpers.Constants;
 import telefonica.aaee.informes.model.condiciones.TraficoInternacional;
 
 @Repository
@@ -51,13 +52,9 @@ public class TraficoInternacionalService {
         JpaEntityInformation<TraficoInternacional, Long> conceptoFacturableEntityInfo = new JpaMetamodelEntityInformation<TraficoInternacional, Long>(TraficoInternacional.class, em.getMetamodel());
         repo = new SimpleJpaRepository<TraficoInternacional, Long>(conceptoFacturableEntityInfo, em);
         
-        logger.info("\n\n\n");
-        logger.info("Número de TraficoInternacional:" + repo.findAll().size());
-        logger.info("\n\n\n");
+        logger.info(Constants.SEP_V + "Número de TraficoInternacional:[" + repo.findAll().size() + "]" + Constants.SEP_V);
 
-        logger.info("\n\n\n");
-        logger.info("Número de TraficoInternacional:" + repo.findAll(new PageRequest(0, 5)).getNumberOfElements());
-        logger.info("\n\n\n");
+        logger.info(Constants.SEP_V + "Número de TraficoInternacional por Página:[" + repo.findAll(new PageRequest(0, PAGE_SIZE)).getNumberOfElements() + "]" + Constants.SEP_V);
 	
 	}
 	

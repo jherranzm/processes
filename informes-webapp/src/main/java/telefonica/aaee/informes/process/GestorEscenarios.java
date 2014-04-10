@@ -40,6 +40,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import telefonica.aaee.informes.exceptions.CeldasIncorrectasException;
 import telefonica.aaee.informes.exceptions.ConceptoFacturableNotFoundException;
+import telefonica.aaee.informes.exceptions.ReasignacionCargoNotFoundException;
 import telefonica.aaee.informes.exceptions.TraficoInternacionalNotFoundException;
 import telefonica.aaee.informes.exceptions.TraficoInternacionalPorNivelNotFoundException;
 import telefonica.aaee.informes.exceptions.TraficoNotFoundException;
@@ -49,6 +50,7 @@ import telefonica.aaee.informes.model.condiciones.Trafico;
 import telefonica.aaee.informes.model.condiciones.TraficoInternacional;
 import telefonica.aaee.informes.model.condiciones.TraficoInternacionalPorNivel;
 import telefonica.aaee.informes.services.condiciones.ConceptoFacturableService;
+import telefonica.aaee.informes.services.condiciones.ReasignacionCargoService;
 import telefonica.aaee.informes.services.condiciones.TraficoInternacionalPorNivelService;
 import telefonica.aaee.informes.services.condiciones.TraficoInternacionalService;
 import telefonica.aaee.informes.services.condiciones.TraficoService;
@@ -127,6 +129,9 @@ public class GestorEscenarios {
 
 	@Autowired
 	private TraficoInternacionalPorNivelService traficoIntNivelService;
+
+	@Autowired
+	private ReasignacionCargoService reasCargoService;
 
 	@PersistenceContext(unitName = "JPAInformesWebApp")
 	public void setEntityManager(EntityManager em) {
@@ -813,7 +818,7 @@ public class GestorEscenarios {
 	}
 	
 	private void updateReasignacionCargos(Sheet sheet)
-			throws CeldasIncorrectasException, SQLException {
+			throws CeldasIncorrectasException, SQLException, ReasignacionCargoNotFoundException {
 		/**
 		 * Comprobamos que las cabeceras de la primera fila sean correctas
 		 */
@@ -837,16 +842,16 @@ public class GestorEscenarios {
 
 				logger.info("Fila:" + row.getRowNum());
 
-				// Recuperamos la condici��n del Excel
+				// Recuperamos la condición del Excel
 				ReasignacionCargo condicion = fila2ReasignacionCargo(row);
 
 				// Localizamos el elemento de la tabla
 				ReasignacionCargo reasignacion = entityManager.find(ReasignacionCargo.class, condicion.getId());
 				
 				if (reasignacion == null) {
-					// Buscamos por acuerdo, cif, grupo de gasto y agrupaci��n facturable
+					// Buscamos por acuerdo, cif, grupo de gasto y agrupación facturable
 					logger.info("ReasignacionCargo no localizado!");
-					logger.info("Buscamos la condici��n de Reasignacion por Cargo:");
+					logger.info("Buscamos la condición de Reasignacion por Cargo:");
 					
 					Query query = entityManager.createNamedQuery("FindByAcuerdoCifGrupoDeGastoAgrupacionFacturable");
 					query.setParameter("ac", condicion.getAcuerdo());
@@ -863,10 +868,12 @@ public class GestorEscenarios {
 						reasignacion.setGrupoDeGastoReasignado(condicion.getGrupoDeGastoReasignado());
 						reasignacion.setAgrupacionFacturableReasignado(condicion.getAgrupacionFacturableReasignado());
 
-						update(reasignacion);
-
-						logger.info("Modificado ReasignacionCargo:" + reasignacion.toString());
-						incNumModificaciones();
+						ReasignacionCargo mod = reasCargoService.update(reasignacion);
+						
+						if (!mod.equals(reasignacion)) {
+							logger.info("Modificado REASCARGO:" + mod.toString());
+							incNumModificaciones();
+						}
 					} catch (javax.persistence.NoResultException e) {
 						logger.warn("No existe la tupla Acuerdo-Cif-GrupoDeGasto-AgrupacionFacturable:"
 								+ condicion.getAcuerdo() + ":"
@@ -875,9 +882,9 @@ public class GestorEscenarios {
 								+ condicion.getAgrupacionFacturable()
 								);
 
-						save(reasignacion);
+						ReasignacionCargo nuevo = reasCargoService.create(condicion);
 						
-						logger.info("Guardado ReasignacionCargo:" + condicion.toString());
+						logger.info("Guardado REASCARGO:" + nuevo.toString());
 					} catch (javax.persistence.NonUniqueResultException e) {
 						logger.warn("Hay más de un resultado para la tupla Acuerdo-Cif-GrupoDeGasto-AgrupacionFacturable:"
 								+ condicion.getAcuerdo() + ":"
@@ -902,11 +909,12 @@ public class GestorEscenarios {
 					reasignacion.setGrupoDeGastoReasignado(condicion.getGrupoDeGastoReasignado());
 					reasignacion.setAgrupacionFacturableReasignado(condicion.getAgrupacionFacturableReasignado());
 
-					update(reasignacion);
-
-					logger.info("Modificado ReasignacionCargo:" + reasignacion.toString());
-
-					incNumModificaciones();
+					ReasignacionCargo mod = reasCargoService.update(reasignacion);
+					
+					if (!mod.equals(reasignacion)) {
+						logger.info("Modificado REASCARGO:" + mod.toString());
+						incNumModificaciones();
+					}
 
 				}
 

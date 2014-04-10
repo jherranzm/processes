@@ -19,6 +19,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import telefonica.aaee.informes.exceptions.ConsultaNotFoundException;
+import telefonica.aaee.informes.helpers.Constants;
 import telefonica.aaee.informes.model.Consulta;
 
 @Repository
@@ -39,12 +40,6 @@ public class ConsultaService {
 	private JpaRepository<Consulta, Long> repo;
 	
 
-//	@PersistenceContext
-//	public void setEm(EntityManager em) {
-//		this.em = em;
-//	}
-
-
 	public ConsultaService() {
 	}
 	
@@ -59,13 +54,9 @@ public class ConsultaService {
         JpaEntityInformation<Consulta, Long> consultaEntityInfo = new JpaMetamodelEntityInformation<Consulta, Long>(Consulta.class, em.getMetamodel());
         repo = new SimpleJpaRepository<Consulta, Long>(consultaEntityInfo, em);
         
-        logger.info("\n\n\n");
-        logger.info("Número de consultas:" + repo.findAll().size());
-        logger.info("\n\n\n");
+        logger.info(Constants.SEP_V + "Número de Consulta:[" + repo.findAll().size() + "]" + Constants.SEP_V);
 
-        logger.info("\n\n\n");
-        logger.info("Número de consultas:" + repo.findAll(new PageRequest(0, 5)).getNumberOfElements());
-        logger.info("\n\n\n");
+        logger.info(Constants.SEP_V + "Número de Consulta por Página:[" + repo.findAll(new PageRequest(0, PAGE_SIZE)).getNumberOfElements() + "]" + Constants.SEP_V);
 	
 	}
 	

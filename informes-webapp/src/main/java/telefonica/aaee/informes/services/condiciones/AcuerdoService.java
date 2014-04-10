@@ -17,11 +17,14 @@ import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import telefonica.aaee.informes.helpers.Constants;
 import telefonica.aaee.informes.model.condiciones.Acuerdo;
 
 @Repository
 @Transactional
 public class AcuerdoService {
+	
+	private static final int PAGE_SIZE = 5;
 	
 	private static final String ACUERDO_FIND_BY_NOMBRE = "Acuerdo.findByNombre";
 	private static final String ACUERDO_FIND_ALL = "Acuerdo.findAll";
@@ -33,12 +36,6 @@ public class AcuerdoService {
 	
 	private JpaRepository<Acuerdo, Long> repo;
 	
-
-//	@PersistenceContext
-//	public void setEm(EntityManager em) {
-//		this.em = em;
-//	}
-
 
 	public AcuerdoService() {
 	}
@@ -54,13 +51,9 @@ public class AcuerdoService {
         JpaEntityInformation<Acuerdo, Long> consultaEntityInfo = new JpaMetamodelEntityInformation<Acuerdo, Long>(Acuerdo.class, em.getMetamodel());
         repo = new SimpleJpaRepository<Acuerdo, Long>(consultaEntityInfo, em);
         
-        logger.info("\n\n\n");
-        logger.info("Número de acuerdos:" + repo.findAll().size());
-        logger.info("\n\n\n");
+        logger.info(Constants.SEP_V + "Número de Acuerdo:[" + repo.findAll().size() + "]" + Constants.SEP_V);
 
-        logger.info("\n\n\n");
-        logger.info("Número de acuerdos:" + repo.findAll(new PageRequest(0, 5)).getNumberOfElements());
-        logger.info("\n\n\n");
+        logger.info(Constants.SEP_V + "Número de Acuerdo por Página:[" + repo.findAll(new PageRequest(0, PAGE_SIZE)).getNumberOfElements() + "]" + Constants.SEP_V);
 	
 	}
 	
