@@ -21,7 +21,7 @@ import javax.validation.constraints.NotNull;
  * 
  */
 @Entity
-@Table(name = "tbl_InformesXLS")
+@Table(name = "tbl_informesxls")
 @NamedQueries({
 		@NamedQuery(name = "Informe.findAll", query = "SELECT i FROM Informe i"),
 		@NamedQuery(name = "Informe.findByNombreDuplicado", query = "SELECT p "

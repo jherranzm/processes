@@ -155,13 +155,13 @@ public class PestanyaService {
         JpaEntityInformation<Pestanya, Long> entityInfo = new JpaMetamodelEntityInformation<Pestanya, Long>(Pestanya.class, em.getMetamodel());
         repo = new SimpleJpaRepository<Pestanya, Long>(entityInfo, em);
         
-        logger.info("\n\n\n\n\n\n\n\n\n\n\n\n");
+        logger.info("\n\n\n");
         logger.info("Número de pestanyes:" + repo.findAll().size());
-        logger.info("\n\n\n\n\n\n\n\n\n\n\n\n");
+        logger.info("\n\n\n");
 
-        logger.info("\n\n\n\n\n\n\n\n\n\n\n\n");
+        logger.info("\n\n\n");
         logger.info("Número de pestanyes:" + repo.findAll(new PageRequest(0, 5)).getNumberOfElements());
-        logger.info("\n\n\n\n\n\n\n\n\n\n\n\n");
+        logger.info("\n\n\n");
 	
 	}
 }

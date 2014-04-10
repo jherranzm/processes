@@ -17,6 +17,8 @@ import java.util.Map;
 import javax.sql.RowSetMetaData;
 import javax.sql.rowset.CachedRowSet;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Name;
@@ -25,8 +27,6 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFCell;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
 
 import telefonica.aaee.exceptions.GeneradorExcelException;
 import telefonica.aaee.utils.ConstantsREG;
@@ -41,7 +41,9 @@ import telefonica.aaee.utils.ContenidoHojaExcel;
 public class GeneradorExcelXlsx {
 	
 	private static final String CRLF = "\n";
-	final private static Logger LOGGER = Logger.getLogger(GeneradorExcelXlsx.class.getCanonicalName());
+
+	protected final Log logger = LogFactory.getLog(getClass());
+	
 	final private static long MAX_FILAS_EXCEL = 65530;
 
 	private static Map<String, CellStyle> estilos = new HashMap<String, CellStyle>();
@@ -64,7 +66,6 @@ public class GeneradorExcelXlsx {
 	 */
 	public GeneradorExcelXlsx() {
 		super();
-		LOGGER.setLevel(Level.INFO);
 	}
 
 
@@ -74,16 +75,10 @@ public class GeneradorExcelXlsx {
 		long maxFila = 1;
 		try {
 			int indexCol = crs.getMetaData().getColumnCount();
-			//LOGGER.debug("indexCol:[" + indexCol + "]");
-			//LOGGER.debug("nomColumnes.length():[" + nomColumnes.length() + "]");
 			if (indexCol > 0) {
 				int pos1 = indexCol % nomColumnes.length();
 	
-				//LOGGER.debug("pos1:[" + pos1 + "]");
 				int fl = (int) (indexCol / nomColumnes.length());
-				//LOGGER.debug("fl:[" + fl + "]");
-	
-//				if (fl > 0) nomColumna.append(nomColumnes.charAt(fl - 1));
 				if (fl > 0) nomColumna.append(nomColumnes.charAt(fl));
 				if (pos1 > 0) nomColumna.append(nomColumnes.charAt(pos1 - 1));
 			} else {
@@ -108,17 +103,13 @@ public class GeneradorExcelXlsx {
 	private void crearNombreRangoEnLibro(Workbook theWorkbook, ContenidoHojaExcel che) {
 		if(che.getNumRegs() > 0){
 			final String strName = che.getNombre();
-			//LOGGER.debug("Nombre de la pestaña:[" + strName + "]");
 			final String nomRango = getRango(che.getCrs());
-			//LOGGER.debug("Nombre del rango:"  +  nomRango);
 			String n11 = "'"  +  che.getNombrePestanya()  +  "'!"  +  nomRango;
 
 			Name name = theWorkbook.createName();
 			name.setNameName(strName);
 			name.setRefersToFormula(n11);
-			LOGGER.info("Rango:"  +  n11);
-			//LOGGER.debug("Número de nombres en el libro:" + theWorkbook.getNumberOfNames());
-			
+			logger.info("Rango:"  +  n11);
 		}
 	}
 
@@ -147,14 +138,14 @@ public class GeneradorExcelXlsx {
 		setFile(getPrefijoFichero()  +  sDate  +  ".xlsx");
 		setFullFile(getRealPath()  +  getFile());
 	
-		LOGGER.info("Fichero temporal:"  +  getFullFile());
+		logger.info("Fichero temporal:"  +  getFullFile());
 	
 		try {
 	
 			Workbook wbOutput = new SXSSFWorkbook(100);
 			estilos = UtilStyles.creaEstilos(wbOutput);
 			
-			LOGGER.debug("Fichero y cabeceras creadas!");
+			logger.debug("Fichero y cabeceras creadas!");
 				
 	
 			// Se crean las hojas necesarias
@@ -166,7 +157,7 @@ public class GeneradorExcelXlsx {
 			}
 	
 			int index = 0;
-			LOGGER.info("Número de pestañas:  ache.size() = "  +  ache.size());
+			logger.info("Número de pestañas:  ache.size() = "  +  ache.size());
 			for (ContenidoHojaExcel che : ache) {
 				
 				StringBuffer sb = new StringBuffer();
@@ -176,7 +167,7 @@ public class GeneradorExcelXlsx {
 					sb.append("Nombre Pestaña:").append(che.getNombrePestanya()).append(CRLF);
 					sb.append("Número de registros:").append(che.getNumRegs()).append(CRLF);
 					
-					LOGGER.info(sb.toString());
+					logger.info(sb.toString());
 	
 				if (che.getNumRegs() == 0) {
 					
@@ -208,7 +199,7 @@ public class GeneradorExcelXlsx {
 					
 				} else {
 
-					LOGGER.warn("En la pestaña "  + che.getNombre() + " se ha producido un error, ya que hay "  +  che.getNumRegs()  +  " registros.");
+					logger.warn("En la pestaña "  + che.getNombre() + " se ha producido un error, ya que hay "  +  che.getNumRegs()  +  " registros.");
 					
 				} //if (che.getNumRegs() == 0) 
 			} //for (ContenidoHojaExcel che : ache)
@@ -216,9 +207,9 @@ public class GeneradorExcelXlsx {
 			
 			FileOutputStream fileOut = new FileOutputStream(getFullFile());
 			wbOutput.write(fileOut);
-			LOGGER.info("Guardado el fichero : " + getFullFile());
+			logger.info("Guardado el fichero : " + getFullFile());
 			fileOut.close();
-			LOGGER.info("Cerrado el fichero : " + getFullFile());
+			logger.info("Cerrado el fichero : " + getFullFile());
 			
 			File file = new File(getFullFile());
 			setFileSize(file.length());
@@ -228,13 +219,13 @@ public class GeneradorExcelXlsx {
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (SQLException e) {
-			LOGGER.warn("Se ha producido una excepción de SQL");
-			LOGGER.info(ConstantsREG.SEP_VERTICAL);
+			logger.warn("Se ha producido una excepción de SQL");
+			logger.info(ConstantsREG.SEP_VERTICAL);
 			e.printStackTrace();
 		} catch (Exception e) {
 			e.printStackTrace();
-			LOGGER.warn("Se ha producido una excepción Genérica...");
-			LOGGER.info(ConstantsREG.SEP_VERTICAL);
+			logger.warn("Se ha producido una excepción Genérica...");
+			logger.info(ConstantsREG.SEP_VERTICAL);
 			System.exit(1);
 		} finally {
 		}
@@ -367,7 +358,7 @@ public class GeneradorExcelXlsx {
 			
 			_f ++ ;
 			
-			LOGGER.info("Se van a tratar "  +  crs.size()  +  " registros...");
+			logger.info("Se van a tratar "  +  crs.size()  +  " registros...");
 		
 			_f = filasDatos(laPestanyaActual, crs, columnaPorcentaje, rsmd, numColumnas, _f);
 			
@@ -402,7 +393,7 @@ public class GeneradorExcelXlsx {
 			cell.setCellStyle(estilos.get(UtilStyles.GENERIC_HEADER));
 			
 			String tmpCabecera = rsmd.getColumnName(_c).replaceAll("_", " ").toUpperCase();
-			LOGGER.debug(rsmd.getColumnName(_c)  +  " -> "  +  tmpCabecera);
+			logger.debug(rsmd.getColumnName(_c)  +  " -> "  +  tmpCabecera);
 			cell.setCellValue(tmpCabecera);
 			
 			if(
@@ -420,7 +411,7 @@ public class GeneradorExcelXlsx {
 	
 				) {
 				cell.setCellStyle(estilos.get(UtilStyles.SPECIAL_HEADER));
-				//LOGGER.debug("Columna especial:"  +  rsmd.getColumnName(_c));
+				//logger.debug("Columna especial:"  +  rsmd.getColumnName(_c));
 			}
 			if(rsmd.getColumnName(_c).equalsIgnoreCase("PORCENTAJE")) {
 				columnaPorcentaje = _c;
@@ -463,11 +454,11 @@ public class GeneradorExcelXlsx {
 			// Recorremos las columnas
 			for (int _c = 1; _c <= numColumnas; _c ++ ) {
 				
-				//LOGGER.debug("Columna: " + _c);
+				//logger.debug("Columna: " + _c);
 
 				Cell cell = row.createCell((_c - 1)); // poi.3.6
 				
-				//LOGGER.debug("rsmd.getColumnType(_c):" + rsmd.getColumnType(_c));
+				//logger.debug("rsmd.getColumnType(_c):" + rsmd.getColumnType(_c));
 				
 				if (rsmd.getColumnType(_c) == java.sql.Types.INTEGER) {
 					cell.setCellType(XSSFCell.CELL_TYPE_NUMERIC);
@@ -478,7 +469,7 @@ public class GeneradorExcelXlsx {
 					cell.setCellType(XSSFCell.CELL_TYPE_NUMERIC);
 					cell.setCellValue(crs.getLong(_c));
 					cell.setCellStyle(estilos.get(UtilStyles.GENERIC_INTEGER));
-					//LOGGER.debug("BIGINT: rsmd.getColumnType(_c):" + rsmd.getColumnName(_c));
+					//logger.debug("BIGINT: rsmd.getColumnType(_c):" + rsmd.getColumnName(_c));
 
 				} else if (rsmd.getColumnType(_c) == java.sql.Types.FLOAT
 						|| rsmd.getColumnType(_c) == java.sql.Types.DOUBLE
@@ -491,17 +482,17 @@ public class GeneradorExcelXlsx {
 					cell.setCellStyle(estilos.get(UtilStyles.GENERIC_FLOAT));
 					if(_c == columnaPorcentaje) {
 						cell.setCellStyle(estilos.get(UtilStyles.GENERIC_PERCENTAGE));
-						//LOGGER.debug("Porcentaje: rsmd.getColumnType(_c):" + rsmd.getColumnName(_c));
+						//logger.debug("Porcentaje: rsmd.getColumnType(_c):" + rsmd.getColumnName(_c));
 					}
 
 				} else if ((rsmd.getColumnType(_c) == java.sql.Types.VARCHAR)
 						|| (rsmd.getColumnType(_c) == java.sql.Types.CHAR)
 						|| (rsmd.getColumnName(_c) == "TEXT")) {
-					//LOGGER.debug("Fila-Col:[" + _f + ":" + _c + "]["+ rsmd.getColumnName(_c) +"] es VARCHAR...");
+					//logger.debug("Fila-Col:[" + _f + ":" + _c + "]["+ rsmd.getColumnName(_c) +"] es VARCHAR...");
 					cell.setCellType(XSSFCell.CELL_TYPE_STRING);
-					//LOGGER.debug("Vamos a por el getString...");
+					//logger.debug("Vamos a por el getString...");
 					String value = crs.getString(_c);
-					//LOGGER.debug("Pasamos el getString...");
+					//logger.debug("Pasamos el getString...");
 					if (value != null) {
 						cell.setCellValue(value);
 						if ((rsmd.getColumnName(_c)
@@ -511,7 +502,7 @@ public class GeneradorExcelXlsx {
 						}
 					}else{
 						cell.setCellValue("");
-						//LOGGER.debug("Fila-Col:[" + _f + ":" + _c + "]["+ rsmd.getColumnName(_c) +"]= Valor nulo!");
+						//logger.debug("Fila-Col:[" + _f + ":" + _c + "]["+ rsmd.getColumnName(_c) +"]= Valor nulo!");
 					}
 					cell.setCellStyle(estilos.get(UtilStyles.GENERIC_OTHER));
 				
@@ -526,7 +517,7 @@ public class GeneradorExcelXlsx {
 						cell.setCellValue(sdf.format(value));
 					}else{
 						cell.setCellValue("");
-						//LOGGER.debug("Fila-Col:[" + _f + ":" + _c + "]["+ rsmd.getColumnName(_c) +"]= Valor nulo!");
+						//logger.debug("Fila-Col:[" + _f + ":" + _c + "]["+ rsmd.getColumnName(_c) +"]= Valor nulo!");
 					}
 					cell.setCellStyle(estilos.get(UtilStyles.GENERIC_DATE));
 
@@ -539,7 +530,7 @@ public class GeneradorExcelXlsx {
 						cell.setCellValue(hora.format(value));
 					}else{
 						cell.setCellValue("");
-						//LOGGER.debug("Fila-Col:[" + _f + ":" + _c + "]["+ rsmd.getColumnName(_c) +"]= Valor nulo!");
+						//logger.debug("Fila-Col:[" + _f + ":" + _c + "]["+ rsmd.getColumnName(_c) +"]= Valor nulo!");
 					}
 					cell.setCellStyle(estilos.get(UtilStyles.GENERIC_DATE));
 
@@ -551,29 +542,29 @@ public class GeneradorExcelXlsx {
 					String value = new String(unosBytes);
 					if (value != null){
 						cell.setCellValue(value);
-						//LOGGER.debug("java.sql.Types.VARBINARY:Fila-Col:[" + _f + ":" + _c + "]= "+ value +"!");
+						//logger.debug("java.sql.Types.VARBINARY:Fila-Col:[" + _f + ":" + _c + "]= "+ value +"!");
 					}
 					
 						
 				} else if ((rsmd.getColumnTypeName(_c).equals("VARCHAR"))) {
-					//LOGGER.debug(ConstantsREG.SEP_VERTICAL  +  rsmd.getColumnTypeName(_c));
+					//logger.debug(ConstantsREG.SEP_VERTICAL  +  rsmd.getColumnTypeName(_c));
 					String value = crs.getString(_c);
 					// cellStyle.setDataFormat(HSSFDataFormat.getBuiltinFormat("@"));
 					cell.setCellType(XSSFCell.CELL_TYPE_STRING);
 					if (value == null) {
-						//LOGGER.debug("OJO!:En la columna "  + _c  +  ":"  +  rsmd.getColumnType(_c)  +  ":"  +  rsmd.getColumnTypeName(_c)  +  ":[**NULL**]");
+						//logger.debug("OJO!:En la columna "  + _c  +  ":"  +  rsmd.getColumnType(_c)  +  ":"  +  rsmd.getColumnTypeName(_c)  +  ":[**NULL**]");
 						cell.setCellValue("");
 					} else if(value.equals("")) {
-						//LOGGER.debug("OJO!:En la columna "  + _c  +  ":"  +  rsmd.getColumnType(_c)  +  ":"  +  rsmd.getColumnTypeName(_c)  +  ":[****]");
+						//logger.debug("OJO!:En la columna "  + _c  +  ":"  +  rsmd.getColumnType(_c)  +  ":"  +  rsmd.getColumnTypeName(_c)  +  ":[****]");
 						cell.setCellValue("");
 					} else {
-						//LOGGER.debug("OJO!:"  +  _c  +  ":"  +  rsmd.getColumnType(_c)  +  ":[" +  value  + "]");
+						//logger.debug("OJO!:"  +  _c  +  ":"  +  rsmd.getColumnType(_c)  +  ":[" +  value  + "]");
 						cell.setCellValue(value);
 					}
-					//LOGGER.debug("Colocamos el estilo a la celda...");
+					//logger.debug("Colocamos el estilo a la celda...");
 					//cell.setCellStyle(estilos.get("cellStyleOther"));
 				} else {
-					//LOGGER.debug("Tratamiento por defecto. Tipo Columna:#" + rsmd.getColumnTypeName(_c) + "#");
+					//logger.debug("Tratamiento por defecto. Tipo Columna:#" + rsmd.getColumnTypeName(_c) + "#");
 					String value = crs.getString(_c);
 					if (value != null) {
 						cell.setCellValue(value);
@@ -581,7 +572,7 @@ public class GeneradorExcelXlsx {
 						
 					cell.setCellStyle(estilos.get(UtilStyles.GENERIC_OTHER));
 
-					//LOGGER.debug("OJO!:"  +  rsmd.getColumnType(_c));
+					//logger.debug("OJO!:"  +  rsmd.getColumnType(_c));
 
 				}
 			}// for (int _c = 1; _c <= numColumnas; _c ++ )
@@ -633,35 +624,35 @@ public class GeneradorExcelXlsx {
 		
 		int pixelsWitdh = 12;
 	
-		LOGGER.info("Actualizamos la anchura de las columnas en la pestaña " + pestanya.getSheetName());
+		logger.info("Actualizamos la anchura de las columnas en la pestaña " + pestanya.getSheetName());
 		
 		for (int _c = 1; _c <= numColumnas; _c ++ ) {
 				
-			LOGGER.debug("Anchura de las columnas: ["  +  _c  +  "] de ["  +  numColumnas  +  "] " +  rsmd.getColumnType(_c)  +  ":"  +  rsmd.getColumnName(_c));
+			logger.debug("Anchura de las columnas: ["  +  _c  +  "] de ["  +  numColumnas  +  "] " +  rsmd.getColumnType(_c)  +  ":"  +  rsmd.getColumnName(_c));
 			
 			try {
-				LOGGER.debug("Nombre del campo:" + rsmd.getColumnName(_c));
+				logger.debug("Nombre del campo:" + rsmd.getColumnName(_c));
 				pestanya.autoSizeColumn(_c);
 				
-				LOGGER.debug("Anchura de la columna:" + pestanya.getColumnWidth(_c));
+				logger.debug("Anchura de la columna:" + pestanya.getColumnWidth(_c));
 				// Las palabras del nombre de la columna
 				String[] words = rsmd.getColumnName(_c).split("[_ ]");
 				int max = 0;
 				for(String word : words){
 					max = (word.length() > max ? word.length() : max);
-					LOGGER.debug(word + ":" + max);
+					logger.debug(word + ":" + max);
 				}
-				LOGGER.debug(max + "->" + Math.floor(((max * pixelsWitdh + 15) /  pixelsWitdh * 256)) + "->" + (pestanya.getColumnWidth(_c)));
-				LOGGER.debug(max + "->" + Math.floor(((max * pixelsWitdh + 15) /  pixelsWitdh * 256)/256) + "->" + (pestanya.getColumnWidth(_c)/256));
-				LOGGER.debug(max + "->" + Math.floor(( (max + 3) * 256 )) + "->" + (pestanya.getColumnWidth(_c)));
+				logger.debug(max + "->" + Math.floor(((max * pixelsWitdh + 15) /  pixelsWitdh * 256)) + "->" + (pestanya.getColumnWidth(_c)));
+				logger.debug(max + "->" + Math.floor(((max * pixelsWitdh + 15) /  pixelsWitdh * 256)/256) + "->" + (pestanya.getColumnWidth(_c)/256));
+				logger.debug(max + "->" + Math.floor(( (max + 3) * 256 )) + "->" + (pestanya.getColumnWidth(_c)));
 				//if( Math.floor(((max * pixelsWitdh + 15) /  pixelsWitdh * 256) / 256)  > (pestanya.getColumnWidth(_c)/256) ){
 				if( ( (max + 4) * 256 )  > pestanya.getColumnWidth(_c) ){
-					LOGGER.debug("Cambio de anchura!");
+					logger.debug("Cambio de anchura!");
 					pestanya.setColumnWidth(_c,    (max + 4) * 256  );
 				}
-				LOGGER.debug("Anchura de la columna:" + pestanya.getColumnWidth(_c));
+				logger.debug("Anchura de la columna:" + pestanya.getColumnWidth(_c));
 			} catch (Exception e) {
-				LOGGER.warn("[ERROR] Al cambiar el ancho de la columna ["+ rsmd.getColumnName(_c) +"] en la pestaña " + pestanya.getSheetName()+ ": " + e.getMessage());
+				logger.warn("[ERROR] Al cambiar el ancho de la columna ["+ rsmd.getColumnName(_c) +"] en la pestaña " + pestanya.getSheetName()+ ": " + e.getMessage());
 			}
 			
 		}
@@ -677,11 +668,11 @@ public class GeneradorExcelXlsx {
 			final ResultSetMetaData rsmd, 
 			final int numColumnas) throws SQLException {
 		
-		LOGGER.info("Actualizamos la anchura de las columnas en la pestaña " + pestanya.getSheetName());
+		logger.info("Actualizamos la anchura de las columnas en la pestaña " + pestanya.getSheetName());
 		
 		for (int _c = 1; _c <= numColumnas; _c ++ ) {
 				
-			LOGGER.debug("Anchura de las columnas: ["  +  _c  +  "] de ["  +  numColumnas  +  "] " +  rsmd.getColumnType(_c)  +  ":"  +  rsmd.getColumnName(_c));
+			logger.debug("Anchura de las columnas: ["  +  _c  +  "] de ["  +  numColumnas  +  "] " +  rsmd.getColumnType(_c)  +  ":"  +  rsmd.getColumnName(_c));
 			
 			int ancho = pestanya.getColumnWidth(_c);
 			
@@ -689,12 +680,12 @@ public class GeneradorExcelXlsx {
 				pestanya.autoSizeColumn(_c);
 				
 				if( ancho  > pestanya.getColumnWidth(_c) ){
-					LOGGER.debug("Cambio de anchura!");
+					logger.debug("Cambio de anchura!");
 					pestanya.setColumnWidth(_c,    ancho  );
 				}
-				LOGGER.debug("Anchura de la columna:" + pestanya.getColumnWidth(_c));
+				logger.debug("Anchura de la columna:" + pestanya.getColumnWidth(_c));
 			} catch (Exception e) {
-				LOGGER.warn("[ERROR] Al cambiar el ancho de la columna ["+ rsmd.getColumnName(_c) +"] en la pestaña " + pestanya.getSheetName()+ ": " + e.getMessage());
+				logger.warn("[ERROR] Al cambiar el ancho de la columna ["+ rsmd.getColumnName(_c) +"] en la pestaña " + pestanya.getSheetName()+ ": " + e.getMessage());
 			}
 			
 		}

@@ -10,7 +10,7 @@ import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @Entity
-@Table(name="tbl_PestanyaExcel")
+@Table(name="tbl_pestanyaexcel")
 @XmlRootElement
 public class PestanyaExcel 
 

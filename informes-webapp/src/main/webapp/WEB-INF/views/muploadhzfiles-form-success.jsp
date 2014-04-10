@@ -44,7 +44,7 @@
 				</h3>
 				<br>
 				<c:forEach items="${FORM.urls}" var="url">
-					<li><a href="${pageContext.request.contextPath}/getFile/file/${url}">${url}</a></li>
+					<li><a href="${pageContext.request.contextPath}/getFile/file/${url.fileName}/${url.fileExt}">${url.fileName}</a></li>
 				</c:forEach>
 			</div><!-- #urls -->
 

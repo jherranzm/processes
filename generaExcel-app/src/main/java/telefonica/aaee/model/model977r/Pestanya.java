@@ -14,7 +14,7 @@ import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @Entity
-@Table(name="tbl_Pestanyes")
+@Table(name="tbl_pestanyes")
 @XmlRootElement
 public class Pestanya
 	extends telefonica.aaee.xml.GenericXML

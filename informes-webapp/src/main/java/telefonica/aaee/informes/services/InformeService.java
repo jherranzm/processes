@@ -177,6 +177,14 @@ public class InformeService {
 		logger.info("Tenemos el request:" + request.getPageNumber());
 	        return repo.findAll(request);
 	}
+	
+//	public boolean applyInforme(Long informeId){
+//		logger.info("Vamos a generar el request...");
+//		
+//		em.createNativeQuery("CALL 977r.977r_SP_APPLY_COND_ALL( ? );");
+//		
+//		return true;
+//	}
 
 	
 	@PostConstruct
@@ -184,13 +192,13 @@ public class InformeService {
         JpaEntityInformation<Informe, Long> entityInfo = new JpaMetamodelEntityInformation<Informe, Long>(Informe.class, em.getMetamodel());
         repo = new SimpleJpaRepository<Informe, Long>(entityInfo, em);
         
-        logger.info("\n\n\n\n\n\n\n\n\n\n\n\n");
+        logger.info("\n\n\n");
         logger.info("Número de informes:" + repo.findAll().size());
-        logger.info("\n\n\n\n\n\n\n\n\n\n\n\n");
+        logger.info("\n\n\n");
 
-        logger.info("\n\n\n\n\n\n\n\n\n\n\n\n");
+        logger.info("\n\n\n");
         logger.info("Número de informes:" + repo.findAll(new PageRequest(0, 5)).getNumberOfElements());
-        logger.info("\n\n\n\n\n\n\n\n\n\n\n\n");
+        logger.info("\n\n\n");
 	
 	}
 }

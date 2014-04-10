@@ -25,8 +25,13 @@
 		<validation.version>1.1.0.Final</validation.version>
 		<hibernate.validator.version>5.0.1.Final</hibernate.validator.version>
 		<poi.version>3.9</poi.version>
-		
+
 		<javax.persistence.version>2.1.0</javax.persistence.version>
+
+		<jdk.version>1.7</jdk.version>
+		<maven.compiler.version>3.1</maven.compiler.version>
+		<webapp.name>informes</webapp.name>
+
 	</properties>
 
 	<dependencies>
@@ -227,11 +232,11 @@
 		</dependency>
 
 
-<!-- 		<dependency> -->
-<!-- 			<groupId>telefonica.aaee</groupId> -->
-<!-- 			<artifactId>Capture977App</artifactId> -->
-<!-- 			<version>1.1</version> -->
-<!-- 		</dependency> -->
+		<!-- <dependency> -->
+		<!-- <groupId>telefonica.aaee</groupId> -->
+		<!-- <artifactId>Capture977App</artifactId> -->
+		<!-- <version>1.1</version> -->
+		<!-- </dependency> -->
 
 		<dependency>
 			<groupId>telefonica.aaee</groupId>
@@ -241,6 +246,46 @@
 
 	</dependencies>
 	<build>
+
+		<plugins>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>${maven.compiler.version}</version>
+				<configuration>
+					<source>${jdk.version}</source>
+					<target>${jdk.version}</target>
+					<encoding>${project.build.sourceEncoding}</encoding> <!-- si no da error de codificación -->
+				</configuration>
+			</plugin>
+
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<version>2.2</version>
+				<configuration>
+					<warSourceDirectory>src/main/webapp</warSourceDirectory>
+					<warName>${project.artifactId}</warName>
+					<failOnMissingWebXml>false</failOnMissingWebXml>
+				</configuration>
+			</plugin>
+
+
+			<plugin>
+				<groupId>org.apache.tomcat.maven</groupId>
+				<artifactId>tomcat7-maven-plugin</artifactId>
+				<version>2.1</version>
+				<configuration>
+					<url>http://localhost:8080/manager/text</url>
+					<server>Tomcat7</server>
+					<path>/${webapp.name}</path>
+				</configuration>
+			</plugin>
+
+		</plugins>
+
 		<finalName>informes</finalName>
 	</build>
 

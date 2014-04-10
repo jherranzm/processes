@@ -11,7 +11,7 @@ import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @Entity
-@Table(name="tbl_ConsultasSQL")
+@Table(name="tbl_consultassql")
 @XmlRootElement
 public class ConsultaSQL 
 	

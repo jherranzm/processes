@@ -9,6 +9,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.io.FilenameUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
@@ -65,7 +66,7 @@ public class MUploadHZFilesFormController
             
             List<MultipartFile> files = form.getFiles();
             List<FileInfoDTO> uploadedFiles = new ArrayList<FileInfoDTO>();
-            List<String> urls = new ArrayList<String>();
+            List<FileInfoDTO> urls = new ArrayList<FileInfoDTO>();
             
             if(null != files && files.size() > 0) {
                 for (MultipartFile multipartFile : files) {
@@ -93,7 +94,13 @@ public class MUploadHZFilesFormController
                     		if(reader.execute()){
                                         
                         		uploadedFiles.add(fileInfo);
-                        		urls.add(reader.getNombreFicheroExcel());
+                        		
+                        		FileInfoDTO info = new FileInfoDTO();
+                        		
+                        		info.setFileExt(FilenameUtils.getExtension(reader.getNombreFicheroExcel()));
+                        		info.setFileName(reader.getNombreFicheroExcel());
+                        		
+                        		urls.add(info);
                     		}
                             
                             

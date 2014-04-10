@@ -19,7 +19,7 @@ import javax.validation.constraints.NotNull;
  * 
  */
 @Entity
-@Table(name = "tbl_ConsultasSQL")
+@Table(name = "tbl_consultassql")
 @NamedQueries({
 		@NamedQuery(name = "Consulta.findAll", query = "SELECT c FROM Consulta c"),
 		@NamedQuery(name = "Consulta.findByNombreDuplicado", query = "SELECT p "

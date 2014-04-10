@@ -15,7 +15,7 @@ public class MUploadForm {
 	private List<FileInfoDTO> uploadedFiles;
 	
 	// URLs
-	private List<String> urls;
+	private List<FileInfoDTO> urls;
 	
 	
 	/**
@@ -42,11 +42,11 @@ public class MUploadForm {
 		this.uploadedFiles = uploadedFiles;
 	}
 
-	public List<String> getUrls() {
+	public List<FileInfoDTO> getUrls() {
 		return urls;
 	}
 
-	public void setUrls(List<String> urls) {
+	public void setUrls(List<FileInfoDTO> urls) {
 		this.urls = urls;
 	}
 

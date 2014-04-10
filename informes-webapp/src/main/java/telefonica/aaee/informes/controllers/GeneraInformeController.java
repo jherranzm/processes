@@ -1,5 +1,6 @@
 package telefonica.aaee.informes.controllers;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,6 +9,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.validation.Valid;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +29,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import telefonica.aaee.app.GeneraREGFicheroExcel;
 import telefonica.aaee.informes.form.GeneraInformeForm;
 import telefonica.aaee.informes.helpers.FileHelper;
+import telefonica.aaee.informes.model.FileInfoDTO;
 import telefonica.aaee.informes.model.Informe;
 import telefonica.aaee.informes.model.condiciones.Acuerdo;
 import telefonica.aaee.informes.services.InformeService;
@@ -100,9 +103,7 @@ public class GeneraInformeController {
 		logger.info("Informe:" + informe.toString());
 		logger.info("Acuerdo:" + acuerdo.toString());
 
-		List<String> urls = new ArrayList<String>();
-//		urls.add(informe.getNombre());
-//		urls.add(acuerdo.getAcuerdo());
+		List<FileInfoDTO> urls = new ArrayList<FileInfoDTO>();
 		
 		String tempDir = environment.getProperty("uploadfiles.temporary.path");
 		logger.info(environment.getProperty("uploadfiles.temporary.path"));
@@ -117,7 +118,14 @@ public class GeneraInformeController {
 		
 		grfe.generaExcel();
 		
-		urls.add(grfe.getExcelFile());
+		FileInfoDTO info = new FileInfoDTO();
+		
+		File file = new File(grfe.getExcelFile());
+		
+		info.setFileName(FilenameUtils.getName(grfe.getExcelFile()));
+		info.setFileSize(file.length());
+		info.setFileExt(FilenameUtils.getExtension(grfe.getExcelFile()));
+		urls.add(info);
 		
 
 		generaInformeForm.setUrls(urls);

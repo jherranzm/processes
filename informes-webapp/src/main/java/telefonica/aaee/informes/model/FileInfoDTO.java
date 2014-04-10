@@ -11,6 +11,7 @@ public class FileInfoDTO implements Serializable{
 	private long fileSize;
 	private long fileLines;
 	private String url;
+	private String fileExt;
 	
 	
 	
@@ -76,6 +77,12 @@ public class FileInfoDTO implements Serializable{
 	}
 	public void setUrl(String url) {
 		this.url = url;
+	}
+	public String getFileExt() {
+		return fileExt;
+	}
+	public void setFileExt(String fileExt) {
+		this.fileExt = fileExt;
 	}
 	
 	

@@ -59,13 +59,13 @@ public class ConsultaService {
         JpaEntityInformation<Consulta, Long> consultaEntityInfo = new JpaMetamodelEntityInformation<Consulta, Long>(Consulta.class, em.getMetamodel());
         repo = new SimpleJpaRepository<Consulta, Long>(consultaEntityInfo, em);
         
-        logger.info("\n\n\n\n\n\n\n\n\n\n\n\n");
+        logger.info("\n\n\n");
         logger.info("Número de consultas:" + repo.findAll().size());
-        logger.info("\n\n\n\n\n\n\n\n\n\n\n\n");
+        logger.info("\n\n\n");
 
-        logger.info("\n\n\n\n\n\n\n\n\n\n\n\n");
+        logger.info("\n\n\n");
         logger.info("Número de consultas:" + repo.findAll(new PageRequest(0, 5)).getNumberOfElements());
-        logger.info("\n\n\n\n\n\n\n\n\n\n\n\n");
+        logger.info("\n\n\n");
 	
 	}
 	

@@ -5,67 +5,63 @@ import java.io.Serializable;
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlRootElement;
 
-
 /**
  * The persistent class for the ttrafico database table.
  * 
  */
 @Entity
-@Table(name="ttrafico")
-@NamedQueries({
-	@NamedQuery(name = "FindByAcuerdoAmbitoDeTrafico"
-			, query = "SELECT c "
-					+ "FROM Trafico c " 
-						+ "WHERE "
-							+ "1 = 1 "
-							+ "and c.acuerdo = :ac "
-							+ "and c.ambitoDeTrafico = :at ")
-})
+@Table(name = "ttrafico")
+@NamedQueries({ 
+	@NamedQuery(
+			name = "FindByAcuerdoAmbitoDeTrafico", 
+			query = "SELECT c "
+		+ "FROM Trafico c "
+		+ "WHERE "
+		+ "1 = 1 "
+		+ "and c.acuerdo = :ac "
+		+ "and c.ambitoDeTrafico = :at ") })
 @XmlRootElement
 public class Trafico implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	private long id;
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
 	private String acuerdo;
 
-	@Column(name="AMBITO_DE_TRAFICO")
+	@Column(name = "AMBITO_DE_TRAFICO")
 	private String ambitoDeTrafico;
 
 	private String cif;
 
-	@Column(name="DESC_AMBITO_DE_TRAFICO")
+	@Column(name = "DESC_AMBITO_DE_TRAFICO")
 	private String descAmbitoDeTrafico;
 
-	@Column(name="EST_LLAMADA")
+	@Column(name = "EST_LLAMADA")
 	private double estLlamada;
 
-	@Column(name="PORCENTAJE_DESCUENTO")
+	@Column(name = "PORCENTAJE_DESCUENTO")
 	private double porcentajeDescuento;
 
-	@Column(name="PORCENTAJE_ONNET")
+	@Column(name = "PORCENTAJE_ONNET")
 	private double porcentajeOnnet;
 
-	@Column(name="PRECIO_ESPECIAL")
+	@Column(name = "PRECIO_ESPECIAL")
 	private String precioEspecial;
 
-	@Column(name="PRECIO_POR_MINUTO")
+	@Column(name = "PRECIO_POR_MINUTO")
 	private double precioPorMinuto;
 
-	@Column(name="TIPO_DESCUENTO")
+	@Column(name = "TIPO_DESCUENTO")
 	private String tipoDescuento;
-	
-	@Column(name="ini_periodo")
+
+	@Column(name = "ini_periodo")
 	private String iniPeriodo;
 
-	@Column(name="fin_periodo")
+	@Column(name = "fin_periodo")
 	private String finPeriodo;
 
-	
-
-    
 	/**
 	 * @return iniPeriodo
 	 */
@@ -73,7 +69,6 @@ public class Trafico implements Serializable {
 		return iniPeriodo;
 	}
 
-	
 	/**
 	 * @param iniPeriodo valor a asignar al campo iniPeriodo
 	 */
@@ -81,7 +76,6 @@ public class Trafico implements Serializable {
 		this.iniPeriodo = iniPeriodo;
 	}
 
-	
 	/**
 	 * @return finPeriodo
 	 */
@@ -89,7 +83,6 @@ public class Trafico implements Serializable {
 		return finPeriodo;
 	}
 
-	
 	/**
 	 * @param finPeriodo valor a asignar al campo finPeriodo
 	 */
@@ -98,13 +91,13 @@ public class Trafico implements Serializable {
 	}
 
 	public Trafico() {
-    }
+	}
 
-	public long getId() {
+	public Long getId() {
 		return this.id;
 	}
 
-	public void setId(long id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 
@@ -188,10 +181,42 @@ public class Trafico implements Serializable {
 		this.porcentajeOnnet = porcentajeOnnet;
 	}
 
-
 	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
+	 * @see java.lang.Object#toString()
 	 */
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("Trafico [id=");
+		builder.append(id);
+		builder.append(", acuerdo=");
+		builder.append(acuerdo);
+		builder.append(", ambitoDeTrafico=");
+		builder.append(ambitoDeTrafico);
+		builder.append(", cif=");
+		builder.append(cif);
+		builder.append(", descAmbitoDeTrafico=");
+		builder.append(descAmbitoDeTrafico);
+		builder.append(", estLlamada=");
+		builder.append(estLlamada);
+		builder.append(", porcentajeDescuento=");
+		builder.append(porcentajeDescuento);
+		builder.append(", porcentajeOnnet=");
+		builder.append(porcentajeOnnet);
+		builder.append(", precioEspecial=");
+		builder.append(precioEspecial);
+		builder.append(", precioPorMinuto=");
+		builder.append(precioPorMinuto);
+		builder.append(", tipoDescuento=");
+		builder.append(tipoDescuento);
+		builder.append(", iniPeriodo=");
+		builder.append(iniPeriodo);
+		builder.append(", finPeriodo=");
+		builder.append(finPeriodo);
+		builder.append("]");
+		return builder.toString();
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -209,7 +234,7 @@ public class Trafico implements Serializable {
 		result = prime * result + (int) (temp ^ (temp >>> 32));
 		result = prime * result
 				+ ((finPeriodo == null) ? 0 : finPeriodo.hashCode());
-		result = prime * result + (int) (id ^ (id >>> 32));
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		result = prime * result
 				+ ((iniPeriodo == null) ? 0 : iniPeriodo.hashCode());
 		temp = Double.doubleToLongBits(porcentajeDescuento);
@@ -225,10 +250,6 @@ public class Trafico implements Serializable {
 		return result;
 	}
 
-
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -266,7 +287,10 @@ public class Trafico implements Serializable {
 				return false;
 		} else if (!finPeriodo.equals(other.finPeriodo))
 			return false;
-		if (id != other.id)
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
 			return false;
 		if (iniPeriodo == null) {
 			if (other.iniPeriodo != null)
@@ -295,44 +319,104 @@ public class Trafico implements Serializable {
 		return true;
 	}
 
+	public static class Builder {
+		private Long id;
+		private String acuerdo;
+		private String ambitoDeTrafico;
+		private String cif;
+		private String descAmbitoDeTrafico;
+		private double estLlamada;
+		private double porcentajeDescuento;
+		private double porcentajeOnnet;
+		private String precioEspecial;
+		private double precioPorMinuto;
+		private String tipoDescuento;
+		private String iniPeriodo;
+		private String finPeriodo;
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
-	@Override
-	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		builder.append("Trafico [id=");
-		builder.append(id);
-		builder.append(", acuerdo=");
-		builder.append(acuerdo);
-		builder.append(", ambitoDeTrafico=");
-		builder.append(ambitoDeTrafico);
-		builder.append(", cif=");
-		builder.append(cif);
-		builder.append(", descAmbitoDeTrafico=");
-		builder.append(descAmbitoDeTrafico);
-		builder.append(", estLlamada=");
-		builder.append(estLlamada);
-		builder.append(", porcentajeDescuento=");
-		builder.append(porcentajeDescuento);
-		builder.append(", porcentajeOnnet=");
-		builder.append(porcentajeOnnet);
-		builder.append(", precioEspecial=");
-		builder.append(precioEspecial);
-		builder.append(", precioPorMinuto=");
-		builder.append(precioPorMinuto);
-		builder.append(", tipoDescuento=");
-		builder.append(tipoDescuento);
-		builder.append(", iniPeriodo=");
-		builder.append(iniPeriodo);
-		builder.append(", finPeriodo=");
-		builder.append(finPeriodo);
-		builder.append("]");
-		return builder.toString();
+		public Builder id(Long id) {
+			this.id = id;
+			return this;
+		}
+
+		public Builder acuerdo(String acuerdo) {
+			this.acuerdo = acuerdo;
+			return this;
+		}
+
+		public Builder ambitoDeTrafico(String ambitoDeTrafico) {
+			this.ambitoDeTrafico = ambitoDeTrafico;
+			return this;
+		}
+
+		public Builder cif(String cif) {
+			this.cif = cif;
+			return this;
+		}
+
+		public Builder descAmbitoDeTrafico(String descAmbitoDeTrafico) {
+			this.descAmbitoDeTrafico = descAmbitoDeTrafico;
+			return this;
+		}
+
+		public Builder estLlamada(double estLlamada) {
+			this.estLlamada = estLlamada;
+			return this;
+		}
+
+		public Builder porcentajeDescuento(double porcentajeDescuento) {
+			this.porcentajeDescuento = porcentajeDescuento;
+			return this;
+		}
+
+		public Builder porcentajeOnnet(double porcentajeOnnet) {
+			this.porcentajeOnnet = porcentajeOnnet;
+			return this;
+		}
+
+		public Builder precioEspecial(String precioEspecial) {
+			this.precioEspecial = precioEspecial;
+			return this;
+		}
+
+		public Builder precioPorMinuto(double precioPorMinuto) {
+			this.precioPorMinuto = precioPorMinuto;
+			return this;
+		}
+
+		public Builder tipoDescuento(String tipoDescuento) {
+			this.tipoDescuento = tipoDescuento;
+			return this;
+		}
+
+		public Builder iniPeriodo(String iniPeriodo) {
+			this.iniPeriodo = iniPeriodo;
+			return this;
+		}
+
+		public Builder finPeriodo(String finPeriodo) {
+			this.finPeriodo = finPeriodo;
+			return this;
+		}
+
+		public Trafico build() {
+			return new Trafico(this);
+		}
 	}
 
-	
-	
-	
+	private Trafico(Builder builder) {
+		this.id = builder.id;
+		this.acuerdo = builder.acuerdo;
+		this.ambitoDeTrafico = builder.ambitoDeTrafico;
+		this.cif = builder.cif;
+		this.descAmbitoDeTrafico = builder.descAmbitoDeTrafico;
+		this.estLlamada = builder.estLlamada;
+		this.porcentajeDescuento = builder.porcentajeDescuento;
+		this.porcentajeOnnet = builder.porcentajeOnnet;
+		this.precioEspecial = builder.precioEspecial;
+		this.precioPorMinuto = builder.precioPorMinuto;
+		this.tipoDescuento = builder.tipoDescuento;
+		this.iniPeriodo = builder.iniPeriodo;
+		this.finPeriodo = builder.finPeriodo;
+	}
 }

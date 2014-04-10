@@ -18,31 +18,46 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.logging.Logger;
 
+import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import telefonica.aaee.informes.exceptions.CeldasIncorrectasException;
+import telefonica.aaee.informes.exceptions.ConceptoFacturableNotFoundException;
+import telefonica.aaee.informes.exceptions.TraficoInternacionalNotFoundException;
+import telefonica.aaee.informes.exceptions.TraficoInternacionalPorNivelNotFoundException;
+import telefonica.aaee.informes.exceptions.TraficoNotFoundException;
 import telefonica.aaee.informes.model.condiciones.ConceptoFacturable;
 import telefonica.aaee.informes.model.condiciones.ReasignacionCargo;
 import telefonica.aaee.informes.model.condiciones.Trafico;
 import telefonica.aaee.informes.model.condiciones.TraficoInternacional;
 import telefonica.aaee.informes.model.condiciones.TraficoInternacionalPorNivel;
+import telefonica.aaee.informes.services.condiciones.ConceptoFacturableService;
+import telefonica.aaee.informes.services.condiciones.TraficoInternacionalPorNivelService;
+import telefonica.aaee.informes.services.condiciones.TraficoInternacionalService;
+import telefonica.aaee.informes.services.condiciones.TraficoService;
 
 /**
  * @author t130796
  * 
  */
+@Service
 public class GestorEscenarios {
 
 	private static final String BUSCA_CONDICION_TRF_POR_AMBITO = "Buscamos la condición de tráfico por acuerdo y ámbito: [%s] - [%s]";
@@ -88,7 +103,7 @@ public class GestorEscenarios {
 	private static final String AGRUPACION_FACTURABLE_REASIGNADO = "agrupacion facturable reasignado";
 	private static final String COMENTARIOS = "comentarios";
 
-	private static final Logger LOGGER = Logger.getLogger(GestorEscenarios.class.getCanonicalName());
+	protected final Log logger = LogFactory.getLog(getClass());
 
 	private Map<String, List<String>> cabObligatorias = new HashMap<String, List<String>>();
 	private Map<String, List<String>> cabExistentes = new HashMap<String, List<String>>();
@@ -100,16 +115,33 @@ public class GestorEscenarios {
 	private List<String> errores = new ArrayList<String>();
 
 	private EntityManager entityManager;
+	
+	@Autowired
+	private ConceptoFacturableService cfService;
 
-	@PersistenceContext
+	@Autowired
+	private TraficoService traficoService;
+
+	@Autowired
+	private TraficoInternacionalService traficoIntService;
+
+	@Autowired
+	private TraficoInternacionalPorNivelService traficoIntNivelService;
+
+	@PersistenceContext(unitName = "JPAInformesWebApp")
 	public void setEntityManager(EntityManager em) {
 		this.entityManager = em;
 	}
 	
+	@PostConstruct
+    public void init() {
+		logger.info("Inicializando..." + cfService.findAll().size());
+	}
+
+	
 	
 	public GestorEscenarios() {
 		super();
-
 
 		Properties properties = new Properties();
 
@@ -142,6 +174,7 @@ public class GestorEscenarios {
 		
 		boolean bResult = true;
 		InputStream inputStream = null;
+		numModificaciones = 0;
 
 		Calendar calendar = Calendar.getInstance();
 		long lIni = 0;
@@ -151,67 +184,74 @@ public class GestorEscenarios {
 			lIni = calendar.getTimeInMillis();
 
 			inputStream = new FileInputStream(getFileIn());
-
-			Workbook workBook = new XSSFWorkbook(inputStream);
+			
+			Workbook workBook = null;
+			String ext = FilenameUtils.getExtension(getFileIn().getAbsolutePath());
+			
+			if("xlsx".equalsIgnoreCase(ext)){
+				workBook = new XSSFWorkbook(inputStream);
+			}else if("xls".equalsIgnoreCase(ext)){
+				workBook = new HSSFWorkbook(inputStream);
+			}
 
 			int pos = -1;
 			Sheet sheet = null;
 			String pestanya = "";
 
 			pestanya = "Cond.CCF";
-			LOGGER.info("Localizando pestaña..." + pestanya);
+			logger.info("Localizando pestaña..." + pestanya);
 			pos = workBook.getSheetIndex(pestanya);
 			if (pos > -1) {
 				sheet = workBook.getSheetAt(pos);
-				LOGGER.info("Procesando pestaña " + pestanya);
+				logger.info("Procesando pestaña " + pestanya);
 				updateCCF(sheet);
 			} else {
-				LOGGER.warning("No existe la pestaña " + pestanya);
+				logger.warn("No existe la pestaña " + pestanya);
 			}
 
 			pestanya = "Cond.TRF";
-			LOGGER.info("Localizando pestaña..." + pestanya);
+			logger.info("Localizando pestaña..." + pestanya);
 			pos = workBook.getSheetIndex(pestanya);
 			if (pos > -1) {
 				sheet = workBook.getSheetAt(pos);
-				LOGGER.info("Procesando pestaña " + pestanya);
+				logger.info("Procesando pestaña " + pestanya);
 				updateTRF(sheet);
 			} else {
-				LOGGER.warning("No existe la pestaña " + pestanya);
+				logger.warn("No existe la pestaña " + pestanya);
 			}
 
 			pestanya = "Cond.TRFInternacional";
-			LOGGER.info("Localizando pestaña..." + pestanya);
+			logger.info("Localizando pestaña..." + pestanya);
 			pos = workBook.getSheetIndex(pestanya);
 			if (pos > -1) {
 				sheet = workBook.getSheetAt(pos);
-				LOGGER.info("Procesando pestaña " + pestanya);
+				logger.info("Procesando pestaña " + pestanya);
 				updateTRFInt(sheet);
 			} else {
-				LOGGER.warning("No existe la pestaña " + pestanya);
+				logger.warn("No existe la pestaña " + pestanya);
 			}
 
 			//
 			pestanya = "Cond.TRFInternacional_PorNivel";
-			LOGGER.info("Localizando pestaña..." + pestanya);
+			logger.info("Localizando pestaña..." + pestanya);
 			pos = workBook.getSheetIndex(pestanya);
 			if (pos > -1) {
 				sheet = workBook.getSheetAt(pos);
-				LOGGER.info("Procesando pestaña " + pestanya);
+				logger.info("Procesando pestaña " + pestanya);
 				updateTRFInt_PorNivel(sheet);
 			} else {
-				LOGGER.warning("No existe la pestaña " + pestanya);
+				logger.warn("No existe la pestaña " + pestanya);
 			}
 
 			pestanya = "ReasignacionCargos";
-			LOGGER.info("Localizando pestaña..." + pestanya);
+			logger.info("Localizando pestaña..." + pestanya);
 			pos = workBook.getSheetIndex(pestanya);
 			if (pos > -1) {
 				sheet = workBook.getSheetAt(pos);
-				LOGGER.info("Procesando pestaña " + pestanya);
+				logger.info("Procesando pestaña " + pestanya);
 				updateReasignacionCargos(sheet);
 			} else {
-				LOGGER.warning("No existe la pestaña " + pestanya);
+				logger.warn("No existe la pestaña " + pestanya);
 			}
 
 		} catch (IOException e) {
@@ -237,14 +277,14 @@ public class GestorEscenarios {
 			long lFin = calendar2.getTimeInMillis();
 			
 			if(errores.size() >0){
-				LOGGER.warning("Lista de errores.");
+				logger.warn("Lista de errores.");
 				for(String error : errores){
-					LOGGER.warning("ERROR:[" + error + "]");
+					logger.warn("ERROR:[" + error + "]");
 				}
 			}
 
-			LOGGER.info("Total modificaciones:" + this.getNumModificaciones());
-			LOGGER.info("Total tiempo:" + lFin + "-" + lIni + "="
+			logger.info("Total modificaciones:" + this.getNumModificaciones());
+			logger.info("Total tiempo:" + lFin + "-" + lIni + "="
 					+ ((lFin - lIni) / 1000) + " segundos!");
 		}
 
@@ -270,10 +310,10 @@ public class GestorEscenarios {
 			c = cell2String(cell).toLowerCase();
 			c = c.replaceAll("_", " ");
 			if (!obligatorias.contains(c)) {
-				LOGGER.info("*" + c + "* OJO NO está!");
+				logger.info("*" + c + "* OJO NO está!");
 				celdasOK = false;
 			} else {
-				LOGGER.info("*" + c + "* está!");
+				logger.info("*" + c + "* está!");
 				existentes.add(c);
 			}
 		}// while (cells.hasNext ())
@@ -312,7 +352,7 @@ public class GestorEscenarios {
 
 		default: {
 			// types other than String and Numeric.
-			LOGGER.info("Type not supported." + cell.getCellType());
+			logger.info("Type not supported." + cell.getCellType());
 			c = cell.toString();
 			break;
 		}
@@ -367,9 +407,10 @@ public class GestorEscenarios {
 	 * @param sheet
 	 * @throws CeldasIncorrectasException
 	 * @throws SQLException
+	 * @throws ConceptoFacturableNotFoundException 
 	 */
 	private void updateCCF(Sheet sheet) throws CeldasIncorrectasException,
-			SQLException {
+			SQLException, ConceptoFacturableNotFoundException {
 		/**
 		 * Comprobamos que las cabeceras de la primera fila sean correctas
 		 */
@@ -379,7 +420,7 @@ public class GestorEscenarios {
 
 		cabExistentes.put(CABECERAS_CCF, lista);
 
-		LOGGER.info(cabExistentes.toString());
+		logger.info(cabExistentes.toString());
 
 		// Recorremos las filas
 		Iterator<Row> filas = (Iterator<Row>) sheet.rowIterator();
@@ -391,7 +432,7 @@ public class GestorEscenarios {
 
 			} else {
 
-				LOGGER.info("Fila:" + row.getRowNum());
+				logger.info("Fila:" + row.getRowNum());
 
 				// Recogemos los datos del Excel...
 				ConceptoFacturable condicion = fila2CF(row);
@@ -403,15 +444,15 @@ public class GestorEscenarios {
 				// no está...
 				if (cf == null) {
 
-					// miramos que esté el acuerdo y el concepto...
-					LOGGER.info("CF no localizado!");
+					// miramos que está el acuerdo y el concepto...
+					logger.info("CF no localizado!");
 					Query query = entityManager.createNamedQuery("FindByAcuerdoCifTipoDeServicio");
 					query.setParameter("ac", condicion.getAcuerdo());
 					query.setParameter("cf", condicion.getConceptoFacturable());
 					query.setParameter("sv", condicion.getTipoDeServicio());
 					try {
 						cf = (ConceptoFacturable) query.getSingleResult();
-						LOGGER.info("Localizado CF:" + cf.toString());
+						logger.info("Localizado CF:" + cf.toString());
 
 						// Solo modificamos si hay un precio especial...
 						if (condicion.getPrecioEspecial().equalsIgnoreCase("SI")) {
@@ -420,27 +461,30 @@ public class GestorEscenarios {
 							cf.setTipoPrecioEspecial(condicion.getTipoPrecioEspecial());
 							cf.setImporteAcuerdo(condicion.getImporteAcuerdo());
 							
-							update(cf);
+							//update(cf);
+							ConceptoFacturable mod = cfService.update(cf);
 							
-							incNumModificaciones();
-							LOGGER.info("Modificado CF:" + cf.toString());
+							if (!mod.equals(cf)) {
+								logger.info("Modificado CF:" + mod.toString());
+								incNumModificaciones();
+							}
 						} else {
-							LOGGER.info("Localizado CF " + cf.getId()
+							logger.info("Localizado CF " + cf.getId()
 									+ ", sin precio especial!");
 						}
 					} catch (javax.persistence.NoResultException e) {
-						LOGGER.warning("No existe el par acuerdo-conceptofacturable:"
+						logger.warn("No existe el par acuerdo-conceptofacturable:"
 								+ condicion.getAcuerdo()
 								+ ":"
 								+ condicion.getConceptoFacturable());
 						
-						save(condicion);
+						//save(condicion);
+						condicion = cfService.create(condicion);
 						
-						LOGGER.warning("Guardado el CF :"
+						logger.warn("Guardado el CF :"
 								+ condicion.toString());
-						incNumModificaciones();
 					} catch (javax.persistence.NonUniqueResultException e) {
-						LOGGER.warning("Hay más de un resultado:"
+						logger.warn("Hay más de un resultado:"
 								+ condicion.toString());
 						errores.add(String.format("Hay más de un resultado para la tupla Acuerdo-Concepto Facturable-Tipo de Servicio:"
 								, condicion.getAcuerdo()
@@ -449,23 +493,17 @@ public class GestorEscenarios {
 						cf = null;
 					}
 				} else {
-					LOGGER.info("Localizado CF:" + cf.toString());
+					logger.info("Localizado CF:" + cf.toString());
 					cf.setPrecioEspecial(condicion.getPrecioEspecial());
 					cf.setTipoPrecioEspecial(condicion
 							.getTipoPrecioEspecial());
 					cf.setImporteAcuerdo(condicion.getImporteAcuerdo());
 					
-					update(cf);
+					ConceptoFacturable mod = cfService.update(cf);
 					
-					LOGGER.info("Guardado CF:" + cf.toString());
-					LOGGER.info("Localizando CF2... con id " + cf.getId());
-					ConceptoFacturable cf2 = entityManager.find(
-							ConceptoFacturable.class, cf.getId());
-					LOGGER.info("Localizado CF2:" + cf2.toString());
-					if (cf.getImporteAcuerdo() == cf2.getImporteAcuerdo()) {
+					if (!mod.equals(cf)) {
+						logger.info("Modificado CF:" + mod.toString());
 						incNumModificaciones();
-					} else {
-						LOGGER.info("Error... en " + cf.toString());
 					}
 				}
 			}// if (row.getRowNum() == 1)
@@ -477,9 +515,10 @@ public class GestorEscenarios {
 	 * @param sheet
 	 * @throws CeldasIncorrectasException
 	 * @throws SQLException
+	 * @throws TraficoNotFoundException 
 	 */
 	private void updateTRF(Sheet sheet) throws CeldasIncorrectasException,
-			SQLException {
+			SQLException, TraficoNotFoundException {
 		/**
 		 * Comprobamos que las cabeceras de la primera fila sean correctas
 		 */
@@ -489,7 +528,7 @@ public class GestorEscenarios {
 
 		cabExistentes.put(CABECERAS_TRF, lista);
 
-		LOGGER.info(cabExistentes.toString());
+		logger.info(cabExistentes.toString());
 
 		// Recorremos las filas
 		Iterator<Row> rows2 = (Iterator<Row>) sheet.rowIterator();
@@ -500,16 +539,16 @@ public class GestorEscenarios {
 				// No se hace nada con la primera fila
 			} else {
 
-				LOGGER.info("Fila:" + row.getRowNum());
+				logger.info("Fila:" + row.getRowNum());
 
 				Trafico condicion = fila2TRF(row);
 
 				Trafico trf = entityManager.find(Trafico.class, condicion.getId());
 
 				if (trf == null) {
-					// Buscamos por acuerdo y ámbito de tráfico
-					LOGGER.info("TRF no localizado!");
-					LOGGER.info(String.format(BUSCA_CONDICION_TRF_POR_AMBITO
+					// Buscamos por acuerdo y ��mbito de tr��fico
+					logger.info("TRF no localizado!");
+					logger.info(String.format(BUSCA_CONDICION_TRF_POR_AMBITO
 							, condicion.getAcuerdo()
 							, condicion.getAmbitoDeTrafico()));
 					
@@ -518,25 +557,27 @@ public class GestorEscenarios {
 					query.setParameter("at", condicion.getAmbitoDeTrafico());
 					try {
 						trf = (Trafico) query.getSingleResult();
-						LOGGER.info("Localizado CF:" + trf.toString());
+						logger.info("Localizado CF:" + trf.toString());
 						trf.setPrecioEspecial(condicion.getPrecioEspecial());
 						trf.setPrecioEspecial(condicion.getPrecioEspecial());
 						trf.setPrecioPorMinuto(condicion.getPrecioPorMinuto());
 
-						update(trf);
+						Trafico mod = traficoService.update(trf);
 						
-						LOGGER.info("Modificado TRF:" + trf.toString());
-						incNumModificaciones();
+						if (!mod.equals(trf)) {
+							logger.info("Modificado TRF:" + mod.toString());
+							incNumModificaciones();
+						}
 					} catch (javax.persistence.NoResultException e) {
-						LOGGER.warning("No existe el par acuerdo-ambito:"
+						logger.warn("No existe el par acuerdo-ambito:"
 								+ condicion.getAcuerdo() + ":"
 								+ condicion.getAmbitoDeTrafico());
 
-						save(trf);
+						condicion = traficoService.create(condicion);
 						
-						LOGGER.info("Guardado TRF:" + condicion.toString());
+						logger.info("Guardado TRF:" + condicion.toString());
 					} catch (javax.persistence.NonUniqueResultException e) {
-						LOGGER.warning("Hay más de un resultado:"
+						logger.warn("Hay más de un resultado:"
 								+ condicion.toString());
 						errores.add(String.format("Hay más de un resultado para la tupla Acuerdo-Ambito de Tráfico:"
 								, condicion.getAcuerdo()
@@ -544,19 +585,21 @@ public class GestorEscenarios {
 						trf = null;
 					}
 				} else {
-					LOGGER.info("Localizado TRF:" + trf.toString());
+					logger.info("Localizado TRF:" + trf.toString());
 
 					trf.setPrecioEspecial(condicion.getPrecioEspecial());
 					trf.setTipoDescuento(condicion.getTipoDescuento());
 					trf.setPrecioPorMinuto(condicion.getPrecioPorMinuto());
-					trf.setPorcentajeDescuento(condicion
-							.getPorcentajeDescuento());
+					trf.setPorcentajeDescuento(condicion.getPorcentajeDescuento());
 					trf.setEstLlamada(condicion.getEstLlamada());
 
-					update(trf);
+					Trafico mod = traficoService.update(trf);
 					
-					LOGGER.info("Modificado TRF:" + trf.toString());
-					incNumModificaciones();
+					if (!mod.equals(trf)) {
+						logger.info("Modificado TRF:" + mod.toString());
+						incNumModificaciones();
+					}
+
 
 				}
 
@@ -570,9 +613,10 @@ public class GestorEscenarios {
 	 * @param sheet
 	 * @throws CeldasIncorrectasException
 	 * @throws SQLException
+	 * @throws TraficoInternacionalNotFoundException 
 	 */
 	private void updateTRFInt(Sheet sheet) throws CeldasIncorrectasException,
-			SQLException {
+			SQLException, TraficoInternacionalNotFoundException {
 		/**
 		 * Comprobamos que las cabeceras de la primera fila sean correctas
 		 */
@@ -583,7 +627,7 @@ public class GestorEscenarios {
 
 		cabExistentes.put(CABECERAS_TRF_INT, lista);
 
-		LOGGER.info(cabExistentes.toString());
+		logger.info(cabExistentes.toString());
 
 		// Recorremos las filas
 		Iterator<Row> rows2 = (Iterator<Row>) sheet.rowIterator();
@@ -594,15 +638,15 @@ public class GestorEscenarios {
 				// No se hace nada con la primera fila
 			} else {
 
-				LOGGER.info("Fila:" + row.getRowNum());
+				logger.info("Fila:" + row.getRowNum());
 
 				TraficoInternacional condicion = fila2TRFInt(row);
 
 				TraficoInternacional tint = entityManager.find(TraficoInternacional.class, condicion.getId());
 				if (tint == null) {
-					// Buscamos por acuerdo y ámbito de tráfico
-					LOGGER.info("TRFInt no localizado!");
-					LOGGER.info(String.format(BUSCA_CONDICION_TRF_INT_POR_ACUERDO_Y_DESTINO
+					// Buscamos por acuerdo y ��mbito de tr��fico
+					logger.info("TRFInt no localizado!");
+					logger.info(String.format(BUSCA_CONDICION_TRF_INT_POR_ACUERDO_Y_DESTINO
 							, condicion.getAcuerdo()
 							, condicion.getDestino()));
 					Query query = entityManager.createNamedQuery("FindByAcuerdoDestino");
@@ -610,24 +654,27 @@ public class GestorEscenarios {
 					query.setParameter("pd", condicion.getDestino());
 					try {
 						tint = (TraficoInternacional) query.getSingleResult();
-						LOGGER.info("Localizado TRFInt:" + tint.toString());
+						logger.info("Localizado TRFInt:" + tint.toString());
 						tint.setPrecioEspecial(condicion.getPrecioEspecial());
 						tint.setPrecioPorMinuto(condicion.getPrecioPorMinuto());
 
-						update(tint);
+						TraficoInternacional mod = traficoIntService.update(tint);
 						
-						LOGGER.info("Modificado TRF:" + tint.toString());
-						incNumModificaciones();
+						if (!mod.equals(tint)) {
+							logger.info("Modificado TRFINT:" + mod.toString());
+							incNumModificaciones();
+						}
+
 					} catch (javax.persistence.NoResultException e) {
-						LOGGER.warning("No existe el par acuerdo-destino:"
+						logger.warn("No existe el par acuerdo-destino:"
 								+ condicion.getAcuerdo() + ":"
 								+ condicion.getDestino());
 
-						save(condicion);
+						TraficoInternacional nuevo = traficoIntService.create(tint);
 						
-						LOGGER.info("Guardado TRFInt:" + condicion.toString());
+						logger.info("Guardado TRFInt:" + nuevo.toString());
 					} catch (javax.persistence.NonUniqueResultException e) {
-						LOGGER.warning("Hay más de un resultado para el par:"
+						logger.warn("Hay más de un resultado para el par:"
 								+ condicion.getAcuerdo() + ":"
 								+ condicion.getDestino());
 						errores.add(String.format("Hay más de un resultado para el par acuerdo-destino: [%s]-[%s]"
@@ -637,7 +684,7 @@ public class GestorEscenarios {
 					}
 
 				} else {
-					LOGGER.info("Localizado TRFInt:" + tint.toString());
+					logger.info("Localizado TRFInt:" + tint.toString());
 
 					tint.setPrecioEspecial(condicion.getPrecioEspecial());
 					tint.setTipoDescuento(condicion.getTipoDescuento());
@@ -645,11 +692,14 @@ public class GestorEscenarios {
 					tint.setPorcentajeDescuento(condicion.getPorcentajeDescuento());
 					tint.setEstLlamada(condicion.getEstLlamada());
 
-					update(tint);
+					TraficoInternacional mod = traficoIntService.update(tint);
 
-					LOGGER.info("Modificado TRFInt:" + tint.toString());
 
-					incNumModificaciones();
+					if (!mod.equals(tint)) {
+						logger.info("Modificado TRFInt:" + mod.toString());
+						incNumModificaciones();
+					}
+					
 
 				}
 
@@ -663,9 +713,10 @@ public class GestorEscenarios {
 	 * @param sheet
 	 * @throws CeldasIncorrectasException
 	 * @throws SQLException
+	 * @throws TraficoInternacionalPorNivelNotFoundException 
 	 */
 	private void updateTRFInt_PorNivel(Sheet sheet)
-			throws CeldasIncorrectasException, SQLException {
+			throws CeldasIncorrectasException, SQLException, TraficoInternacionalPorNivelNotFoundException {
 		/**
 		 * Comprobamos que las cabeceras de la primera fila sean correctas
 		 */
@@ -676,7 +727,7 @@ public class GestorEscenarios {
 
 		cabExistentes.put(CABECERAS_TRF_INT_POR_NIVEL, lista);
 
-		LOGGER.info(cabExistentes.toString());
+		logger.info(cabExistentes.toString());
 
 		// Recorremos las filas
 		Iterator<Row> rows2 = (Iterator<Row>) sheet.rowIterator();
@@ -687,16 +738,16 @@ public class GestorEscenarios {
 				// No se hace nada con la primera fila
 			} else {
 
-				LOGGER.info("Fila:" + row.getRowNum());
+				logger.info("Fila:" + row.getRowNum());
 
 				TraficoInternacionalPorNivel condicion = fila2TRFInt_PorNivel(row);
 
 				TraficoInternacionalPorNivel tint = entityManager.find(
 						TraficoInternacionalPorNivel.class, condicion.getId());
 				if (tint == null) {
-					// Buscamos por acuerdo y ámbito de tráfico
-					LOGGER.info("TRF no localizado!");
-					LOGGER.info(String.format(BUSCA_CONDICION_TRF_INT_POR_NIVEL
+					// Buscamos por acuerdo y ��mbito de tr��fico
+					logger.info("TRF no localizado!");
+					logger.info(String.format(BUSCA_CONDICION_TRF_INT_POR_NIVEL
 							, condicion.getAcuerdo()
 							, condicion.getNivel()));
 					Query query = entityManager.createNamedQuery("FindByAcuerdoNivel");
@@ -705,24 +756,27 @@ public class GestorEscenarios {
 					try {
 						tint = (TraficoInternacionalPorNivel) query
 								.getSingleResult();
-						LOGGER.info("Localizado TRFInt:" + tint.toString());
+						logger.info("Localizado TRFInt:" + tint.toString());
 						tint.setPrecioEspecial(condicion.getPrecioEspecial());
 						tint.setPrecioPorMinuto(condicion.getPrecioPorMinuto());
 
-						update(tint);
+						TraficoInternacionalPorNivel mod = traficoIntNivelService.update(tint);
 						
-						LOGGER.info("Modificado TRF:" + tint.toString());
-						incNumModificaciones();
+						if (!mod.equals(tint)) {
+							logger.info("Modificado TRFINT:" + mod.toString());
+							incNumModificaciones();
+						}
+						
 					} catch (javax.persistence.NoResultException e) {
-						LOGGER.warning("No existe el par acuerdo-nivel:"
+						logger.warn("No existe el par acuerdo-nivel:"
 								+ condicion.getAcuerdo() + ":"
 								+ condicion.getNivel());
 
-						save(tint);
+						TraficoInternacionalPorNivel nuevo = traficoIntNivelService.create(tint);
 						
-						LOGGER.info("Guardado TRFInt:" + condicion.toString());
+						logger.info("Guardado TRFInt:" + nuevo.toString());
 					} catch (javax.persistence.NonUniqueResultException e) {
-						LOGGER.warning("Hay más de un resultado para el par:"
+						logger.warn("Hay más de un resultado para el par:"
 								+ condicion.getAcuerdo() + ":"
 								+ condicion.getNivel());
 						errores.add(String.format("Hay más de un resultado para el par acuerdo-nivel: [%s]-[%s]"
@@ -733,7 +787,7 @@ public class GestorEscenarios {
 					}
 
 				} else {
-					LOGGER.info("Localizado TRFInt:" + tint.toString());
+					logger.info("Localizado TRFInt:" + tint.toString());
 
 					tint.setPrecioEspecial(condicion.getPrecioEspecial());
 					tint.setTipoDescuento(condicion.getTipoDescuento());
@@ -742,11 +796,14 @@ public class GestorEscenarios {
 							.getPorcentajeDescuento());
 					tint.setEstLlamada(condicion.getEstLlamada());
 
-					update(tint);
+					TraficoInternacionalPorNivel mod = traficoIntNivelService.update(tint);
+					
+					if (!mod.equals(tint)) {
+						logger.info("Modificado TRFINTNIV:" + mod.toString());
+						incNumModificaciones();
+					}
 
-					LOGGER.info("Modificado TRFInt:" + tint.toString());
 
-					incNumModificaciones();
 
 				}
 
@@ -767,7 +824,7 @@ public class GestorEscenarios {
 
 		cabExistentes.put(CABECERAS_REAS_CARGO, lista);
 
-		LOGGER.info(cabExistentes.toString());
+		logger.info(cabExistentes.toString());
 
 		// Recorremos las filas
 		Iterator<Row> rows2 = (Iterator<Row>) sheet.rowIterator();
@@ -778,18 +835,18 @@ public class GestorEscenarios {
 				// No se hace nada con la primera fila
 			} else {
 
-				LOGGER.info("Fila:" + row.getRowNum());
+				logger.info("Fila:" + row.getRowNum());
 
-				// Recuperamos la condición del Excel
+				// Recuperamos la condici��n del Excel
 				ReasignacionCargo condicion = fila2ReasignacionCargo(row);
 
 				// Localizamos el elemento de la tabla
 				ReasignacionCargo reasignacion = entityManager.find(ReasignacionCargo.class, condicion.getId());
 				
 				if (reasignacion == null) {
-					// Buscamos por acuerdo, cif, grupo de gasto y agrupación facturable
-					LOGGER.info("ReasignacionCargo no localizado!");
-					LOGGER.info("Buscamos la condición de Reasignacion por Cargo:");
+					// Buscamos por acuerdo, cif, grupo de gasto y agrupaci��n facturable
+					logger.info("ReasignacionCargo no localizado!");
+					logger.info("Buscamos la condici��n de Reasignacion por Cargo:");
 					
 					Query query = entityManager.createNamedQuery("FindByAcuerdoCifGrupoDeGastoAgrupacionFacturable");
 					query.setParameter("ac", condicion.getAcuerdo());
@@ -799,7 +856,7 @@ public class GestorEscenarios {
 					try {
 						reasignacion = (ReasignacionCargo) query
 								.getSingleResult();
-						LOGGER.info("Localizado ReasignacionCargo:" + reasignacion.toString());
+						logger.info("Localizado ReasignacionCargo:" + reasignacion.toString());
 						reasignacion.setTipoDocReasignado(condicion.getTipoDocReasignado());
 						reasignacion.setCifReasignado(condicion.getCifReasignado());
 						reasignacion.setNombreClienteReasignado(condicion.getNombreClienteReasignado());
@@ -808,10 +865,10 @@ public class GestorEscenarios {
 
 						update(reasignacion);
 
-						LOGGER.info("Modificado ReasignacionCargo:" + reasignacion.toString());
+						logger.info("Modificado ReasignacionCargo:" + reasignacion.toString());
 						incNumModificaciones();
 					} catch (javax.persistence.NoResultException e) {
-						LOGGER.warning("No existe la tupla Acuerdo-Cif-GrupoDeGasto-AgrupacionFacturable:"
+						logger.warn("No existe la tupla Acuerdo-Cif-GrupoDeGasto-AgrupacionFacturable:"
 								+ condicion.getAcuerdo() + ":"
 								+ condicion.getCif() + ":"
 								+ condicion.getGrupoDeGasto() + ":"
@@ -820,9 +877,9 @@ public class GestorEscenarios {
 
 						save(reasignacion);
 						
-						LOGGER.info("Guardado ReasignacionCargo:" + condicion.toString());
+						logger.info("Guardado ReasignacionCargo:" + condicion.toString());
 					} catch (javax.persistence.NonUniqueResultException e) {
-						LOGGER.warning("Hay más de un resultado para la tupla Acuerdo-Cif-GrupoDeGasto-AgrupacionFacturable:"
+						logger.warn("Hay más de un resultado para la tupla Acuerdo-Cif-GrupoDeGasto-AgrupacionFacturable:"
 								+ condicion.getAcuerdo() + ":"
 								+ condicion.getCif() + ":"
 								+ condicion.getGrupoDeGasto() + ":"
@@ -837,7 +894,7 @@ public class GestorEscenarios {
 					}
 
 				} else {
-					LOGGER.info("Localizado ReasignacionCargo:" + reasignacion.toString());
+					logger.info("Localizado ReasignacionCargo:" + reasignacion.toString());
 
 					reasignacion.setTipoDocReasignado(condicion.getTipoDocReasignado());
 					reasignacion.setCifReasignado(condicion.getCifReasignado());
@@ -847,7 +904,7 @@ public class GestorEscenarios {
 
 					update(reasignacion);
 
-					LOGGER.info("Modificado ReasignacionCargo:" + reasignacion.toString());
+					logger.info("Modificado ReasignacionCargo:" + reasignacion.toString());
 
 					incNumModificaciones();
 
@@ -880,11 +937,11 @@ public class GestorEscenarios {
 			if (colNum < lista.size()) {
 				String campo = lista.get(colNum);
 
-				// LOGGER.info(String.format("[%d] campo [%s]", colNum, campo));
+				// logger.info(String.format("[%d] campo [%s]", colNum, campo));
 				if (campo.equals(ID)) {
 					double lTmp = Double.parseDouble(strCelda);
 					long id = Math.round(lTmp);
-					// LOGGER.info("id:\t" + id);
+					// logger.info("id:\t" + id);
 					condicion.setId(id);
 
 				} else if (campo.equals(PRECIO_ESPECIAL)) {
@@ -945,10 +1002,10 @@ public class GestorEscenarios {
 			if (colNum < lista.size()) {
 				String campo = lista.get(colNum);
 
-				// LOGGER.info(String.format("[%d] campo [%s]", colNum, campo));
+				// logger.info(String.format("[%d] campo [%s]", colNum, campo));
 				if (campo.equals(ID)) {
 					long id = Math.round(cell.getNumericCellValue());
-					// LOGGER.info(String.format("ID: [%d]", id));
+					// logger.info(String.format("ID: [%d]", id));
 					condicion.setId(id);
 
 				} else if (campo.equals(TIPO_DESCUENTO)) {
@@ -1001,10 +1058,10 @@ public class GestorEscenarios {
 			if (colNum < lista.size()) {
 				String campo = lista.get(colNum);
 
-				// LOGGER.info(String.format("[%d] campo [%s]", colNum, campo));
+				// logger.info(String.format("[%d] campo [%s]", colNum, campo));
 				if (campo.equals(ID)) {
 					long id = Math.round(cell.getNumericCellValue());
-					// LOGGER.info("id:\t" + id);
+					// logger.info("id:\t" + id);
 					condicion.setId(id);
 				} else if (campo.equals(TIPO_DESCUENTO)) {
 					condicion.setTipoDescuento(strCelda);
@@ -1056,10 +1113,10 @@ public class GestorEscenarios {
 			if (colNum < lista.size()) {
 				String campo = lista.get(colNum);
 
-				// LOGGER.info(String.format("[%d] campo [%s]", colNum, campo));
+				// logger.info(String.format("[%d] campo [%s]", colNum, campo));
 				if (campo.equals(ID)) {
 					long id = Math.round(cell.getNumericCellValue());
-					// LOGGER.info("id:\t" + id);
+					// logger.info("id:\t" + id);
 					condicion.setId(id);
 				} else if (campo.equals(TIPO_DESCUENTO)) {
 					condicion.setTipoDescuento(strCelda);
@@ -1108,10 +1165,10 @@ public class GestorEscenarios {
 			if (colNum < lista.size()) {
 				String campo = lista.get(colNum);
 
-				// LOGGER.info(String.format("Columna [%d] campo [%s]", colNum, campo));
+				// logger.info(String.format("Columna [%d] campo [%s]", colNum, campo));
 				if (campo.equals(ID)) {
 					long id = Math.round(cell.getNumericCellValue());
-					// LOGGER.info("id:\t" + id);
+					// logger.info("id:\t" + id);
 					condicion.setId(id);
 				} else if (campo.equals(TIPO_DOC_REASIGNADO)) {
 					condicion.setTipoDocReasignado(strCelda);

@@ -25,6 +25,8 @@
 		<junit.version>4.8.2</junit.version>
 		<poi.version>3.9</poi.version>
 
+		<jdk.version>1.7</jdk.version>
+		<maven.compiler.version>3.1</maven.compiler.version>
 	</properties>
 
 
@@ -58,9 +60,9 @@
 						<artifactId>maven-compiler-plugin</artifactId>
 						<version>${maven.compiler.version}</version>
 						<configuration>
-							<source>1.6</source>
-							<target>1.6</target>
-							<encoding>UTF-8</encoding> <!-- si no da error de codificación -->
+							<source>${jdk.version}</source>
+							<target>${jdk.version}</target>
+							<encoding>${project.build.sourceEncoding}</encoding> <!-- si no da error de codificación -->
 						</configuration>
 					</plugin>
 
@@ -222,11 +224,11 @@
 
 
 		<!-- xerces -->
-<!-- 		<dependency> -->
-<!-- 			<groupId>xerces</groupId> -->
-<!-- 			<artifactId>xercesImpl</artifactId> -->
-<!-- 			<version>2.9.1</version> -->
-<!-- 		</dependency> -->
+		<!-- <dependency> -->
+		<!-- <groupId>xerces</groupId> -->
+		<!-- <artifactId>xercesImpl</artifactId> -->
+		<!-- <version>2.9.1</version> -->
+		<!-- </dependency> -->
 
 		<dependency>
 			<groupId>org.apache.ant</groupId>
@@ -253,11 +255,11 @@
 			<scope>compile</scope>
 		</dependency>
 
-<!-- 		<dependency> -->
-<!-- 			<groupId>xom</groupId> -->
-<!-- 			<artifactId>xom</artifactId> -->
-<!-- 			<version>1.1</version> -->
-<!-- 		</dependency> -->
+		<!-- <dependency> -->
+		<!-- <groupId>xom</groupId> -->
+		<!-- <artifactId>xom</artifactId> -->
+		<!-- <version>1.1</version> -->
+		<!-- </dependency> -->
 
 
 

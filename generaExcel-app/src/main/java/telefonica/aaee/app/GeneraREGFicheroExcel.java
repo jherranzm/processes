@@ -5,8 +5,8 @@ import java.util.List;
 
 import javax.sql.rowset.CachedRowSet;
 
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import telefonica.aaee.export.GeneradorExcelXlsx;
 import telefonica.aaee.model.model977r.ConsultaSQL;
@@ -23,7 +23,7 @@ public class GeneraREGFicheroExcel {
 	
 	private static final long MAX_REGS = 65000;
 
-	private static final Logger LOGGER = Logger.getLogger(GeneraREGFicheroExcel.class.getCanonicalName());
+	protected final Log logger = LogFactory.getLog(getClass());
 	
 	private String informe = "";
 	private String acuerdo = "";
@@ -38,7 +38,6 @@ public class GeneraREGFicheroExcel {
 	
 	public GeneraREGFicheroExcel() {
 		super();
-		LOGGER.setLevel(Level.INFO);
 		
 		infService = new InformeService();
 		consultaSQLService = new ConsultaSQLService();
@@ -87,7 +86,7 @@ public class GeneraREGFicheroExcel {
 		
 		long endTime = System.currentTimeMillis();
 		
-		LOGGER.info("El proceso ha tardado: " + ((endTime - startTime)/1000) + " segundos!");
+		System.out.println("El proceso ha tardado: " + ((endTime - startTime)/1000) + " segundos!");
 	}
 	
 	public void generaExcel(){
@@ -118,7 +117,7 @@ public class GeneraREGFicheroExcel {
 			while (k < ache.size()){
 				ContenidoHojaExcel temp_che = ache.get(k);
 				
-				LOGGER.debug("SQL:" + temp_che.getConsulta());
+				logger.debug("SQL:" + temp_che.getConsulta());
 				ConsultaSQL cSQL = consultaSQLService.getConsultaSQLByNombre(temp_che.getConsulta());
 				String sql = cSQL.getDefinicion();
 				if(sql == null){
@@ -137,30 +136,30 @@ public class GeneraREGFicheroExcel {
 						
 						
 						long numRegs = db.getNumRegistros(
-								temp_sql, 
+								temp_sql.toLowerCase(), 
 								params);
 						
 						if(numRegs > 0 && numRegs < MAX_REGS){
 							crs = db.getCachedRowSetFromSQL(
-									sql, 
+									sql.toLowerCase(), 
 									params);
 							
-							LOGGER.info("Registros recuperados:" + crs.size() + " : " + cSQL.getNombre());
+							logger.info("Registros recuperados:" + crs.size() + " : " + cSQL.getNombre());
 							temp_che.setCrs(crs);
 							temp_che.setNumRegs(crs.size());
 							
 							ache.set(k, temp_che);
 							
 						}else{
-							LOGGER.info("Registros recuperados:" + numRegs + " : " + cSQL.getNombre());
-							LOGGER.warn("SQL eliminada:" + sql);
+							logger.info("Registros recuperados:" + numRegs + " : " + cSQL.getNombre());
+							logger.warn("SQL eliminada:" + sql);
 						}
 					}else{
 						crs = db.getCachedRowSetFromSQL(
-								sql, 
+								sql.toLowerCase(), 
 								params);
 						
-						LOGGER.info("Registros recuperados:" + crs.size() + " : " + cSQL.getNombre());
+						logger.info("Registros recuperados:" + crs.size() + " : " + cSQL.getNombre());
 						temp_che.setCrs(crs);
 						temp_che.setNumRegs(crs.size());
 						
@@ -186,21 +185,21 @@ public class GeneraREGFicheroExcel {
 				sb.append("Fin!").append("\n");
 				sb.append("El fichero generado es :[").append(excelGen.getFile()).append("]").append("\n");
 				sb.append("El tamaño del fichero es de :[").append(excelGen.getFileSize()).append("] bytes.\n");
-				LOGGER.info(sb.toString());
+				logger.info(sb.toString());
 				
-				this.setExcelFile(excelGen.getFile());
+				this.setExcelFile(excelGen.getFullFile());
 				
 			} else {
-				LOGGER.fatal("Algún error...");
+				logger.fatal("Algún error...");
 				// EnvioCorreoError.envioCorreo("sqlToXLS Error!");
-				LOGGER.warn("Error en ReadNewHZFile.execute()");
+				logger.warn("Error en ReadNewHZFile.execute()");
 			}
 			
 
 		} catch (Exception e) {
 			e.printStackTrace();
-			LOGGER.fatal("Se ha producido una excepción...");
-			LOGGER.warn(e.getMessage());
+			logger.fatal("Se ha producido una excepción...");
+			logger.warn(e.getMessage());
 
 		}finally{
 			

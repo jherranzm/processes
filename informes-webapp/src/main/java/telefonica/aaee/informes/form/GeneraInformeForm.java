@@ -3,6 +3,7 @@ package telefonica.aaee.informes.form;
 import java.io.Serializable;
 import java.util.List;
 
+import telefonica.aaee.informes.model.FileInfoDTO;
 import telefonica.aaee.informes.model.Informe;
 import telefonica.aaee.informes.model.condiciones.Acuerdo;
 
@@ -17,7 +18,7 @@ public class GeneraInformeForm   implements Serializable{
 	private Long acuerdoId;
 
 	// URLs
-	private List<String> urls;
+	private List<FileInfoDTO> urls;
 
 	public GeneraInformeForm() {
 		super();
@@ -81,12 +82,12 @@ public class GeneraInformeForm   implements Serializable{
 	}
 
 
-	public List<String> getUrls() {
+	public List<FileInfoDTO> getUrls() {
 		return urls;
 	}
 
 
-	public void setUrls(List<String> urls) {
+	public void setUrls(List<FileInfoDTO> urls) {
 		this.urls = urls;
 	}
 	

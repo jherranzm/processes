@@ -13,6 +13,7 @@ import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
@@ -36,7 +37,9 @@ public class MUploadEscenarioFilesFormController
 	
 	private EntityManager em;
 	
-	
+	@Autowired
+	private GestorEscenarios ge;
+
 
 	@PersistenceContext
 	public void setEm(EntityManager em) {
@@ -96,7 +99,7 @@ public class MUploadEscenarioFilesFormController
                     		/**
                     		 * Procesado del fichero... 
                     		 */
-                    		GestorEscenarios ge = new GestorEscenarios();
+                    		//GestorEscenarios ge = new GestorEscenarios();
                     		ge.setFileIn(new File(absFileName));
                     		ge.setEntityManager(em);
                     		
@@ -115,22 +118,6 @@ public class MUploadEscenarioFilesFormController
                     }
                     
                 }
-            }
-            
-            /**
-             * Test
-             */
-            
-            Properties props = System.getProperties();
-            for(Object key : props.keySet()){
-            	logger.info("PROP:[" + key + "]:[" + (String)props.getProperty((String)key) + "]");
-            	
-            }
-            
-            List<String> keys = new ArrayList<String>(System.getenv().keySet());
-            Collections.sort(keys);
-            for (String key : keys) {
-            	logger.info("ENV:[" + key + "]:[" + System.getenv().get(key) + "]");
             }
             
             form.setUploadedFiles(uploadedFiles);

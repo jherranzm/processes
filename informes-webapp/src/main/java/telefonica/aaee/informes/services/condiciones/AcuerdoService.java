@@ -54,13 +54,13 @@ public class AcuerdoService {
         JpaEntityInformation<Acuerdo, Long> consultaEntityInfo = new JpaMetamodelEntityInformation<Acuerdo, Long>(Acuerdo.class, em.getMetamodel());
         repo = new SimpleJpaRepository<Acuerdo, Long>(consultaEntityInfo, em);
         
-        logger.info("\n\n\n\n\n\n\n\n\n\n\n\n");
+        logger.info("\n\n\n");
         logger.info("Número de acuerdos:" + repo.findAll().size());
-        logger.info("\n\n\n\n\n\n\n\n\n\n\n\n");
+        logger.info("\n\n\n");
 
-        logger.info("\n\n\n\n\n\n\n\n\n\n\n\n");
+        logger.info("\n\n\n");
         logger.info("Número de acuerdos:" + repo.findAll(new PageRequest(0, 5)).getNumberOfElements());
-        logger.info("\n\n\n\n\n\n\n\n\n\n\n\n");
+        logger.info("\n\n\n");
 	
 	}
 	

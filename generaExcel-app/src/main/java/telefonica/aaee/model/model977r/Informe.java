@@ -16,7 +16,7 @@ import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @Entity
-@Table(name="tbl_InformesXLS")
+@Table(name="tbl_informesxls")
 @XmlRootElement
 public class Informe 
 	extends telefonica.aaee.xml.GenericXML

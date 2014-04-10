@@ -1,12 +1,50 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>telefonica.aaee.informes</groupId>
-  <artifactId>informes</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
-  <packaging>pom</packaging>
-  <modules>
-  	<module>../generaExcel-app</module>
-  	<module>../informes-webapp</module>
-  	<module>../capture-977r-app</module>
-  </modules>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>telefonica.aaee.informes</groupId>
+	<artifactId>informes</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<packaging>pom</packaging>
+	<modules>
+		<module>../generaExcel-app</module>
+		<module>../informes-webapp</module>
+		<module>../capture-977r-app</module>
+	</modules>
+
+	<properties>
+
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<project.final.name>GeneraREGFicheroExcel</project.final.name>
+
+		<maven.compiler.version>3.1</maven.compiler.version>
+		<maven.jar.version>2.3.2</maven.jar.version>
+		<maven.assembly.version>2.4</maven.assembly.version>
+		<maven.shade.version>1.4</maven.shade.version>
+
+		<log4j.version>1.2.17</log4j.version>
+		<junit.version>4.8.2</junit.version>
+		<poi.version>3.9</poi.version>
+
+		<jdk.version>1.7</jdk.version>
+		<maven.compiler.plugin.version>3.1</maven.compiler.plugin.version>
+	</properties>
+
+
+
+	<build>
+		<finalName>Capture977App-1.1</finalName>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>${maven.compiler.version}</version>
+				<configuration>
+					<source>${jdk.version}</source>
+					<target>${jdk.version}</target>
+					<encoding>${project.build.sourceEncoding}</encoding> <!-- si no da error de codificación -->
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 </project>

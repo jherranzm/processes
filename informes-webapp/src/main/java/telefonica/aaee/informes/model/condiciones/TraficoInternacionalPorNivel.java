@@ -2,7 +2,14 @@ package telefonica.aaee.informes.model.condiciones;
 
 import java.io.Serializable;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
 
 
@@ -27,7 +34,7 @@ public class TraficoInternacionalPorNivel implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	private long id;
+	private Long id;
 
 	private String acuerdo;
 
@@ -99,11 +106,11 @@ public class TraficoInternacionalPorNivel implements Serializable {
 	public TraficoInternacionalPorNivel() {
     }
 
-	public long getId() {
+	public Long getId() {
 		return this.id;
 	}
 
-	public void setId(long id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 
@@ -188,9 +195,45 @@ public class TraficoInternacionalPorNivel implements Serializable {
 	}
 
 
+
+
 	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
+	 * @see java.lang.Object#toString()
 	 */
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("TraficoInternacionalPorNivel [id=");
+		builder.append(id);
+		builder.append(", acuerdo=");
+		builder.append(acuerdo);
+		builder.append(", ambitoDeTrafico=");
+		builder.append(ambitoDeTrafico);
+		builder.append(", cif=");
+		builder.append(cif);
+		builder.append(", descAmbitoDeTrafico=");
+		builder.append(descAmbitoDeTrafico);
+		builder.append(", estLlamada=");
+		builder.append(estLlamada);
+		builder.append(", nivel=");
+		builder.append(nivel);
+		builder.append(", porcentajeDescuento=");
+		builder.append(porcentajeDescuento);
+		builder.append(", precioEspecial=");
+		builder.append(precioEspecial);
+		builder.append(", precioPorMinuto=");
+		builder.append(precioPorMinuto);
+		builder.append(", tipoDescuento=");
+		builder.append(tipoDescuento);
+		builder.append(", iniPeriodo=");
+		builder.append(iniPeriodo);
+		builder.append(", finPeriodo=");
+		builder.append(finPeriodo);
+		builder.append("]");
+		return builder.toString();
+	}
+
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -208,7 +251,7 @@ public class TraficoInternacionalPorNivel implements Serializable {
 		result = prime * result + (int) (temp ^ (temp >>> 32));
 		result = prime * result
 				+ ((finPeriodo == null) ? 0 : finPeriodo.hashCode());
-		result = prime * result + (int) (id ^ (id >>> 32));
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		result = prime * result
 				+ ((iniPeriodo == null) ? 0 : iniPeriodo.hashCode());
 		result = prime * result + ((nivel == null) ? 0 : nivel.hashCode());
@@ -224,9 +267,6 @@ public class TraficoInternacionalPorNivel implements Serializable {
 	}
 
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -264,7 +304,10 @@ public class TraficoInternacionalPorNivel implements Serializable {
 				return false;
 		} else if (!finPeriodo.equals(other.finPeriodo))
 			return false;
-		if (id != other.id)
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
 			return false;
 		if (iniPeriodo == null) {
 			if (other.iniPeriodo != null)
@@ -293,43 +336,6 @@ public class TraficoInternacionalPorNivel implements Serializable {
 		} else if (!tipoDescuento.equals(other.tipoDescuento))
 			return false;
 		return true;
-	}
-
-
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
-	@Override
-	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		builder.append("TraficoInternacionalPorNivel [id=");
-		builder.append(id);
-		builder.append(", acuerdo=");
-		builder.append(acuerdo);
-		builder.append(", ambitoDeTrafico=");
-		builder.append(ambitoDeTrafico);
-		builder.append(", cif=");
-		builder.append(cif);
-		builder.append(", descAmbitoDeTrafico=");
-		builder.append(descAmbitoDeTrafico);
-		builder.append(", estLlamada=");
-		builder.append(estLlamada);
-		builder.append(", nivel=");
-		builder.append(nivel);
-		builder.append(", porcentajeDescuento=");
-		builder.append(porcentajeDescuento);
-		builder.append(", precioEspecial=");
-		builder.append(precioEspecial);
-		builder.append(", precioPorMinuto=");
-		builder.append(precioPorMinuto);
-		builder.append(", tipoDescuento=");
-		builder.append(tipoDescuento);
-		builder.append(", iniPeriodo=");
-		builder.append(iniPeriodo);
-		builder.append(", finPeriodo=");
-		builder.append(finPeriodo);
-		builder.append("]");
-		return builder.toString();
 	}
 	
 	
