@@ -280,13 +280,13 @@
 				<configuration>
 					<url>http://localhost:8080/manager/text</url>
 					<server>Tomcat7</server>
-					<path>/${webapp.name}</path>
+					<path>/${project.artifactId}</path>
 				</configuration>
 			</plugin>
 
 		</plugins>
 
-		<finalName>informes</finalName>
+		<finalName>${project.artifactId}</finalName>
 	</build>
 
 

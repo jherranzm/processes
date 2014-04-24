@@ -89,7 +89,7 @@
             <property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver" />
             <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/977r" />
             <property name="javax.persistence.jdbc.user" value="root" />
-            <property name="javax.persistence.jdbc.password" value="illuminatti" />
+            <property name="javax.persistence.jdbc.password" value="barlinux" />
             <property name="javax.persistence.ddl-generation.output-mode" value="database" />
             
             

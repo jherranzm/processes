@@ -23,7 +23,6 @@ import telefonica.aaee.informes.helpers.Constants;
 import telefonica.aaee.informes.model.condiciones.ConceptoFacturable;
 
 @Repository
-@Transactional
 public class ConceptoFacturableService {
 	
 	private static final int PAGE_SIZE = 5;
@@ -82,38 +81,43 @@ public class ConceptoFacturableService {
 	
 
 	public ConceptoFacturable findById(Long id) {
-		return em.find(ConceptoFacturable.class, id);
+		return 
+				//em.find(ConceptoFacturable.class, id);
+				repo.findOne(id);
 	}
 
 
+	@Transactional
 	public ConceptoFacturable update(ConceptoFacturable mod) throws ConceptoFacturableNotFoundException {
-		ConceptoFacturable cfOriginal = em.find(ConceptoFacturable.class, new Long(mod.getId()));
+		ConceptoFacturable cfOriginal = 
+				//em.find(ConceptoFacturable.class, new Long(mod.getId()));
+				repo.findOne(mod.getId());
 
 		if (cfOriginal == null)
 			throw new ConceptoFacturableNotFoundException();
 		
 		cfOriginal.setImporteAcuerdo(mod.getImporteAcuerdo());
 		cfOriginal.setPrecioEspecial(mod.getPrecioEspecial());
-
+		cfOriginal.setTipoPrecioEspecial(mod.getTipoPrecioEspecial());
 		
-		
-		ConceptoFacturable cfResult = em.merge(cfOriginal);
-		em.flush();
+		ConceptoFacturable cfResult = repo.saveAndFlush(cfOriginal);
 		logger.info("ConceptoFacturable " + cfResult.toString());
 		return cfResult;
 	}
 
 
+	@Transactional
 	public ConceptoFacturable create(ConceptoFacturable nuevoCf) {
 		
 		
 		logger.info("Guardamos el ConceptoFacturable...");
-		em.persist(nuevoCf);
-		em.flush();
-		logger.info("ConceptoFacturable guardado con ID " + nuevoCf.getId());
+//		em.persist(nuevoCf);
+//		em.flush();
+		ConceptoFacturable ret = repo.saveAndFlush(nuevoCf);
+		logger.info("ConceptoFacturable guardado con ID " + ret.getId());
 		
 		
-		return nuevoCf;
+		return ret;
 	}
 
 }
