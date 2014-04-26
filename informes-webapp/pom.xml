@@ -279,7 +279,7 @@
 				<version>2.1</version>
 				<configuration>
 					<url>http://localhost:8080/manager/text</url>
-					<server>Tomcat7</server>
+					<server>Tomcat7053</server>
 					<path>/${project.artifactId}</path>
 				</configuration>
 			</plugin>

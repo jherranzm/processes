@@ -41,18 +41,24 @@ import org.springframework.transaction.annotation.Transactional;
 import telefonica.aaee.informes.exceptions.CeldasIncorrectasException;
 import telefonica.aaee.informes.exceptions.ConceptoFacturableNotFoundException;
 import telefonica.aaee.informes.exceptions.ReasignacionCargoNotFoundException;
+import telefonica.aaee.informes.exceptions.ReasignacionNotFoundException;
 import telefonica.aaee.informes.exceptions.TraficoInternacionalNotFoundException;
 import telefonica.aaee.informes.exceptions.TraficoInternacionalPorNivelNotFoundException;
 import telefonica.aaee.informes.exceptions.TraficoNotFoundException;
+import telefonica.aaee.informes.exceptions.TraficoRINotFoundException;
 import telefonica.aaee.informes.model.condiciones.ConceptoFacturable;
+import telefonica.aaee.informes.model.condiciones.Reasignacion;
 import telefonica.aaee.informes.model.condiciones.ReasignacionCargo;
 import telefonica.aaee.informes.model.condiciones.Trafico;
 import telefonica.aaee.informes.model.condiciones.TraficoInternacional;
 import telefonica.aaee.informes.model.condiciones.TraficoInternacionalPorNivel;
+import telefonica.aaee.informes.model.condiciones.TraficoRI;
 import telefonica.aaee.informes.services.condiciones.ConceptoFacturableService;
 import telefonica.aaee.informes.services.condiciones.ReasignacionCargoService;
+import telefonica.aaee.informes.services.condiciones.ReasignacionService;
 import telefonica.aaee.informes.services.condiciones.TraficoInternacionalPorNivelService;
 import telefonica.aaee.informes.services.condiciones.TraficoInternacionalService;
+import telefonica.aaee.informes.services.condiciones.TraficoRIService;
 import telefonica.aaee.informes.services.condiciones.TraficoService;
 
 /**
@@ -69,8 +75,10 @@ public class GestorEscenarios {
 	private static final String CABECERAS_TRF_INT_POR_NIVEL = "cabecerasTRFInt_PorNivel";
 	private static final String CABECERAS_CCF = "cabecerasCCF";
 	private static final String CABECERAS_TRF = "cabecerasTRF";
+	private static final String CABECERAS_TRF_RI = "cabecerasTRFRI";
 	private static final String CABECERAS_TRF_INT = "cabecerasTRFInt";
 	private static final String CABECERAS_REAS_CARGO = "cabecerasReasignacionCargos";
+	private static final String CABECERAS_REAS = "cabecerasReasignacion";
 
 	private static final String ID = "id";
 	private static final String ACUERDO = "acuerdo";
@@ -105,6 +113,18 @@ public class GestorEscenarios {
 	private static final String AGRUPACION_FACTURABLE_REASIGNADO = "agrupacion facturable reasignado";
 	private static final String COMENTARIOS = "comentarios";
 
+	// Reasignación 
+	private static final String CIF_NUEVO = "cif nuevo";
+	private static final String NOMBRE_NUEVO = "nombre nuevo";
+	private static final String MULTICONEXION = "multiconexion";
+	private static final String NUMERO_COMERCIAL = "numero comercial";
+	private static final String NUMERO_COMERCIAL_ASOCIADO = "numero comercial asociado";
+	private static final String CIF_ORIGINAL = "cif original";
+	private static final String NOMBRE_ORIGINAL = "nombre original";
+	private static final String CENTRO_COSTE = "centrocoste";
+	private static final String NUMERO_CUENTA = "numerocuenta";
+	private static final String IDACUERDO = "idacuerdo";
+
 	protected final Log logger = LogFactory.getLog(getClass());
 
 	private Map<String, List<String>> cabObligatorias = new HashMap<String, List<String>>();
@@ -125,6 +145,9 @@ public class GestorEscenarios {
 	private TraficoService traficoService;
 
 	@Autowired
+	private TraficoRIService traficoRIService;
+
+	@Autowired
 	private TraficoInternacionalService traficoIntService;
 
 	@Autowired
@@ -132,6 +155,9 @@ public class GestorEscenarios {
 
 	@Autowired
 	private ReasignacionCargoService reasCargoService;
+
+	@Autowired
+	private ReasignacionService reasService;
 
 	@PersistenceContext(unitName = "JPAInformesWebApp")
 	public void setEntityManager(EntityManager em) {
@@ -225,6 +251,17 @@ public class GestorEscenarios {
 				logger.warn("No existe la pestaña " + pestanya);
 			}
 
+			pestanya = "Cond.TRF.RI";
+			logger.info("Localizando pestaña..." + pestanya);
+			pos = workBook.getSheetIndex(pestanya);
+			if (pos > -1) {
+				sheet = workBook.getSheetAt(pos);
+				logger.info("Procesando pestaña " + pestanya);
+				updateTRFRI(sheet);
+			} else {
+				logger.warn("No existe la pestaña " + pestanya);
+			}
+
 			pestanya = "Cond.TRFInternacional";
 			logger.info("Localizando pestaña..." + pestanya);
 			pos = workBook.getSheetIndex(pestanya);
@@ -255,6 +292,17 @@ public class GestorEscenarios {
 				sheet = workBook.getSheetAt(pos);
 				logger.info("Procesando pestaña " + pestanya);
 				updateReasignacionCargos(sheet);
+			} else {
+				logger.warn("No existe la pestaña " + pestanya);
+			}
+
+			pestanya = "Reasignacion";
+			logger.info("Localizando pestaña..." + pestanya);
+			pos = workBook.getSheetIndex(pestanya);
+			if (pos > -1) {
+				sheet = workBook.getSheetAt(pos);
+				logger.info("Procesando pestaña " + pestanya);
+				updateReasignacion(sheet);
 			} else {
 				logger.warn("No existe la pestaña " + pestanya);
 			}
@@ -614,6 +662,103 @@ public class GestorEscenarios {
 	}
 
 	/**
+	 * @param sheet
+	 * @throws CeldasIncorrectasException
+	 * @throws SQLException
+	 * @throws TraficoNotFoundException 
+	 */
+	private void updateTRFRI(Sheet sheet) throws CeldasIncorrectasException,
+			SQLException, TraficoRINotFoundException {
+		/**
+		 * Comprobamos que las cabeceras de la primera fila sean correctas
+		 */
+		List<String> lista = new ArrayList<String>();
+		if (!celdasCabeceraOK(sheet, cabObligatorias.get(CABECERAS_TRF_RI), lista))
+			throw new CeldasIncorrectasException("Error en las Celdas");
+
+		cabExistentes.put(CABECERAS_TRF_RI, lista);
+
+		logger.info(cabExistentes.toString());
+
+		// Recorremos las filas
+		Iterator<Row> rows2 = (Iterator<Row>) sheet.rowIterator();
+		while (rows2.hasNext()) {
+
+			Row row = rows2.next();
+			if (row.getRowNum() == 0) { // resto filas
+				// No se hace nada con la primera fila
+			} else {
+
+				logger.info("Fila:" + row.getRowNum());
+
+				TraficoRI condicion = fila2TRFRI(row);
+
+				TraficoRI trf = entityManager.find(TraficoRI.class, condicion.getId());
+
+				if (trf == null) {
+					// Buscamos por acuerdo y ��mbito de tr��fico
+					logger.info("TRF no localizado!");
+					logger.info(String.format(BUSCA_CONDICION_TRF_POR_AMBITO
+							, condicion.getAcuerdo()
+							, condicion.getAmbitoDeTrafico()));
+					
+					Query query = entityManager.createNamedQuery("FindByAcuerdoAmbitoDeTrafico");
+					query.setParameter("ac", condicion.getAcuerdo());
+					query.setParameter("at", condicion.getAmbitoDeTrafico());
+					try {
+						trf = (TraficoRI) query.getSingleResult();
+						logger.info("Localizado TraficoRI:" + trf.toString());
+						trf.setPrecioEspecial(condicion.getPrecioEspecial());
+						trf.setPrecioEspecial(condicion.getPrecioEspecial());
+						trf.setPrecioPorMinuto(condicion.getPrecioPorMinuto());
+
+						TraficoRI mod = traficoRIService.update(trf);
+						
+						if (!mod.equals(trf)) {
+							logger.info("Modificado TraficoRI:" + mod.toString());
+							incNumModificaciones();
+						}
+					} catch (javax.persistence.NoResultException e) {
+						logger.warn("No existe el par acuerdo-ambito:"
+								+ condicion.getAcuerdo() + ":"
+								+ condicion.getAmbitoDeTrafico());
+
+						condicion = traficoRIService.create(condicion);
+						
+						logger.info("Guardado TraficoRI:" + condicion.toString());
+					} catch (javax.persistence.NonUniqueResultException e) {
+						logger.warn("Hay más de un resultado:"
+								+ condicion.toString());
+						errores.add(String.format("Hay más de un resultado para la tupla Acuerdo-Ambito de Tráfico:"
+								, condicion.getAcuerdo()
+								, condicion.getAmbitoDeTrafico()));
+						trf = null;
+					}
+				} else {
+					logger.info("Localizado TraficoRI:" + trf.toString());
+
+					trf.setPrecioEspecial(condicion.getPrecioEspecial());
+					trf.setTipoDescuento(condicion.getTipoDescuento());
+					trf.setPrecioPorMinuto(condicion.getPrecioPorMinuto());
+					trf.setPorcentajeDescuento(condicion.getPorcentajeDescuento());
+					trf.setEstLlamada(condicion.getEstLlamada());
+
+					TraficoRI mod = traficoRIService.update(trf);
+					
+					if (!mod.equals(trf)) {
+						logger.info("Modificado TRF:" + mod.toString());
+						incNumModificaciones();
+					}
+
+
+				}
+
+			}// if (row.getRowNum() == 1)
+
+		}// while (rows.hasNext ())
+	}
+
+	/**
 	 * 
 	 * @param sheet
 	 * @throws CeldasIncorrectasException
@@ -924,6 +1069,115 @@ public class GestorEscenarios {
 	}
 
 
+	private void updateReasignacion(Sheet sheet)
+			throws CeldasIncorrectasException, SQLException, ReasignacionNotFoundException {
+		/**
+		 * Comprobamos que las cabeceras de la primera fila sean correctas
+		 */
+		List<String> lista = new ArrayList<String>();
+		if (!celdasCabeceraOK(sheet,
+				cabObligatorias.get(CABECERAS_REAS), lista))
+			throw new CeldasIncorrectasException("Error en las Celdas");
+
+		cabExistentes.put(CABECERAS_REAS, lista);
+
+		logger.info(cabExistentes.toString());
+
+		// Recorremos las filas
+		Iterator<Row> rows2 = (Iterator<Row>) sheet.rowIterator();
+		while (rows2.hasNext()) {
+
+			Row row = rows2.next();
+			if (row.getRowNum() == 0) { // resto filas
+				// No se hace nada con la primera fila
+			} else {
+
+				logger.info("Fila:" + row.getRowNum());
+
+				// Recuperamos la condición del Excel
+				Reasignacion condicion = fila2Reasignacion(row);
+
+				// Localizamos el elemento de la tabla
+				Reasignacion reasignacion = entityManager.find(Reasignacion.class, condicion.getId());
+				
+				if (reasignacion == null) {
+					// Buscamos por acuerdo, cif, grupo de gasto y agrupación facturable
+					logger.info("Reasignacion no localizado!");
+					logger.info("Buscamos la condición de Reasignacion:");
+					
+					Query query = entityManager.createNamedQuery("FindByAcuerdoNumeroComercialAsociado");
+					query.setParameter("ac", condicion.getAcuerdo());
+					query.setParameter("m", condicion.getMulticonexion());
+					query.setParameter("nc", condicion.getNumeroComercial());
+					query.setParameter("nca", condicion.getNumeroComercialAsociado());
+					try {
+						reasignacion = (Reasignacion) query
+								.getSingleResult();
+						logger.info("Localizado Reasignacion:" + reasignacion.toString());
+						
+						reasignacion.setCifNuevo(condicion.getCifNuevo());
+						reasignacion.setNombreNuevo(condicion.getNombreNuevo());
+						
+						reasignacion.setNumeroCuenta(condicion.getNumeroCuenta());
+						reasignacion.setCentroCoste(condicion.getCentroCoste());
+
+						Reasignacion mod = reasService.update(reasignacion);
+						
+						if (!mod.equals(reasignacion)) {
+							logger.info("Modificado Reasignacion:" + mod.toString());
+							incNumModificaciones();
+						}
+					} catch (javax.persistence.NoResultException e) {
+						logger.warn("No existe la tupla Acuerdo-Multiconexion-NC-NCA:"
+								+ condicion.getAcuerdo() + ":"
+								+ condicion.getMulticonexion() + ":"
+								+ condicion.getNumeroComercial() + ":"
+								+ condicion.getNumeroComercialAsociado()
+								);
+
+						Reasignacion nuevo = reasService.create(condicion);
+						
+						logger.info("Guardado Reasignacion:" + nuevo.toString());
+					} catch (javax.persistence.NonUniqueResultException e) {
+						logger.warn("Hay más de un resultado para la tupla Acuerdo-Cif-GrupoDeGasto-AgrupacionFacturable:"
+								+ condicion.getAcuerdo() + ":"
+								+ condicion.getMulticonexion() + ":"
+								+ condicion.getNumeroComercial() + ":"
+								+ condicion.getNumeroComercialAsociado()
+								);
+						errores.add(String.format("Hay más de un resultado para la tupla Acuerdo-Cif-GrupoDeGasto-AgrupacionFacturable:"
+								, condicion.getAcuerdo()
+								+ condicion.getMulticonexion() + ":"
+								+ condicion.getNumeroComercial() + ":"
+								+ condicion.getNumeroComercialAsociado()
+								));
+						reasignacion = null;
+					}
+
+				} else {
+					logger.info("Localizado ReasignacionCargo:" + reasignacion.toString());
+
+					reasignacion.setCifNuevo(condicion.getCifNuevo());
+					reasignacion.setNombreNuevo(condicion.getNombreNuevo());
+					
+					reasignacion.setNumeroCuenta(condicion.getNumeroCuenta());
+					reasignacion.setCentroCoste(condicion.getCentroCoste());
+
+					Reasignacion mod = reasService.update(reasignacion);
+					
+					if (!mod.equals(reasignacion)) {
+						logger.info("Modificado REASCARGO:" + mod.toString());
+						incNumModificaciones();
+					}
+
+				}
+
+			}// if (row.getRowNum() == 1)
+
+		}// while (rows.hasNext ())
+	}
+
+
 
 	/**
 	 * @param row
@@ -1209,6 +1463,122 @@ public class GestorEscenarios {
 
 //		condicion.setIniPeriodo("20110128");
 //		condicion.setFinPeriodo("25001228");
+		return condicion;
+	}
+	
+	/**
+	 * @param row
+	 */
+	private Reasignacion fila2Reasignacion(Row row) {
+		// De cada fila recorremos las celdas
+		Reasignacion condicion = new Reasignacion();
+
+		Iterator<Cell> celdas = row.cellIterator();
+		while (celdas.hasNext()) {
+			Cell cell = celdas.next();
+			int colNum = cell.getColumnIndex();
+			String strCelda = cell2String(cell);
+
+			List<String> lista = cabExistentes.get(CABECERAS_REAS);
+			if (colNum < lista.size()) {
+				String campo = lista.get(colNum);
+
+				// logger.info(String.format("Columna [%d] campo [%s]", colNum, campo));
+				if (campo.equals(ID)) {
+					long id = Math.round(cell.getNumericCellValue());
+					// logger.info("id:\t" + id);
+					condicion.setId(id);
+				} else if (campo.equals(CIF_ORIGINAL)) {
+					condicion.setCifOriginal(strCelda);
+				} else if (campo.equals(NOMBRE_ORIGINAL)) {
+					condicion.setNombreOriginal(strCelda);
+					
+				} else if (campo.equals(CIF_NUEVO)) {
+					condicion.setCifNuevo(strCelda);
+				} else if (campo.equals(NOMBRE_NUEVO)) {
+					condicion.setNombreNuevo(strCelda);
+					
+				} else if (campo.equals(ACUERDO)) {
+					condicion.setAcuerdo(strCelda);
+				} else if (campo.equals(IDACUERDO)) {
+					condicion.setIdAcuerdo(Math.round(cell.getNumericCellValue()));
+					
+				} else if (campo.equals(MULTICONEXION)) {
+					condicion.setMulticonexion(strCelda);
+				} else if (campo.equals(NUMERO_COMERCIAL)) {
+					condicion.setNumeroComercial(strCelda);
+				} else if (campo.equals(NUMERO_COMERCIAL_ASOCIADO)) {
+					condicion.setNumeroComercialAsociado(strCelda);
+					
+				} else if (campo.equals(NUMERO_CUENTA)) {
+					condicion.setNumeroCuenta(strCelda);
+				} else if (campo.equals(CENTRO_COSTE)) {
+					condicion.setCentroCoste(strCelda);
+				}
+			}
+
+		}// while (cells.hasNext())
+
+//		condicion.setIniPeriodo("20110128");
+//		condicion.setFinPeriodo("25001228");
+		return condicion;
+	}
+
+	/**
+	 * @param row
+	 * @return
+	 */
+	private TraficoRI fila2TRFRI(Row row) {
+		TraficoRI condicion = new TraficoRI();
+	
+		// De cada fila recorremos las celdas
+		Iterator<Cell> celdas = row.cellIterator();
+	
+		while (celdas.hasNext()) {
+			Cell cell = celdas.next();
+			int colNum = cell.getColumnIndex();
+			String strCelda = cell2String(cell);
+	
+			List<String> lista = cabExistentes.get(CABECERAS_TRF_RI);
+			if (colNum < lista.size()) {
+				String campo = lista.get(colNum);
+	
+				// logger.info(String.format("[%d] campo [%s]", colNum, campo));
+				if (campo.equals(ID)) {
+					long id = Math.round(cell.getNumericCellValue());
+					// logger.info(String.format("ID: [%d]", id));
+					condicion.setId(id);
+	
+				} else if (campo.equals(TIPO_DESCUENTO)) {
+					condicion.setTipoDescuento(strCelda);
+	
+				} else if (campo.equals(EST_LLAMADA)) {
+					double est_llamada = new Double(strCelda);
+					condicion.setEstLlamada(est_llamada);
+	
+				} else if (campo.equals(PRECIO_POR_MINUTO)) {
+					double precio_por_minuto = new Double(strCelda);
+					condicion.setPrecioPorMinuto(precio_por_minuto);
+	
+				} else if (campo.equals(PORCENTAJE_DESCUENTO)) {
+					double porcentaje_descuento = new Double(strCelda);
+					condicion.setPorcentajeDescuento(porcentaje_descuento);
+	
+				} else if (campo.equals(PRECIO_ESPECIAL)) {
+					condicion.setPrecioEspecial(strCelda);
+	
+				} else if (campo.equals(AMBITO_DE_TRAFICO)) {
+					condicion.setAmbitoDeTrafico(strCelda);
+	
+				} else if (campo.equals(ACUERDO)) {
+					condicion.setAcuerdo(strCelda);
+				}
+			}
+	
+		}// while (cells.hasNext())
+	
+		condicion.setIniPeriodo("20110128");
+		condicion.setFinPeriodo("25001228");
 		return condicion;
 	}
 }
