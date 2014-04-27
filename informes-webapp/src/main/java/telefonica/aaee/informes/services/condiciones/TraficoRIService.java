@@ -28,7 +28,7 @@ public class TraficoRIService {
 	
 	private static final int PAGE_SIZE = 5;
 	
-	private static final String TRAFICO_FIND_ALL = "TRAFICO.findAll";
+	private static final String TRAFICORI_FIND_ALL = "TRAFICORI.findAll";
 
 	protected final Log logger = LogFactory.getLog(getClass());
 		
@@ -63,7 +63,7 @@ public class TraficoRIService {
 		
 		List<TraficoRI> lista = null;
 		
-		Query query = em.createNamedQuery(TRAFICO_FIND_ALL);
+		Query query = em.createNamedQuery(TRAFICORI_FIND_ALL);
 	    lista = (List<TraficoRI>)query.getResultList();
 		
 		return lista;

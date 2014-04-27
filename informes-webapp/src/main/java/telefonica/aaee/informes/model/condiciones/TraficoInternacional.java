@@ -18,8 +18,12 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @Entity
 @Table(name = "ttrafico_internacional")
-@NamedQueries({ @NamedQuery(name = "FindByAcuerdoDestino", query = "SELECT c FROM TraficoInternacional c "
-		+ "WHERE " + "c.acuerdo = :ac " + "and c.destino = :pd ") })
+@NamedQueries({ 
+	@NamedQuery(name = "FindByAcuerdoDestino", query = "SELECT c FROM TraficoInternacional c "
+		+ "WHERE " 
+			+ "c.acuerdo = :ac " 
+			+ "and c.destino = :pd ") 
+})
 @XmlRootElement
 public class TraficoInternacional
 

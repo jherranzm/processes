@@ -23,6 +23,14 @@ import javax.xml.bind.annotation.XmlRootElement;
 			query = "SELECT c "
 					+ "FROM ConceptoFacturable c "
 					)
+	, @NamedQuery(name = "FindByAcuerdoCifTipoDeServicio", 
+			query = "SELECT c "
+					+ "FROM ConceptoFacturable c "
+					+ "WHERE "
+					+ "c.acuerdo = :ac "
+					+ "and c.conceptoFacturable = :cf "
+					+ "and c.tipoDeServicio = :sv"
+					)
 })
 @XmlRootElement
 public class ConceptoFacturable

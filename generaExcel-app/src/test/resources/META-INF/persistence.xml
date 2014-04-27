@@ -5,7 +5,7 @@
         
         	
 	<!--  -->
-	<persistence-unit name="PU_ACUERDOS" transaction-type="RESOURCE_LOCAL">
+	<persistence-unit name="TEST_PU_ACUERDOS" transaction-type="RESOURCE_LOCAL">
         <class>telefonica.aaee.model.Tarea</class>
         <class>telefonica.aaee.model.TareaPK</class>
 		<properties>
@@ -28,7 +28,7 @@
 		</properties>
 	</persistence-unit>
 
-	<persistence-unit name="PU_MOFA" transaction-type="RESOURCE_LOCAL">
+	<persistence-unit name="TEST_PU_MOFA" transaction-type="RESOURCE_LOCAL">
         <class>telefonica.aaee.model.DatosCliente</class>
 		<properties>
 			<property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver" />
@@ -54,7 +54,7 @@
 
 
 
-    <persistence-unit name="PU_MERCURIO" transaction-type="RESOURCE_LOCAL">
+    <persistence-unit name="TEST_PU_MERCURIO" transaction-type="RESOURCE_LOCAL">
         <class>telefonica.aaee.model.DatosHorus</class>
         <properties>
             <property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver" />
@@ -77,7 +77,7 @@
     </persistence-unit>
 
 
-    <persistence-unit name="977R" transaction-type="RESOURCE_LOCAL">
+    <persistence-unit name="TEST_977R" transaction-type="RESOURCE_LOCAL">
     
     	<!--ESTE ES OBLIGATORIO DE ECLISELINK, ES SU IMPLEMENTACION-->
         <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>

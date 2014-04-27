@@ -40,6 +40,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import telefonica.aaee.informes.exceptions.CeldasIncorrectasException;
 import telefonica.aaee.informes.exceptions.ConceptoFacturableNotFoundException;
+import telefonica.aaee.informes.exceptions.PlantaPrecioEspecialNotFoundException;
 import telefonica.aaee.informes.exceptions.ReasignacionCargoNotFoundException;
 import telefonica.aaee.informes.exceptions.ReasignacionNotFoundException;
 import telefonica.aaee.informes.exceptions.TraficoInternacionalNotFoundException;
@@ -47,6 +48,7 @@ import telefonica.aaee.informes.exceptions.TraficoInternacionalPorNivelNotFoundE
 import telefonica.aaee.informes.exceptions.TraficoNotFoundException;
 import telefonica.aaee.informes.exceptions.TraficoRINotFoundException;
 import telefonica.aaee.informes.model.condiciones.ConceptoFacturable;
+import telefonica.aaee.informes.model.condiciones.PlantaPrecioEspecial;
 import telefonica.aaee.informes.model.condiciones.Reasignacion;
 import telefonica.aaee.informes.model.condiciones.ReasignacionCargo;
 import telefonica.aaee.informes.model.condiciones.Trafico;
@@ -54,6 +56,7 @@ import telefonica.aaee.informes.model.condiciones.TraficoInternacional;
 import telefonica.aaee.informes.model.condiciones.TraficoInternacionalPorNivel;
 import telefonica.aaee.informes.model.condiciones.TraficoRI;
 import telefonica.aaee.informes.services.condiciones.ConceptoFacturableService;
+import telefonica.aaee.informes.services.condiciones.PlantaPrecioEspecialService;
 import telefonica.aaee.informes.services.condiciones.ReasignacionCargoService;
 import telefonica.aaee.informes.services.condiciones.ReasignacionService;
 import telefonica.aaee.informes.services.condiciones.TraficoInternacionalPorNivelService;
@@ -79,6 +82,7 @@ public class GestorEscenarios {
 	private static final String CABECERAS_TRF_INT = "cabecerasTRFInt";
 	private static final String CABECERAS_REAS_CARGO = "cabecerasReasignacionCargos";
 	private static final String CABECERAS_REAS = "cabecerasReasignacion";
+	private static final String CABECERAS_PPE = "cabecerasPlantaPrecioEspecial";
 
 	private static final String ID = "id";
 	private static final String ACUERDO = "acuerdo";
@@ -124,6 +128,12 @@ public class GestorEscenarios {
 	private static final String CENTRO_COSTE = "centrocoste";
 	private static final String NUMERO_CUENTA = "numerocuenta";
 	private static final String IDACUERDO = "idacuerdo";
+	
+	//PlantaPreciosEspeciales
+	private static final String MAX_IMPORTE_ESTANDAR_PRODUCTO = "max importe estandar producto";
+	private static final String MIN_IMPORTE_ESTANDAR_PRODUCTO = "min importe estandar producto";
+	private static final String MAX_IMPORTE_UNITARIO = "max importe unitario";
+	private static final String MIN_IMPORTE_UNITARIO = "min importe unitario";
 
 	protected final Log logger = LogFactory.getLog(getClass());
 
@@ -159,6 +169,9 @@ public class GestorEscenarios {
 	@Autowired
 	private ReasignacionService reasService;
 
+	@Autowired
+	private PlantaPrecioEspecialService ppeService;
+
 	@PersistenceContext(unitName = "JPAInformesWebApp")
 	public void setEntityManager(EntityManager em) {
 		this.entityManager = em;
@@ -166,7 +179,8 @@ public class GestorEscenarios {
 	
 	@PostConstruct
     public void init() {
-		logger.info("Inicializando..." + cfService.findAll().size());
+		logger.info("Inicializando ConceptoFacturableService..." + cfService.findAll().size());
+		logger.info("Inicializando TraficoService..." + traficoService.findAll().size());
 	}
 
 	
@@ -303,6 +317,17 @@ public class GestorEscenarios {
 				sheet = workBook.getSheetAt(pos);
 				logger.info("Procesando pestaña " + pestanya);
 				updateReasignacion(sheet);
+			} else {
+				logger.warn("No existe la pestaña " + pestanya);
+			}
+
+			pestanya = "Cond.PPE";
+			logger.info("Localizando pestaña..." + pestanya);
+			pos = workBook.getSheetIndex(pestanya);
+			if (pos > -1) {
+				sheet = workBook.getSheetAt(pos);
+				logger.info("Procesando pestaña " + pestanya);
+				updatePlantaPreciosEspeciales(sheet);
 			} else {
 				logger.warn("No existe la pestaña " + pestanya);
 			}
@@ -533,7 +558,7 @@ public class GestorEscenarios {
 						
 						//save(condicion);
 						condicion = cfService.create(condicion);
-						
+						incNumModificaciones();
 						logger.warn("Guardado el CF :"
 								+ condicion.toString());
 					} catch (javax.persistence.NonUniqueResultException e) {
@@ -627,7 +652,7 @@ public class GestorEscenarios {
 								+ condicion.getAmbitoDeTrafico());
 
 						condicion = traficoService.create(condicion);
-						
+						incNumModificaciones();
 						logger.info("Guardado TRF:" + condicion.toString());
 					} catch (javax.persistence.NonUniqueResultException e) {
 						logger.warn("Hay más de un resultado:"
@@ -702,7 +727,7 @@ public class GestorEscenarios {
 							, condicion.getAcuerdo()
 							, condicion.getAmbitoDeTrafico()));
 					
-					Query query = entityManager.createNamedQuery("FindByAcuerdoAmbitoDeTrafico");
+					Query query = entityManager.createNamedQuery("TRAFICORI.FindByAcuerdoAmbitoDeTrafico");
 					query.setParameter("ac", condicion.getAcuerdo());
 					query.setParameter("at", condicion.getAmbitoDeTrafico());
 					try {
@@ -724,7 +749,7 @@ public class GestorEscenarios {
 								+ condicion.getAmbitoDeTrafico());
 
 						condicion = traficoRIService.create(condicion);
-						
+						incNumModificaciones();
 						logger.info("Guardado TraficoRI:" + condicion.toString());
 					} catch (javax.persistence.NonUniqueResultException e) {
 						logger.warn("Hay más de un resultado:"
@@ -821,7 +846,7 @@ public class GestorEscenarios {
 								+ condicion.getDestino());
 
 						TraficoInternacional nuevo = traficoIntService.create(tint);
-						
+						incNumModificaciones();
 						logger.info("Guardado TRFInt:" + nuevo.toString());
 					} catch (javax.persistence.NonUniqueResultException e) {
 						logger.warn("Hay más de un resultado para el par:"
@@ -923,7 +948,7 @@ public class GestorEscenarios {
 								+ condicion.getNivel());
 
 						TraficoInternacionalPorNivel nuevo = traficoIntNivelService.create(tint);
-						
+						incNumModificaciones();
 						logger.info("Guardado TRFInt:" + nuevo.toString());
 					} catch (javax.persistence.NonUniqueResultException e) {
 						logger.warn("Hay más de un resultado para el par:"
@@ -1028,7 +1053,7 @@ public class GestorEscenarios {
 								);
 
 						ReasignacionCargo nuevo = reasCargoService.create(condicion);
-						
+						incNumModificaciones();
 						logger.info("Guardado REASCARGO:" + nuevo.toString());
 					} catch (javax.persistence.NonUniqueResultException e) {
 						logger.warn("Hay más de un resultado para la tupla Acuerdo-Cif-GrupoDeGasto-AgrupacionFacturable:"
@@ -1136,7 +1161,7 @@ public class GestorEscenarios {
 								);
 
 						Reasignacion nuevo = reasService.create(condicion);
-						
+						incNumModificaciones();
 						logger.info("Guardado Reasignacion:" + nuevo.toString());
 					} catch (javax.persistence.NonUniqueResultException e) {
 						logger.warn("Hay más de un resultado para la tupla Acuerdo-Cif-GrupoDeGasto-AgrupacionFacturable:"
@@ -1577,6 +1602,219 @@ public class GestorEscenarios {
 	
 		}// while (cells.hasNext())
 	
+		condicion.setIniPeriodo("20110128");
+		condicion.setFinPeriodo("25001228");
+		return condicion;
+	}
+
+	/**
+	 * @param conn
+	 * @param sheet
+	 * @throws CeldasIncorrectasException
+	 * @throws SQLException
+	 * @throws ConceptoFacturableNotFoundException 
+	 */
+	private void updatePlantaPreciosEspeciales(Sheet sheet) throws CeldasIncorrectasException,
+			SQLException, PlantaPrecioEspecialNotFoundException{
+		/**
+		 * Comprobamos que las cabeceras de la primera fila sean correctas
+		 */
+		List<String> lista = new ArrayList<String>();
+		if (!celdasCabeceraOK(sheet, cabObligatorias.get(CABECERAS_PPE), lista))
+			throw new CeldasIncorrectasException("Error en las Celdas");
+	
+		cabExistentes.put(CABECERAS_PPE, lista);
+	
+		logger.info(cabExistentes.toString());
+	
+		// Recorremos las filas
+		Iterator<Row> filas = (Iterator<Row>) sheet.rowIterator();
+		while (filas.hasNext()) {
+	
+			Row row = filas.next();
+			
+			if (row.getRowNum() == 0) { // resto filas
+	
+			} else {
+	
+				logger.info("Fila:" + row.getRowNum());
+	
+				// Recogemos los datos del Excel...
+				PlantaPrecioEspecial condicion = fila2PPE(row);
+	
+				// Localizamos esa entidad en la tabla por el Id...
+				PlantaPrecioEspecial cf = entityManager.find(PlantaPrecioEspecial.class,
+						condicion.getId());
+	
+				// no está...
+				if (cf == null) {
+	
+					// miramos que está el acuerdo y el concepto...
+					logger.info("PlantaPrecioEspecial no localizado!");
+					Query query = entityManager.createNamedQuery("FindByAcuerdoTipoDeServicioMulticonexionNCNCACF");
+					query.setParameter("ac", condicion.getAcuerdo());
+					query.setParameter("ts", condicion.getTipoDeServicio());
+					query.setParameter("m", condicion.getMulticonexion());
+					query.setParameter("nc", condicion.getNumeroComercial());
+					query.setParameter("nca", condicion.getNumeroComercialAsociado());
+					query.setParameter("cf", condicion.getConceptoFacturable());
+					try {
+						cf = (PlantaPrecioEspecial) query.getSingleResult();
+						logger.info("Localizado CF:" + cf.toString());
+	
+						// Solo modificamos si hay un precio especial...
+						if (condicion.getPrecioEspecial().equalsIgnoreCase("SI")) {
+							
+							cf.setPrecioEspecial(condicion.getPrecioEspecial());
+							cf.setTipoPrecioEspecial(condicion.getTipoPrecioEspecial());
+							cf.setImporteAcuerdo(condicion.getImporteAcuerdo());
+							
+							//update(cf);
+							PlantaPrecioEspecial mod = ppeService.update(cf);
+							
+							if (!mod.equals(cf)) {
+								logger.info("Modificado CF:" + mod.toString());
+								incNumModificaciones();
+							}
+						} else {
+							logger.info("Localizado PlantaPrecioEspecial " + cf.getId()
+									+ ", sin precio especial!");
+						}
+					} catch (javax.persistence.NoResultException e) {
+						logger.warn("No existe el par acuerdo-conceptofacturable:"
+								+ condicion.getAcuerdo()
+								+ ":"
+								+ condicion.getTipoDeServicio()
+								+ ":"
+								+ condicion.getMulticonexion()
+								+ ":"
+								+ condicion.getNumeroComercial()
+								+ ":"
+								+ condicion.getNumeroComercialAsociado()
+								+ ":"
+								+ condicion.getConceptoFacturable());
+						
+						//save(condicion);
+						condicion = ppeService.create(condicion);
+						incNumModificaciones();
+						logger.warn("Guardado el PlantaPrecioEspecial :"
+								+ condicion.toString());
+					} catch (javax.persistence.NonUniqueResultException e) {
+						logger.warn("Hay más de un resultado:"
+								+ condicion.toString());
+						errores.add(String.format("Hay más de un resultado para la tupla Acuerdo-Concepto Facturable-Tipo de Servicio:"
+								, condicion.getAcuerdo()
+								, condicion.getTipoDeServicio()
+								, condicion.getMulticonexion()
+								, condicion.getNumeroComercial()
+								, condicion.getNumeroComercialAsociado()
+								, condicion.getConceptoFacturable()
+								));
+						cf = null;
+					}
+				} else {
+					logger.info("Localizado PlantaPrecioEspecial:" + cf.toString());
+					cf.setPrecioEspecial(condicion.getPrecioEspecial());
+					cf.setTipoPrecioEspecial(condicion.getTipoPrecioEspecial());
+					cf.setImporteAcuerdo(condicion.getImporteAcuerdo());
+					
+					PlantaPrecioEspecial mod = ppeService.update(cf);
+					
+					if (!mod.equals(cf)) {
+						logger.info("Modificado PlantaPrecioEspecial:" + mod.toString());
+						incNumModificaciones();
+					}
+				}
+			}// if (row.getRowNum() == 1)
+	
+		}// while (rows.hasNext ())
+	}
+
+	/**
+	 * @param row
+	 * @return
+	 */
+	private PlantaPrecioEspecial fila2PPE(Row row) {
+		// De cada fila recorremos las celdas
+		Iterator<Cell> cells1 = row.cellIterator();
+	
+		PlantaPrecioEspecial condicion = new PlantaPrecioEspecial();
+	
+		while (cells1.hasNext()) {
+	
+			Cell cell = cells1.next();
+			short colNum = (short) cell.getColumnIndex();
+			String strCelda = cell2String(cell);
+	
+			List<String> lista = cabExistentes.get(CABECERAS_PPE);
+			if (colNum < lista.size()) {
+				String campo = lista.get(colNum);
+	
+				// logger.info(String.format("[%d] campo [%s]", colNum, campo));
+				if (campo.equals(ID)) {
+					double lTmp = Double.parseDouble(strCelda);
+					long id = Math.round(lTmp);
+					// logger.info("id:\t" + id);
+					condicion.setId(id);
+				
+				} else if (campo.equals(IDACUERDO)) {
+					double lTmp = Double.parseDouble(strCelda);
+					long id = Math.round(lTmp);
+					// logger.info("id:\t" + id);
+					condicion.setIdAcuerdo(id);
+	
+				} else if (campo.equals(TIPO_DE_SERVICIO)) {
+					condicion.setTipoDeServicio(strCelda);
+				} else if (campo.equals(DESC_TIPO_DE_SERVICIO)) {
+					condicion.setDescTipoDeServicio(strCelda);
+	
+				} else if (campo.equals(PRECIO_ESPECIAL)) {
+					condicion.setPrecioEspecial(strCelda);
+				} else if (campo.equals(TIPO_PRECIO_ESPECIAL)) {
+					condicion.setTipoPrecioEspecial(strCelda);
+				} else if (campo.equals(IMPORTE_ACUERDO)) {
+					double importe_acuerdo = new Double(
+							quitarComas(strCelda));
+					condicion.setImporteAcuerdo(importe_acuerdo);
+	
+				} else if (campo.equals(MAX_IMPORTE_ESTANDAR_PRODUCTO)) {
+					double importe = new Double(
+							quitarComas(strCelda));
+					condicion.setMaxImporteEstandarProducto(importe);
+	
+				} else if (campo.equals(MIN_IMPORTE_ESTANDAR_PRODUCTO)) {
+					double importe = new Double(
+							quitarComas(strCelda));
+					condicion.setMinImporteEstandarProducto(importe);
+	
+				} else if (campo.equals(MAX_IMPORTE_UNITARIO)) {
+					double importe = new Double(
+							quitarComas(strCelda));
+					condicion.setMaxImporteUnitario(importe);
+	
+				} else if (campo.equals(MIN_IMPORTE_UNITARIO)) {
+					double importe = new Double(
+							quitarComas(strCelda));
+					condicion.setMinImporteUnitario(importe);
+	
+				} else if (campo.equals(CONCEPTO_FACTURABLE)) {
+					condicion.setConceptoFacturable(strCelda);
+				} else if (campo.equals(DESC_CONCEPTO_FACTURABLE)) {
+					condicion.setDescConceptoFacturable(strCelda);
+	
+				} else if (campo.equals(MULTICONEXION)) {
+					condicion.setMulticonexion(strCelda);
+				} else if (campo.equals(NUMERO_COMERCIAL)) {
+					condicion.setNumeroComercial(strCelda);
+				} else if (campo.equals(NUMERO_COMERCIAL_ASOCIADO)) {
+					condicion.setNumeroComercialAsociado(strCelda);
+					
+				} else if (campo.equals(ACUERDO)) {
+					condicion.setAcuerdo(strCelda);
+				}
+			}
+	
+		}// while (cells.hasNext())
 		condicion.setIniPeriodo("20110128");
 		condicion.setFinPeriodo("25001228");
 		return condicion;

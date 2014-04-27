@@ -4,8 +4,10 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
+import javax.persistence.ParameterMode;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.persistence.StoredProcedureQuery;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -83,5 +85,89 @@ public class AcuerdoService {
 	    
 	    return lista ;
 	}
+	
+	public boolean applyCondiciones(String elAcuerdo){
+		
+		boolean ret = false;
+		
+		logger.info("Inicio del Procedimiento...");
+		logger.info("Aplicar condiciones al acuerdo: ["+ elAcuerdo +"]");
+		
+		StoredProcedureQuery spq = em.createStoredProcedureQuery("977r.977r_SP_APPLY_COND_ALL");
+		
+		spq.registerStoredProcedureParameter("elAcuerdo", String.class, ParameterMode.IN);
+		
+		spq.setParameter("elAcuerdo", elAcuerdo);
+		
+		ret = spq.execute();
+		
+		logger.info("...fin del Procedimiento!");
+		
+		return ret;
+		
+	}
 
+	public boolean applyBusinessRulesAplicarPlantaPreciosEspeciales(String elAcuerdo){
+		
+		boolean ret = false;
+		
+		logger.info("Inicio del Procedimiento...");
+		logger.info("Aplicar PlantaPreciosEspeciales al acuerdo: ["+ elAcuerdo +"]");
+		
+		StoredProcedureQuery spq = em.createStoredProcedureQuery("977r.977r_regneg_AplicarPlantaPreciosEspeciales");
+		
+		spq.registerStoredProcedureParameter("elAcuerdo", String.class, ParameterMode.IN);
+		
+		spq.setParameter("elAcuerdo", elAcuerdo);
+		
+		ret = spq.execute();
+		
+		logger.info("...fin del Procedimiento!");
+		
+		return ret;
+		
+	}
+
+	public boolean applyBusinessRulesLineaSoporteVPNIPSinCoste(String elAcuerdo){
+		
+		boolean ret = false;
+		
+		logger.info("Inicio del Procedimiento...");
+		logger.info("Aplicar LineaSoporteVPNIPSinCoste al acuerdo: ["+ elAcuerdo +"]");
+		
+		StoredProcedureQuery spq = em.createStoredProcedureQuery("977r.977r_regneg_LineaSoporteVPNIP_SinCoste");
+		
+		spq.registerStoredProcedureParameter("elAcuerdo", String.class, ParameterMode.IN);
+		
+		spq.setParameter("elAcuerdo", elAcuerdo);
+		
+		ret = spq.execute();
+		
+		logger.info("...fin del Procedimiento!");
+		
+		return ret;
+		
+	}
+	
+	//CompensacionAumentoCuotaLineaBOE
+	public boolean applyBusinessRulesCompensacionAumentoCuotaLineaBOE(String elAcuerdo){
+		
+		boolean ret = false;
+		
+		logger.info("Inicio del Procedimiento...");
+		logger.info("Aplicar CompensacionAumentoCuotaLineaBOE al acuerdo: ["+ elAcuerdo +"]");
+		
+		StoredProcedureQuery spq = em.createStoredProcedureQuery("977r.977r_regneg_CompensacionAumentoCuotaLineaBOE");
+		
+		spq.registerStoredProcedureParameter("elAcuerdo", String.class, ParameterMode.IN);
+		
+		spq.setParameter("elAcuerdo", elAcuerdo);
+		
+		ret = spq.execute();
+		
+		logger.info("...fin del Procedimiento!");
+		
+		return ret;
+		
+	}
 }

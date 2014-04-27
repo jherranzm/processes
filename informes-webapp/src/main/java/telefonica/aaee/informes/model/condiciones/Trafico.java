@@ -12,6 +12,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Entity
 @Table(name = "ttrafico")
 @NamedQueries({ 
+	@NamedQuery(name = "TRAFICO.findAll", query = "SELECT c FROM Trafico c"),
 	@NamedQuery(
 			name = "FindByAcuerdoAmbitoDeTrafico", 
 			query = "SELECT c "
