@@ -88,20 +88,12 @@ public class TraficoRIService {
 
 
 	public TraficoRI update(TraficoRI mod) throws TraficoRINotFoundException {
-		TraficoRI original = em.find(TraficoRI.class, new Long(mod.getId()));
+		TraficoRI original = repo.findOne(new Long(mod.getId()));
 
 		if (original == null)
 			throw new TraficoRINotFoundException();
 		
-		original.setEstLlamada(mod.getEstLlamada());
-		original.setPrecioPorMinuto(mod.getPrecioPorMinuto());
-		original.setPorcentajeDescuento(mod.getPorcentajeDescuento());
-		original.setPrecioEspecial(mod.getPrecioEspecial());
-
-		
-		
-		TraficoRI result = em.merge(original);
-		em.flush();
+		TraficoRI result = repo.saveAndFlush(mod);
 		logger.info("TraficoRI " + result.toString());
 		return result;
 	}
@@ -109,14 +101,11 @@ public class TraficoRIService {
 
 	public TraficoRI create(TraficoRI nuevo) {
 		
+		logger.info("Guardamos el Reasignacion...");
+		TraficoRI result = repo.saveAndFlush(nuevo);
+		logger.info("Reasignacion guardado con ID " + result.getId());
 		
-		logger.info("Guardamos el TraficoRI...");
-		em.persist(nuevo);
-		em.flush();
-		logger.info("TraficoRI guardado con ID " + nuevo.getId());
-		
-		
-		return nuevo;
+		return result;
 	}
 
 }

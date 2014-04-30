@@ -83,38 +83,29 @@ public class TraficoInternacionalService {
 	
 
 	public TraficoInternacional findById(Long id) {
-		return em.find(TraficoInternacional.class, id);
+		return repo.findOne(id);
 	}
 
 
 	public TraficoInternacional update(TraficoInternacional mod) throws TraficoInternacionalNotFoundException {
-		TraficoInternacional original = em.find(TraficoInternacional.class, new Long(mod.getId()));
+		TraficoInternacional original = repo.findOne(new Long(mod.getId()));
 
 		if (original == null)
 			throw new TraficoInternacionalNotFoundException();
 		
-		original.setPrecioPorMinuto(mod.getPrecioPorMinuto());
-		original.setPrecioEspecial(mod.getPrecioEspecial());
-
-		
-		
-		TraficoInternacional result = em.merge(original);
-		em.flush();
+		TraficoInternacional result = repo.saveAndFlush(mod);
 		logger.info("TraficoInternacional " + result.toString());
 		return result;
 	}
 
 
-	public TraficoInternacional create(TraficoInternacional nuevoCf) {
-		
+	public TraficoInternacional create(TraficoInternacional nuevo) {
 		
 		logger.info("Guardamos el TraficoInternacional...");
-		em.persist(nuevoCf);
-		em.flush();
-		logger.info("TraficoInternacional guardado con ID " + nuevoCf.getId());
+		TraficoInternacional result = repo.saveAndFlush(nuevo);
+		logger.info("TraficoInternacional guardado con ID " + result.getId());
 		
-		
-		return nuevoCf;
+		return result;
 	}
 
 }

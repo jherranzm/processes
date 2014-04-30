@@ -83,27 +83,17 @@ public class ReasignacionService {
 	
 
 	public Reasignacion findById(Long id) {
-		return em.find(Reasignacion.class, id);
+		return repo.findOne(id);
 	}
 
 
 	public Reasignacion update(Reasignacion mod) throws ReasignacionNotFoundException {
-		Reasignacion original = em.find(Reasignacion.class, new Long(mod.getId()));
+		Reasignacion original = repo.findOne(new Long(mod.getId()));
 
 		if (original == null)
 			throw new ReasignacionNotFoundException();
 		
-		original.setCifNuevo(mod.getCifNuevo());
-		original.setNombreNuevo(mod.getNombreNuevo());
-		original.setCentroCoste(mod.getCentroCoste());
-		original.setNumeroCuenta(mod.getNumeroCuenta());
-		
-		//original.setComentarios(mod.getComentarios());
-
-		
-		
-		Reasignacion result = em.merge(original);
-		em.flush();
+		Reasignacion result = repo.saveAndFlush(mod);
 		logger.info("Reasignacion " + result.toString());
 		return result;
 	}
@@ -111,14 +101,11 @@ public class ReasignacionService {
 
 	public Reasignacion create(Reasignacion nuevo) {
 		
-		
 		logger.info("Guardamos el Reasignacion...");
-		em.persist(nuevo);
-		em.flush();
-		logger.info("Reasignacion guardado con ID " + nuevo.getId());
+		Reasignacion result = repo.saveAndFlush(nuevo);
+		logger.info("Reasignacion guardado con ID " + result.getId());
 		
-		
-		return nuevo;
+		return result;
 	}
 
 }

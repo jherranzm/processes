@@ -89,35 +89,26 @@ public class ConceptoFacturableService {
 
 	@Transactional
 	public ConceptoFacturable update(ConceptoFacturable mod) throws ConceptoFacturableNotFoundException {
-		ConceptoFacturable cfOriginal = 
-				//em.find(ConceptoFacturable.class, new Long(mod.getId()));
-				repo.findOne(mod.getId());
+		ConceptoFacturable original = repo.findOne(mod.getId());
 
-		if (cfOriginal == null)
+		if (original == null)
 			throw new ConceptoFacturableNotFoundException();
 		
-		cfOriginal.setImporteAcuerdo(mod.getImporteAcuerdo());
-		cfOriginal.setPrecioEspecial(mod.getPrecioEspecial());
-		cfOriginal.setTipoPrecioEspecial(mod.getTipoPrecioEspecial());
-		
-		ConceptoFacturable cfResult = repo.saveAndFlush(cfOriginal);
-		logger.info("ConceptoFacturable " + cfResult.toString());
-		return cfResult;
+		ConceptoFacturable result = repo.saveAndFlush(original);
+		logger.info("ConceptoFacturable " + result.toString());
+		return result;
 	}
 
 
 	@Transactional
-	public ConceptoFacturable create(ConceptoFacturable nuevoCf) {
-		
+	public ConceptoFacturable create(ConceptoFacturable nuevo) {
 		
 		logger.info("Guardamos el ConceptoFacturable...");
-//		em.persist(nuevoCf);
-//		em.flush();
-		ConceptoFacturable ret = repo.saveAndFlush(nuevoCf);
-		logger.info("ConceptoFacturable guardado con ID " + ret.getId());
+		ConceptoFacturable result = repo.saveAndFlush(nuevo);
+		logger.info("ConceptoFacturable guardado con ID " + result.getId());
 		
 		
-		return ret;
+		return result;
 	}
 
 }

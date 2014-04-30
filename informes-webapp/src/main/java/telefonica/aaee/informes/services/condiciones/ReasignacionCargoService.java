@@ -75,34 +75,24 @@ public class ReasignacionCargoService {
 	
 	public Page<ReasignacionCargo> getPage(Integer pageNumber){
 		logger.info("Vamos a generar el request...");
-		PageRequest request =
-	            new PageRequest(pageNumber - 1, PAGE_SIZE);
+		PageRequest request = new PageRequest(pageNumber - 1, PAGE_SIZE);
 		logger.info("Tenemos el request:" + request.getPageNumber());
 	        return repo.findAll(request);
 	}
 	
 
 	public ReasignacionCargo findById(Long id) {
-		return em.find(ReasignacionCargo.class, id);
+		return repo.findOne(id);
 	}
 
 
 	public ReasignacionCargo update(ReasignacionCargo mod) throws ReasignacionCargoNotFoundException {
-		ReasignacionCargo original = em.find(ReasignacionCargo.class, new Long(mod.getId()));
+		ReasignacionCargo original = repo.findOne(new Long(mod.getId()));
 
 		if (original == null)
 			throw new ReasignacionCargoNotFoundException();
 		
-		original.setTipoDocReasignado(mod.getTipoDocReasignado());
-		original.setCifReasignado(mod.getCifReasignado());
-		original.setNombreClienteReasignado(mod.getNombreClienteReasignado());
-		
-		original.setComentarios(mod.getComentarios());
-
-		
-		
-		ReasignacionCargo result = em.merge(original);
-		em.flush();
+		ReasignacionCargo result = repo.saveAndFlush(mod);
 		logger.info("ReasignacionCargo " + result.toString());
 		return result;
 	}
@@ -110,14 +100,11 @@ public class ReasignacionCargoService {
 
 	public ReasignacionCargo create(ReasignacionCargo nuevo) {
 		
-		
 		logger.info("Guardamos el ReasignacionCargo...");
-		em.persist(nuevo);
-		em.flush();
-		logger.info("ReasignacionCargo guardado con ID " + nuevo.getId());
+		ReasignacionCargo result = repo.saveAndFlush(nuevo);
+		logger.info("ReasignacionCargo guardado con ID " + result.getId());
 		
-		
-		return nuevo;
+		return result;
 	}
 
 }

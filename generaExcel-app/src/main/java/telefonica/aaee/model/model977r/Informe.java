@@ -32,7 +32,7 @@ public class Informe
 	
 	@ManyToMany
 	@JoinTable(
-			name="tbl_Informe_Pestanya", 
+			name="tbl_informe_pestanya", 
 	        joinColumns=@JoinColumn(name="informe_id"),
 	        inverseJoinColumns=@JoinColumn(name="pestanya_id")
 			)

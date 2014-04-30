@@ -83,25 +83,17 @@ public class TraficoService {
 	
 
 	public Trafico findById(Long id) {
-		return em.find(Trafico.class, id);
+		return repo.findOne(id);
 	}
 
 
 	public Trafico update(Trafico mod) throws TraficoNotFoundException {
-		Trafico original = em.find(Trafico.class, new Long(mod.getId()));
+		Trafico original = repo.findOne(mod.getId());
 
 		if (original == null)
 			throw new TraficoNotFoundException();
 		
-		original.setEstLlamada(mod.getEstLlamada());
-		original.setPrecioPorMinuto(mod.getPrecioPorMinuto());
-		original.setPorcentajeDescuento(mod.getPorcentajeDescuento());
-		original.setPrecioEspecial(mod.getPrecioEspecial());
-
-		
-		
-		Trafico result = em.merge(original);
-		em.flush();
+		Trafico result = repo.saveAndFlush(mod);
 		logger.info("Trafico " + result.toString());
 		return result;
 	}
@@ -109,14 +101,11 @@ public class TraficoService {
 
 	public Trafico create(Trafico nuevo) {
 		
-		
 		logger.info("Guardamos el Trafico...");
-		em.persist(nuevo);
-		em.flush();
-		logger.info("Trafico guardado con ID " + nuevo.getId());
+		Trafico result = repo.saveAndFlush(nuevo);
+		logger.info("Reasignacion guardado con ID " + result.getId());
 		
-		
-		return nuevo;
+		return result;
 	}
 
 }

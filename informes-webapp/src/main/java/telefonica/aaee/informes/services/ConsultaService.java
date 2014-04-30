@@ -85,7 +85,7 @@ public class ConsultaService {
 	
 
 	public Consulta findById(Long id) {
-		return em.find(Consulta.class, id);
+		return repo.findOne(id);
 	}
 
 
@@ -103,23 +103,14 @@ public class ConsultaService {
 
 
 	public Consulta update(Consulta modificada) throws ConsultaNotFoundException {
-		Consulta consulta = em.find(Consulta.class, new Long(modificada.getId()));
+		Consulta consulta = repo.findOne(new Long(modificada.getId()));
 
 		if (consulta == null)
 			throw new ConsultaNotFoundException();
 
-		
-		logger.info("modificada.getNombre(): " + modificada.getNombre());
-		logger.info("modificada.getDefinicion(): " + modificada.getDefinicion());
-		consulta.setNombre(modificada.getNombre());
-		consulta.setDefinicion(modificada.getDefinicion());
-		
-		logger.info("consulta.getNombre(): " + consulta.getNombre());
-		logger.info("consulta.getDefinicion(): " + consulta.getDefinicion());
-		
-		consulta = em.merge(consulta);
-		em.flush();
-		return consulta;
+		Consulta result = repo.saveAndFlush(modificada);
+		logger.info("Consulta " + result.toString());
+		return result;
 	}
 
 
@@ -135,26 +126,13 @@ public class ConsultaService {
 	}
 
 
-	public Consulta create(Consulta nuevaConsulta) {
+	public Consulta create(Consulta nuevo) {
 		
-		logger.info("nuevaConsulta.getNombre(): " + nuevaConsulta.getNombre());
-		logger.info("nuevaConsulta.getDefinicion(): " + nuevaConsulta.getDefinicion());
+		logger.info("Guardamos el ConceptoFacturable...");
+		Consulta result = repo.saveAndFlush(nuevo);
+		logger.info("ConceptoFacturable guardado con ID " + result.getId());
 		
-		Consulta consulta = new Consulta.Builder()
-				.nombre(nuevaConsulta.getNombre())
-				.definicion(nuevaConsulta.getDefinicion())
-				.build();
-		
-		logger.info("consulta.getNombre(): " + consulta.getNombre());
-		logger.info("consulta.getDefinicion(): " + consulta.getDefinicion());
-		
-		logger.info("Guardamos la consulta...");
-		em.persist(consulta);
-		em.flush();
-		logger.info("consulta guardada con ID " + consulta.getId());
-		
-		
-		return consulta;
+		return result;
 	}
 
 }

@@ -81,43 +81,31 @@ public class PlantaPrecioEspecialService {
 	
 
 	public PlantaPrecioEspecial findById(Long id) {
-		return 
-				//em.find(PlantaPrecioEspecial.class, id);
-				repo.findOne(id);
+		return repo.findOne(id);
 	}
 
 
 	@Transactional
 	public PlantaPrecioEspecial update(PlantaPrecioEspecial mod) throws PlantaPrecioEspecialNotFoundException {
-		PlantaPrecioEspecial cfOriginal = 
-				//em.find(PlantaPrecioEspecial.class, new Long(mod.getId()));
-				repo.findOne(mod.getId());
+		PlantaPrecioEspecial original = repo.findOne(mod.getId());
 
-		if (cfOriginal == null)
+		if (original == null)
 			throw new PlantaPrecioEspecialNotFoundException();
 		
-		cfOriginal.setImporteAcuerdo(mod.getImporteAcuerdo());
-		cfOriginal.setPrecioEspecial(mod.getPrecioEspecial());
-		cfOriginal.setTipoPrecioEspecial(mod.getTipoPrecioEspecial());
-		
-		PlantaPrecioEspecial cfResult = repo.saveAndFlush(cfOriginal);
-		logger.info("PlantaPrecioEspecial " + cfResult.toString());
-		return cfResult;
+		PlantaPrecioEspecial result = repo.saveAndFlush(mod);
+		logger.info("PlantaPrecioEspecial " + result.toString());
+		return result;
 	}
 
 
 	@Transactional
-	public PlantaPrecioEspecial create(PlantaPrecioEspecial nuevoCf) {
-		
+	public PlantaPrecioEspecial create(PlantaPrecioEspecial nuevo) {
 		
 		logger.info("Guardamos el PlantaPrecioEspecial...");
-//		em.persist(nuevoCf);
-//		em.flush();
-		PlantaPrecioEspecial ret = repo.saveAndFlush(nuevoCf);
-		logger.info("PlantaPrecioEspecial guardado con ID " + ret.getId());
+		PlantaPrecioEspecial result = repo.saveAndFlush(nuevo);
+		logger.info("PlantaPrecioEspecial guardado con ID " + result.getId());
 		
-		
-		return ret;
+		return result;
 	}
 
 }

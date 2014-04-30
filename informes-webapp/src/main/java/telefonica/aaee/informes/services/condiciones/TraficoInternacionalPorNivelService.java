@@ -83,38 +83,29 @@ public class TraficoInternacionalPorNivelService {
 	
 
 	public TraficoInternacionalPorNivel findById(Long id) {
-		return em.find(TraficoInternacionalPorNivel.class, id);
+		return repo.findOne(id);
 	}
 
 
 	public TraficoInternacionalPorNivel update(TraficoInternacionalPorNivel mod) throws TraficoInternacionalPorNivelNotFoundException {
-		TraficoInternacionalPorNivel original = em.find(TraficoInternacionalPorNivel.class, new Long(mod.getId()));
+		TraficoInternacionalPorNivel original = repo.findOne(new Long(mod.getId()));
 
 		if (original == null)
 			throw new TraficoInternacionalPorNivelNotFoundException();
 		
-		original.setPrecioPorMinuto(mod.getPrecioPorMinuto());
-		original.setPrecioEspecial(mod.getPrecioEspecial());
-
-		
-		
-		TraficoInternacionalPorNivel result = em.merge(original);
-		em.flush();
+		TraficoInternacionalPorNivel result = repo.saveAndFlush(mod);
 		logger.info("TraficoInternacionalPorNivel " + result.toString());
 		return result;
 	}
 
 
-	public TraficoInternacionalPorNivel create(TraficoInternacionalPorNivel nuevoCf) {
-		
+	public TraficoInternacionalPorNivel create(TraficoInternacionalPorNivel nuevo) {
 		
 		logger.info("Guardamos el TraficoInternacionalPorNivel...");
-		em.persist(nuevoCf);
-		em.flush();
-		logger.info("TraficoInternacionalPorNivel guardado con ID " + nuevoCf.getId());
+		TraficoInternacionalPorNivel result = repo.saveAndFlush(nuevo);
+		logger.info("TraficoInternacionalPorNivel guardado con ID " + result.getId());
 		
-		
-		return nuevoCf;
+		return result;
 	}
 
 }
