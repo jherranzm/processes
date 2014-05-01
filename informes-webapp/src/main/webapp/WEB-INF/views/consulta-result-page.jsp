@@ -101,71 +101,100 @@
 
 
 		<div>
-			<a class="btn btn-primary btn-sm"
-				href="${pageContext.request.contextPath}/consulta/new.html"> <fmt:message
-					key="consulta.form.new.title" />
-			</a>
+			<div class="row">
+				<div class="col-lg-2">
+					<a class="btn btn-primary btn-sm"
+						href="${pageContext.request.contextPath}/consulta/new.html"> <fmt:message
+							key="consulta.form.new.title" />
+					</a>
+				</div>
+				<div class="col-lg-10">
+					<form:form method="POST" 
+						commandName="buscarForm"
+						class="form-horizontal"
+						action="${pageContext.request.contextPath}/consulta/search.html">
+						<div class="form-group">
+
+							<div class="row">
+								<div class="col-lg-6">
+									<input id="queBuscar" name="queBuscar" type="text"
+										class="form-control">
+								</div>
+								<div>
+									<button id="btn-save" type="submit" class="btn btn-primary btn-sm">
+										<spring:message text="missing" code="consulta.form.btn.search" />
+									</button>
+								</div>
+							</div>
+						</div>
+					</form:form>
+				</div>
+			</div>
 		</div>
-		
-		
+
+
 		<!-- Importante: pagination! -->
 		<c:set var="baseUrl" value="/consulta/pages" />
-		
+
 		<c:url var="firstUrl" value="${baseUrl}/1" />
 		<c:url var="lastUrl" value="${baseUrl}/${totalPages}" />
 		<c:url var="prevUrl" value="${baseUrl}/${currentIndex - 1}" />
 		<c:url var="nextUrl" value="${baseUrl}/${currentIndex + 1}" />
-		
+
 
 		<div id="pagination-up">
 			<%@ include file="/WEB-INF/views/include-pagination.jsp"%>
 		</div>
-		
+
 		<div>
 			<table
 				class="table table-hover table-striped table-bordered table-condensed">
-	        <thead>
-	          <tr>
-	            <th>#</th>
-	            <th>ID</th>
-	            <th><spring:message code="consulta.form.field.nombre" /></th>
-	            <th><spring:message code="consulta.form.field.definicion" /></th>
-	          </tr>
-	        </thead>
-	         <tbody>
-				<c:forEach items="${consultas}" var="consulta">
-			          <tr>
-			            <td><a href="${pageContext.request.contextPath}/consulta/delete/${consulta.id}.html"
-							class="btn btn-primary btn-xs">
-							<fmt:message key="consulta.form.btn.del" />
+				<thead>
+					<tr>
+						<th>#</th>
+						<th>ID</th>
+						<th><spring:message code="consulta.form.field.nombre" /></th>
+						<th><spring:message code="consulta.form.field.definicion" /></th>
+					</tr>
+				</thead>
+				<tbody>
+					<c:forEach items="${consultas}" var="consulta">
+						<tr>
+							<td><a
+								href="${pageContext.request.contextPath}/consulta/delete/${consulta.id}.html"
+								class="btn btn-primary btn-xs"> <fmt:message
+										key="consulta.form.btn.del" />
 							</a></td>
 
-			            <td><a href="${pageContext.request.contextPath}/consulta/edit/${consulta.id}.html">
-			            	<c:out value="${consulta.id}" />
-										</a></td>
-			            <td><a href="${pageContext.request.contextPath}/consulta/edit/${consulta.id}.html">
-			            	<c:out value="${consulta.nombre}" />
-										</a></td>
-			            <td><a href="${pageContext.request.contextPath}/consulta/edit/${consulta.id}.html">
-			            	<c:out value="${fn:substring(consulta.definicion, 0, 20)}" />
-										</a></td>
-			          </tr>
-	 		    </c:forEach>
-	          </tbody>
-	        </table>
-		
+							<td><a
+								href="${pageContext.request.contextPath}/consulta/edit/${consulta.id}.html">
+									<c:out value="${consulta.id}" />
+							</a></td>
+							<td><a
+								href="${pageContext.request.contextPath}/consulta/edit/${consulta.id}.html">
+									<c:out value="${consulta.nombre}" />
+							</a></td>
+							<td><a
+								href="${pageContext.request.contextPath}/consulta/edit/${consulta.id}.html">
+									<c:out value="${fn:substring(consulta.definicion, 0, 20)}" />
+							</a></td>
+						</tr>
+					</c:forEach>
+				</tbody>
+			</table>
+
 		</div>
 
 		<div id="pagination-down">
 			<%@ include file="/WEB-INF/views/include-pagination.jsp"%>
 		</div>
-		
+
 		<%@ include file="/WEB-INF/views/include-goHome.jsp"%>
-		
+
 	</div>
 
 
 	<%@ include file="/WEB-INF/views/include-jquery.jsp"%>
-	
+
 </body>
 </html>

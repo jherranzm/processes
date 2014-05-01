@@ -36,6 +36,7 @@ import telefonica.aaee.informes.model.Consulta;
 import telefonica.aaee.informes.services.ConsultaService;
 import telefonica.aaee.informes.services.InformeService;
 import telefonica.aaee.informes.validators.ConsultaFormValidator;
+import telefonica.aaee.informes.validators.SearchFormValidator;
 
 @Controller
 @RequestMapping("/consulta")
@@ -67,9 +68,14 @@ public class ConsultaController {
 	@Autowired
 	private ConsultaFormValidator consultaFormValidator;
 	
+	@Autowired
+	private SearchFormValidator searchFormValidator;
+
 	@InitBinder
 	private void initBinder(WebDataBinder binder) {
-		binder.setValidator(consultaFormValidator);
+		//binder.setValidator(consultaFormValidator);
+		//binder.setValidator(searchFormValidator);
+		binder.addValidators(consultaFormValidator, searchFormValidator);
 	}
 
 
@@ -104,6 +110,8 @@ public class ConsultaController {
 		ModelAndView modelAndView = new ModelAndView();
 		modelAndView.setViewName(CONSULTA_RESULT_PAGE);
 		
+		
+		
 		logger.info("Se ha recibido el parámetro {pageNumber} :{"+pageNumber+"}");
 		
 		//Seguridad
@@ -132,8 +140,6 @@ public class ConsultaController {
 	    modelAndView.addObject("currentIndex", current);
 	    modelAndView.addObject("totalPages", page.getTotalPages());
 	    modelAndView.addObject("pageSize", pageSize);
-		
-		//modelAndView.addObject("consultas", consultas);
 		
 		return modelAndView;
 	}	

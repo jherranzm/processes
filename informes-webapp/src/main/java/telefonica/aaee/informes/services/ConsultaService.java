@@ -11,7 +11,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.support.JpaEntityInformation;
 import org.springframework.data.jpa.repository.support.JpaMetamodelEntityInformation;
 import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
@@ -21,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import telefonica.aaee.informes.exceptions.ConsultaNotFoundException;
 import telefonica.aaee.informes.helpers.Constants;
 import telefonica.aaee.informes.model.Consulta;
+import telefonica.aaee.informes.services.specifications.ConsultaSpecifications;
 
 @Repository
 @Transactional
@@ -37,7 +37,7 @@ public class ConsultaService {
 	@PersistenceContext
 	private EntityManager em;
 	
-	private JpaRepository<Consulta, Long> repo;
+	private SimpleJpaRepository<Consulta, Long> repo;
 	
 
 	public ConsultaService() {
@@ -58,6 +58,10 @@ public class ConsultaService {
 
         logger.info(Constants.SEP_V + "Número de Consulta por Página:[" + repo.findAll(new PageRequest(0, PAGE_SIZE)).getNumberOfElements() + "]" + Constants.SEP_V);
 	
+        logger.info(Constants.SEP_V + "Número de Consultas con CCF:[" + repo.findAll(
+        		ConsultaSpecifications.searchByNombre("CCF")
+        		, new PageRequest(0, 1000)
+        		).getNumberOfElements() + "]" + Constants.SEP_V);
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -83,7 +87,24 @@ public class ConsultaService {
 	        return repo.findAll(request);
 	}
 	
+	public Page<Consulta> getPage(String search, Integer pageNumber){
+		logger.info("Vamos a generar el request...");
+		PageRequest request =
+	            new PageRequest(pageNumber - 1, PAGE_SIZE);
+		logger.info("Tenemos el request:" + request.getPageNumber());
+	        //return repo.findAll(request);
+		return repo.findAll(ConsultaSpecifications.searchByNombre(search), request);
+	}
 
+	public Page<Consulta> getPage(String search){
+		logger.info("Vamos a generar el request...");
+		PageRequest request =
+	            new PageRequest(0, 10000);
+		logger.info("Tenemos el request:" + request.getPageNumber());
+	        //return repo.findAll(request);
+		return repo.findAll(ConsultaSpecifications.searchByNombre(search), request);
+	}
+	
 	public Consulta findById(Long id) {
 		return repo.findOne(id);
 	}
