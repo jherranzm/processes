@@ -11,6 +11,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.support.JpaEntityInformation;
 import org.springframework.data.jpa.repository.support.JpaMetamodelEntityInformation;
 import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
@@ -89,19 +90,15 @@ public class ConsultaService {
 	
 	public Page<Consulta> getPage(String search, Integer pageNumber){
 		logger.info("Vamos a generar el request...");
-		PageRequest request =
-	            new PageRequest(pageNumber - 1, PAGE_SIZE);
+		PageRequest request = new PageRequest(pageNumber - 1, PAGE_SIZE);
 		logger.info("Tenemos el request:" + request.getPageNumber());
-	        //return repo.findAll(request);
 		return repo.findAll(ConsultaSpecifications.searchByNombre(search), request);
 	}
 
 	public Page<Consulta> getPage(String search){
 		logger.info("Vamos a generar el request...");
-		PageRequest request =
-	            new PageRequest(0, 10000);
+		PageRequest request = new PageRequest(0, 10000);
 		logger.info("Tenemos el request:" + request.getPageNumber());
-	        //return repo.findAll(request);
 		return repo.findAll(ConsultaSpecifications.searchByNombre(search), request);
 	}
 	
@@ -156,4 +153,6 @@ public class ConsultaService {
 		return result;
 	}
 
+
+	
 }

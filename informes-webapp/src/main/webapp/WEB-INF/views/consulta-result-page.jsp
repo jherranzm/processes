@@ -110,7 +110,7 @@
 				</div>
 				<div class="col-lg-10">
 					<form:form method="POST" 
-						commandName="buscarForm"
+						modelAttribute="searchForm"
 						class="form-horizontal"
 						action="${pageContext.request.contextPath}/consulta/search.html">
 						<div class="form-group">

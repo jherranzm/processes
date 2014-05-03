@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -73,9 +74,7 @@ public class ConsultaController {
 
 	@InitBinder
 	private void initBinder(WebDataBinder binder) {
-		//binder.setValidator(consultaFormValidator);
-		//binder.setValidator(searchFormValidator);
-		binder.addValidators(consultaFormValidator, searchFormValidator);
+		binder.addValidators(consultaFormValidator);
 	}
 
 
@@ -88,8 +87,6 @@ public class ConsultaController {
 	public ModelAndView listaConsultas() {
 		ModelAndView modelAndView = new ModelAndView();
 		modelAndView.setViewName(CONSULTA_RESULT_PAGE);
-		
-//		List<Consulta> consultas = consultaService.findAll();
 		
 		List<Consulta> consultas = new ArrayList<Consulta>();
 		Iterable<Consulta> lista = consultaService.findAll(new PageRequest(0,10));
@@ -119,27 +116,7 @@ public class ConsultaController {
 		
 		Page<Consulta> page = consultaService.getPage(pageNumber);
 		
-		logger.info("Se ha recibido page :{"+page.toString()+"}");
-		
-		for(Consulta c : page){
-			logger.info(c.toString());
-		}
-
-		int current = page.getNumber() + 1;
-	    int begin = Math.max(1, current - 5);
-	    int end = Math.min(begin + 10, page.getTotalPages());
-	    int pageSize = page.getNumberOfElements();
-		
-		logger.info("current :{"+current+"}");
-		logger.info("begin :{"+begin+"}");
-		logger.info("end :{"+end+"}");
-	    
-	    modelAndView.addObject("consultas", page.getContent());
-	    modelAndView.addObject("beginIndex", begin);
-	    modelAndView.addObject("endIndex", end);
-	    modelAndView.addObject("currentIndex", current);
-	    modelAndView.addObject("totalPages", page.getTotalPages());
-	    modelAndView.addObject("pageSize", pageSize);
+		fillPage(modelAndView, page);
 		
 		return modelAndView;
 	}	
@@ -148,7 +125,6 @@ public class ConsultaController {
 	
 	@RequestMapping(value="/edit/{id}", method=RequestMethod.GET) 
 	public ModelAndView editConsulta(
-			//@PathVariable Integer id,
 			@PathVariable Long id,
             final RedirectAttributes redirectAttributes) throws ConsultaNotFoundException { 
 		
@@ -243,11 +219,6 @@ public class ConsultaController {
             final RedirectAttributes redirectAttributes, 
             Locale locale) {
 		
-//		Assert.notNull(consultasqlForm.getNombre());
-//		Assert.hasText(consultasqlForm.getNombre());
-//		Assert.notNull(consultasqlForm.getDefinicion());
-//		Assert.hasText(consultasqlForm.getDefinicion());
-		
 		logger.info(String.format("Consulta.Nombre : [%s]", consultasqlForm.getNombre()));
 		logger.info(String.format("Consulta.Definicion : [%s]", consultasqlForm.getDefinicion()));
 		
@@ -312,8 +283,48 @@ public class ConsultaController {
 		}
 		return modelAndView;
 	}	
+	
+	
+	@RequestMapping(value="/search", 
+			method=RequestMethod.POST)
+	public ModelAndView search(
+			@RequestParam("queBuscar") String queBuscar,
+            final RedirectAttributes redirectAttributes, 
+            Locale locale) {
+		
+		logger.info("Search!" + "[" + queBuscar + "]");
+		
+		ModelAndView modelAndView = new ModelAndView();
+		modelAndView.setViewName(CONSULTA_RESULT_PAGE);
+		
+		Page<Consulta> page = consultaService.getPage(queBuscar);
+		
+		fillPage(modelAndView, page);
+		
+		return modelAndView;
+	}
 
 
+	private void fillPage(ModelAndView modelAndView, Page<Consulta> page) {
+		int current = page.getNumber() + 1;
+	    int begin = Math.max(1, current - 5);
+	    int end = Math.min(begin + 10, page.getTotalPages());
+	    int pageSize = page.getNumberOfElements();
+		
+		logger.info("current :{"+current+"}");
+		logger.info("begin :{"+begin+"}");
+		logger.info("end :{"+end+"}");
+	    
+	    modelAndView.addObject("beginIndex", begin);
+	    modelAndView.addObject("endIndex", end);
+	    modelAndView.addObject("currentIndex", current);
+	    modelAndView.addObject("totalPages", page.getTotalPages());
+	    modelAndView.addObject("pageSize", pageSize);
+
+	    modelAndView.addObject("consultas", page.getContent());
+	} 
+	
+	
 	private Consulta formToConsulta(ConsultaForm consultaForm) {
 		Consulta mod = new Consulta();
 		
