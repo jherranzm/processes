@@ -5,8 +5,6 @@ import java.util.List;
 import java.util.Locale;
 
 import javax.annotation.Resource;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.validation.Valid;
 
 import org.apache.commons.logging.Log;
@@ -25,6 +23,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -59,9 +58,6 @@ public class PestanyaController {
 	@Autowired
 	private ConsultaService consultaService;
 
-	@PersistenceContext(unitName = "JPAInformesWebApp")
-	private EntityManager entityManager;	
-	
 	@Autowired
 	private PestanyaFormValidator pestanyaFormValidator;
 	
@@ -75,7 +71,7 @@ public class PestanyaController {
 	@RequestMapping(value="/new")
 	public ModelAndView pestanyasqlPage() {
 		List<Integer> numsFilaInicial = new ArrayList<Integer>();
-		for(int k=1; k<12;k++){
+		for(int k=0; k<12;k++){
 			numsFilaInicial.add(new Integer(k));
 		}
 		
@@ -166,7 +162,7 @@ public class PestanyaController {
 			List<Consulta> consultas = consultaService.findAll();
 			modelAndView.addObject("consultas", consultas);
 			List<Integer> numsFilaInicial = new ArrayList<Integer>();
-			for(int k=1; k<12;k++){
+			for(int k=0; k<12;k++){
 				numsFilaInicial.add(new Integer(k));
 			}
 			modelAndView.addObject("numsFilaInicial", numsFilaInicial);
@@ -205,6 +201,45 @@ public class PestanyaController {
 		return modelAndView;
 	}
 
+	@RequestMapping(value="/search", 
+			method=RequestMethod.POST)
+	public ModelAndView search(
+			@RequestParam("queBuscar") String queBuscar,
+            final RedirectAttributes redirectAttributes, 
+            Locale locale) {
+		
+		logger.info("Search!" + "[" + queBuscar + "]");
+		
+		ModelAndView modelAndView = new ModelAndView();
+		modelAndView.setViewName(PESTANYA_RESULT_PAGE);
+		
+		Page<Pestanya> page = pestanyaService.getPage(queBuscar);
+		
+		fillPage(modelAndView, page);
+		
+		return modelAndView;
+	}
+
+
+	private void fillPage(ModelAndView modelAndView, Page<Pestanya> page) {
+		int current = page.getNumber() + 1;
+	    int begin = Math.max(1, current - 5);
+	    int end = Math.min(begin + 10, page.getTotalPages());
+	    int pageSize = page.getNumberOfElements();
+		
+		logger.info("current :{"+current+"}");
+		logger.info("begin :{"+begin+"}");
+		logger.info("end :{"+end+"}");
+	    
+	    modelAndView.addObject("beginIndex", begin);
+	    modelAndView.addObject("endIndex", end);
+	    modelAndView.addObject("currentIndex", current);
+	    modelAndView.addObject("totalPages", page.getTotalPages());
+	    modelAndView.addObject("pageSize", pageSize);
+
+	    modelAndView.addObject("pestanyes", page.getContent());
+	} 
+	
 	
 	@RequestMapping(value="/edit/{id}", method=RequestMethod.GET) 
 	public ModelAndView edit(

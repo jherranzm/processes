@@ -5,7 +5,7 @@
 <html lang="en">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-	<title><fmt:message key="pestanya.form.new.title" /></title>
+	<title><spring:message text="missing" code="pestanya.form.new.title" /></title>
 
 	<%@ include file="/WEB-INF/views/include-css.jsp" %>
 
@@ -31,7 +31,7 @@
 			
  	       <div class="panel-heading">
 	          <h3 class="panel-title">
-					<fmt:message key="pestanya.form.new.title" />
+					<spring:message text="missing" code="pestanya.form.new.title" />
 	          </h3>
  	       </div>
         
@@ -90,11 +90,11 @@
 						<div class="col-md-offset-4 col-md-4">
 							<p class="text-center">
 								<button id="btn-save" type="submit" class="btn btn-primary">
-									<fmt:message key="pestanya.form.btn.save" />
+									<spring:message text="missing" code="pestanya.form.btn.save" />
 								</button>
 								<a href="${pageContext.request.contextPath}/pestanya/pages/1"
-									id="btn-back" class="btn btn-default"> <fmt:message
-										key="pestanya.form.btn.back" />
+									id="btn-back" class="btn btn-default"> 
+									<spring:message text="missing" code="pestanya.form.btn.back" />
 								</a>
 							</p>
 						</div>

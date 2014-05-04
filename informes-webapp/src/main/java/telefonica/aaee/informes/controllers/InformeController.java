@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -66,9 +67,6 @@ public class InformeController {
 	@Autowired
 	private ConsultaService consultaService;
 
-//	@PersistenceContext(unitName = "JPAInformesWebApp")
-//	private EntityManager entityManager;	
-	
 	@Autowired
 	private InformeFormValidator informeValidator;
 
@@ -153,6 +151,47 @@ public class InformeController {
 		}
 		return modelAndView;
 	}
+
+	
+	@RequestMapping(value="/search", 
+			method=RequestMethod.POST)
+	public ModelAndView search(
+			@RequestParam("queBuscar") String queBuscar,
+            final RedirectAttributes redirectAttributes, 
+            Locale locale) {
+		
+		logger.info("Search!" + "[" + queBuscar + "]");
+		
+		ModelAndView modelAndView = new ModelAndView();
+		modelAndView.setViewName(INFORME_RESULT_PAGE);
+		
+		Page<Informe> page = informeService.getPage(queBuscar);
+		
+		fillPage(modelAndView, page);
+		
+		return modelAndView;
+	}
+
+
+	private void fillPage(ModelAndView modelAndView, Page<Informe> page) {
+		int current = page.getNumber() + 1;
+	    int begin = Math.max(1, current - 5);
+	    int end = Math.min(begin + 10, page.getTotalPages());
+	    int pageSize = page.getNumberOfElements();
+		
+		logger.info("current :{"+current+"}");
+		logger.info("begin :{"+begin+"}");
+		logger.info("end :{"+end+"}");
+	    
+	    modelAndView.addObject("beginIndex", begin);
+	    modelAndView.addObject("endIndex", end);
+	    modelAndView.addObject("currentIndex", current);
+	    modelAndView.addObject("totalPages", page.getTotalPages());
+	    modelAndView.addObject("pageSize", pageSize);
+
+	    modelAndView.addObject("informes", page.getContent());
+	} 
+	
 
 
 	@RequestMapping(value="/list")

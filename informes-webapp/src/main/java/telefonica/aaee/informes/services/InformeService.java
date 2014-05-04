@@ -11,7 +11,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.support.JpaEntityInformation;
 import org.springframework.data.jpa.repository.support.JpaMetamodelEntityInformation;
 import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
@@ -22,6 +21,7 @@ import telefonica.aaee.informes.exceptions.InformeNotFoundException;
 import telefonica.aaee.informes.helpers.Constants;
 import telefonica.aaee.informes.model.Informe;
 import telefonica.aaee.informes.model.InformePestanya;
+import telefonica.aaee.informes.services.specifications.InformeSpecifications;
 
 
 @Repository
@@ -39,7 +39,7 @@ public class InformeService {
 	@PersistenceContext
 	private EntityManager em;
 	
-	private JpaRepository<Informe, Long> repo;
+	private SimpleJpaRepository<Informe, Long> repo;
 	
 
 	public InformeService() {
@@ -68,6 +68,10 @@ public class InformeService {
 		return lista;
 	}
 
+	public Iterable<Informe> findAll(PageRequest page) {
+		return repo.findAll(page);
+	}
+	
 	public Informe findById(Long id) {
 		return em.find(Informe.class, id);
 	}
@@ -179,14 +183,19 @@ public class InformeService {
 	        return repo.findAll(request);
 	}
 	
-//	public boolean applyInforme(Long informeId){
-//		logger.info("Vamos a generar el request...");
-//		
-//		em.createNativeQuery("CALL 977r.977r_SP_APPLY_COND_ALL( ? );");
-//		
-//		return true;
-//	}
+	public Page<Informe> getPage(String search, Integer pageNumber){
+		logger.info("Vamos a generar el request...");
+		PageRequest request = new PageRequest(pageNumber - 1, PAGE_SIZE);
+		logger.info("Tenemos el request:" + request.getPageNumber());
+		return repo.findAll(InformeSpecifications.searchByNombre(search), request);
+	}
 
+	public Page<Informe> getPage(String search){
+		logger.info("Vamos a generar el request...");
+		PageRequest request = new PageRequest(0, 10000);
+		logger.info("Tenemos el request:" + request.getPageNumber());
+		return repo.findAll(InformeSpecifications.searchByNombre(search), request);
+	}
 	
 	@PostConstruct
     public void init() {

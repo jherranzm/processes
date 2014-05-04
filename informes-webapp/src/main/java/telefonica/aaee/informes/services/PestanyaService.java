@@ -11,7 +11,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.support.JpaEntityInformation;
 import org.springframework.data.jpa.repository.support.JpaMetamodelEntityInformation;
 import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
@@ -21,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import telefonica.aaee.informes.exceptions.PestanyaNotFoundException;
 import telefonica.aaee.informes.helpers.Constants;
 import telefonica.aaee.informes.model.Pestanya;
+import telefonica.aaee.informes.services.specifications.PestanyaSpecifications;
 
 @Repository
 @Transactional
@@ -35,7 +35,7 @@ public class PestanyaService {
 	private EntityManager em;
 	
 
-	private JpaRepository<Pestanya, Long> repo;
+	private SimpleJpaRepository<Pestanya, Long> repo;
 
 	public PestanyaService() {
 	}
@@ -55,6 +55,10 @@ public class PestanyaService {
 		
 		
 		return lista;
+	}
+	
+	public Iterable<Pestanya> findAll(PageRequest page) {
+		return repo.findAll(page);
 	}
 	
 	public Pestanya findById(Long id) {
@@ -150,6 +154,21 @@ public class PestanyaService {
 		logger.info("Tenemos el request:" + request.getPageNumber());
 	        return repo.findAll(request);
 	}
+
+	public Page<Pestanya> getPage(String search, Integer pageNumber){
+		logger.info("Vamos a generar el request...");
+		PageRequest request = new PageRequest(pageNumber - 1, PAGE_SIZE);
+		logger.info("Tenemos el request:" + request.getPageNumber());
+		return repo.findAll(PestanyaSpecifications.searchByNombre(search), request);
+	}
+
+	public Page<Pestanya> getPage(String search){
+		logger.info("Vamos a generar el request...");
+		PageRequest request = new PageRequest(0, 10000);
+		logger.info("Tenemos el request:" + request.getPageNumber());
+		return repo.findAll(PestanyaSpecifications.searchByNombre(search), request);
+	}
+	
 
 	@PostConstruct
     public void init() {

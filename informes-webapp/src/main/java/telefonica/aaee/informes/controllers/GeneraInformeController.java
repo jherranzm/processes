@@ -41,9 +41,9 @@ public class GeneraInformeController {
 	
 	protected final Log logger = LogFactory.getLog(getClass());
 	
-	private static final String ENCODING = "ISO-8859-1";
+//	private static final String ENCODING = "ISO-8859-1";
 	private static final String GENERA_INFORME_FORM_NEW = "genera-informe-form-new";
-	private static final String GENERA_INFORME_FORM_EDIT = "genera-informe-form-edit";
+//	private static final String GENERA_INFORME_FORM_EDIT = "genera-informe-form-edit";
 	private static final String GENERA_INFORME_RESULT_PAGE = "genera-informe-result-page";
 
 	

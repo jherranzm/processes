@@ -4,11 +4,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title><spring:message code="pestanya.form.list.title" /></title>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title><spring:message code="pestanya.form.list.title" text="missing" /></title>
 
-<%@ include file="/WEB-INF/views/include-css.jsp"%>
-
+	<%@ include file="/WEB-INF/views/include-css.jsp"%>
 
 </head>
 <body>
@@ -34,7 +33,7 @@
 
 					<div class="panel-heading">
 						<h3 class="panel-title">
-							<fmt:message key="pestanya.form.new.title" />
+							<spring:message text="missing" code="pestanya.form.new.title" />
 						</h3>
 					</div>
 
@@ -76,10 +75,35 @@
 
 
 		<div>
-			<a class="btn btn-primary btn-xs"
-				href="${pageContext.request.contextPath}/pestanya/new.html"> <fmt:message
-					key="pestanya.form.new.title" />
-			</a>
+			<div class="row">
+				<div class="col-lg-2">
+					<a class="btn btn-primary btn-sm"
+						href="${pageContext.request.contextPath}/pestanya/new.html"> 
+						<spring:message text="missing" code="pestanya.form.new.title" />
+					</a>
+				</div>
+				<div class="col-lg-10">
+					<form:form method="POST" 
+						modelAttribute="searchForm"
+						class="form-horizontal"
+						action="${pageContext.request.contextPath}/pestanya/search.html">
+						<div class="form-group">
+
+							<div class="row">
+								<div class="col-lg-6">
+									<input id="queBuscar" name="queBuscar" type="text"
+										class="form-control">
+								</div>
+								<div>
+									<button id="btn-save" type="submit" class="btn btn-primary btn-sm">
+										<spring:message text="missing" code="pestanya.form.btn.search" />
+									</button>
+								</div>
+							</div>
+						</div>
+					</form:form>
+				</div>
+			</div>
 		</div>
 		
 		<!-- Importante: pagination! -->
@@ -114,8 +138,8 @@
 						<tr>
 							<td><a
 								href="${pageContext.request.contextPath}/pestanya/delete/${pestanya.id}.html"
-								class="btn btn-primary btn-xs"> <fmt:message
-										key="pestanya.form.btn.del" />
+								class="btn btn-primary btn-xs"> 
+								<spring:message text="missing" code="pestanya.form.btn.del" />
 							</a></td>
 
 							<td><a

@@ -6,7 +6,7 @@
 <html lang="en">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title><fmt:message key="muploadii.form.title.text" /></title>
+<title><spring:message text="missing" code="muploadii.form.title.text" /></title>
 
 <%@ include file="/WEB-INF/views/include-css.jsp"%>
 
@@ -23,7 +23,7 @@
 
 			<div class="page-header">
 				<h1>
-					<fmt:message key="muploadii.form.title.text" />
+					<spring:message text="missing" code="muploadii.form.title.text" />
 				</h1>
 			</div>
 
@@ -32,11 +32,11 @@
 				modelAttribute="uploadForm" enctype="multipart/form-data">
 
 				<p>
-					<fmt:message key="mupload.form.info.text" />
+					<spring:message text="missing" code="mupload.form.info.text" />
 				</p>
 				<div>
-					<a id="addFile" class="btn btn-primary" href="#"> <fmt:message
-							key="mupload.form.btn.addfile.text" />
+					<a id="addFile" class="btn btn-primary" href="#"> 
+					<spring:message text="missing" code="mupload.form.btn.addfile.text" />
 					</a>
 				</div>
 
@@ -52,7 +52,7 @@
 				<br />
 				<input 
 					type="submit"
-					value="<fmt:message key="mupload.form.btn.upload.text" />" />
+					value="<spring:message text="missing" code="mupload.form.btn.upload.text" />" />
 
 					 
 					 <!-- Spring Security -->

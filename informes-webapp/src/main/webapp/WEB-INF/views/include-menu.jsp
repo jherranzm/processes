@@ -11,8 +11,8 @@
 			</button>
 
 			<a href="${pageContext.request.contextPath}/index.jsp"
-				class="navbar-brand"> <spring:message code="app.name"
-					text="missing" />
+				class="navbar-brand"> 
+				<spring:message text="missing"  code="app.name" />
 			</a>
 		</div>
 

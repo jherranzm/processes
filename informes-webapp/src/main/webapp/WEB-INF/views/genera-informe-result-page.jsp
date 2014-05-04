@@ -7,7 +7,7 @@
 <html lang="en">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title><fmt:message key="genera.informe.success.title.text" /></title>
+<title><spring:message text="missing" code="genera.informe.success.title.text" /></title>
 
 
 <%@ include file="/WEB-INF/views/include-css.jsp"%>
@@ -24,13 +24,13 @@
 
 			<div class="page-header">
 				<h1>
-					<fmt:message key="genera.informe.success.title.text" />
+					<spring:message text="missing" code="genera.informe.success.title.text" />
 				</h1>
 			</div><!-- .page-header -->
 
 			<div id="urls">
 				<h3 style="color: blue;">
-					<fmt:message key="genera.informe.success.info.text" />
+					<spring:message text="missing" code="genera.informe.success.info.text" />
 				</h3>
 				<br>
 				<c:forEach items="${FORM.urls}" var="url">

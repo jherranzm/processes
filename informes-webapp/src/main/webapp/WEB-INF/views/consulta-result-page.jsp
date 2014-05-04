@@ -4,12 +4,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title><spring:message code="consulta.form.list.title"
-		text="missing" /></title>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title><spring:message code="consulta.form.list.title" text="missing" /></title>
 
-<%@ include file="/WEB-INF/views/include-css.jsp"%>
-
+	<%@ include file="/WEB-INF/views/include-css.jsp"%>
 
 </head>
 <body>
@@ -34,7 +32,7 @@
 
 					<div class="panel-heading">
 						<h3 class="panel-title">
-							<fmt:message key="consulta.form.new.title" />
+							<spring:message text="missing" code="consulta.form.new.title" />
 						</h3>
 					</div>
 
@@ -44,13 +42,13 @@
 						<!-- inicio contenido -->
 						<div class="row">
 							<div class="col-lg-3">
-								<spring:message code="consulta.form.field.nombre" />
+								<spring:message text="missing" code="consulta.form.field.nombre" />
 							</div>
 							<div class="col-lg-9">${nuevaConsulta.nombre}.</div>
 						</div>
 						<div class="row">
 							<div class="col-lg-3">
-								<spring:message code="consulta.form.field.definicion" />
+								<spring:message text="missing" code="consulta.form.field.definicion" />
 							</div>
 							<div class="col-lg-9">${nuevaConsulta.definicion}.</div>
 						</div>
@@ -71,7 +69,7 @@
 
 					<div class="panel-heading">
 						<h3 class="panel-title">
-							<fmt:message key="consulta.form.deleted.title" />
+							<spring:message text="missing" code="consulta.form.deleted.title" />
 						</h3>
 					</div>
 
@@ -81,13 +79,13 @@
 						<!-- inicio contenido -->
 						<div class="row">
 							<div class="col-lg-3">
-								<spring:message code="consulta.form.field.nombre" />
+								<spring:message text="missing" code="consulta.form.field.nombre" />
 							</div>
 							<div class="col-lg-9">${deletedConsulta.nombre}.</div>
 						</div>
 						<div class="row">
 							<div class="col-lg-3">
-								<spring:message code="consulta.form.field.definicion" />
+								<spring:message text="missing" code="consulta.form.field.definicion" />
 							</div>
 							<div class="col-lg-9">${deletedConsulta.definicion}.</div>
 						</div>
@@ -104,8 +102,8 @@
 			<div class="row">
 				<div class="col-lg-2">
 					<a class="btn btn-primary btn-sm"
-						href="${pageContext.request.contextPath}/consulta/new.html"> <fmt:message
-							key="consulta.form.new.title" />
+						href="${pageContext.request.contextPath}/consulta/new.html"> 
+						<spring:message text="missing" code="consulta.form.new.title" />
 					</a>
 				</div>
 				<div class="col-lg-10">
@@ -162,8 +160,8 @@
 						<tr>
 							<td><a
 								href="${pageContext.request.contextPath}/consulta/delete/${consulta.id}.html"
-								class="btn btn-primary btn-xs"> <fmt:message
-										key="consulta.form.btn.del" />
+								class="btn btn-primary btn-xs"> 
+								<spring:message text="missing" code="consulta.form.btn.del" />
 							</a></td>
 
 							<td><a

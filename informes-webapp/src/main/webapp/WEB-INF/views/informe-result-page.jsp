@@ -5,7 +5,7 @@
 <html lang="en">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-	<title><fmt:message key="informe.form.list.title" /></title>
+	<title><spring:message code="informe.form.list.title" text="missing" /></title>
 
 	<%@ include file="/WEB-INF/views/include-css.jsp" %>
 
@@ -34,7 +34,7 @@
 
 					<div class="panel-heading">
 						<h3 class="panel-title">
-							<fmt:message key="informe.form.new.title" />
+							<spring:message text="missing" code="informe.form.new.title" />
 						</h3>
 					</div>
 
@@ -58,12 +58,35 @@
 	
 
 		<div>
-			<p>
-				<a class="btn btn-primary" 
-					href="${pageContext.request.contextPath}/informe/new.html">
-					<fmt:message key="informe.form.new.title" />
-				</a>
-			</p>
+			<div class="row">
+				<div class="col-lg-2">
+					<a class="btn btn-primary btn-sm"
+						href="${pageContext.request.contextPath}/informe/new.html"> 
+						<spring:message text="missing" code="informe.form.new.title" />
+					</a>
+				</div>
+				<div class="col-lg-10">
+					<form:form method="POST" 
+						modelAttribute="searchForm"
+						class="form-horizontal"
+						action="${pageContext.request.contextPath}/informe/search.html">
+						<div class="form-group">
+
+							<div class="row">
+								<div class="col-lg-6">
+									<input id="queBuscar" name="queBuscar" type="text"
+										class="form-control">
+								</div>
+								<div>
+									<button id="btn-save" type="submit" class="btn btn-primary btn-sm">
+										<spring:message text="missing" code="informe.form.btn.search" />
+									</button>
+								</div>
+							</div>
+						</div>
+					</form:form>
+				</div>
+			</div>
 		</div>
 
 		<!-- Importante: pagination! -->
@@ -96,8 +119,8 @@
 						<tr>
 							<td><a
 								href="${pageContext.request.contextPath}/informe/delete/${informe.id}.html"
-								class="btn btn-primary btn-xs"> <fmt:message
-										key="informe.form.btn.del" />
+								class="btn btn-primary btn-xs"> 
+								<spring:message text="missing" code="informe.form.btn.del" />
 							</a></td>
 
 							<td><a

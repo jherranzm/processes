@@ -22,22 +22,22 @@
 
 			<div>
 <%-- 				<sec:authorize access="hasAnyRole('ADMIN', 'ROLE_ADMIN')"> --%>
-				<p>
-					<a href="${pageContext.request.contextPath}/role/list.html">
-						<spring:message code="role.form.list.title" text="missing" />
-						<!-- 					Lista Consultas -->
-					</a>
-				</p>
+<!-- 				<p> -->
+<%-- 					<a href="${pageContext.request.contextPath}/role/list.html"> --%>
+<%-- 						<spring:message code="role.form.list.title" text="missing" /> --%>
+<!-- 											Lista Consultas -->
+<!-- 					</a> -->
+<!-- 				</p> -->
 				
-				<p>
-					<a href="${pageContext.request.contextPath}/usuario/list.html">
-						<spring:message code="usuario.form.list.title" text="missing" />
-						<!-- 					Lista Consultas -->
-					</a>
-				</p>
+<!-- 				<p> -->
+<%-- 					<a href="${pageContext.request.contextPath}/usuario/list.html"> --%>
+<%-- 						<spring:message code="usuario.form.list.title" text="missing" /> --%>
+<!-- 											Lista Consultas -->
+<!-- 					</a> -->
+<!-- 				</p> -->
+<!-- 				<hr> -->
 <%-- 				</sec:authorize> --%>
 				
-				<hr>
 
 				<p>
 					<a href="${pageContext.request.contextPath}/consulta/pages/1">
