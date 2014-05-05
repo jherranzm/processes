@@ -79,7 +79,7 @@ public class ConsultaController {
 
 
 	@RequestMapping(value="/new")
-	public ModelAndView consultaPage() {
+	public ModelAndView nueva() {
 		return new ModelAndView(CONSULTA_FORM_NEW, "consultaForm", new ConsultaForm());
 	}
 	

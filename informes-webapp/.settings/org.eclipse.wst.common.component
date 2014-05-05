@@ -6,6 +6,9 @@
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/resources"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/test/resources"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/webapp"/>
+        <dependent-module archiveName="Capture977App-1.1.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/capture-977r-app/capture-977r-app">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
         <dependent-module archiveName="generaExcel-app-1.1.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/generaExcel-app/generaExcel-app">
             <dependency-type>uses</dependency-type>
         </dependent-module>

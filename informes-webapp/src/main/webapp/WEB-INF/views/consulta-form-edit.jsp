@@ -49,7 +49,9 @@
 						</label>
 						<div class="col-lg-10">
 							<input id="nombre" name="nombre" type="text" 
-							class="form-control" placeholder="${consulta.nombre}" value="${consulta.nombre}">
+							class="form-control" 
+							placeholder="${consulta.nombre}" 
+							value="${consulta.nombre}">
 						</div> 
 					</div>
 		
@@ -58,7 +60,9 @@
 							<spring:message code="consulta.form.field.definicion" />
 						</label> 
 						<div class="col-lg-10">
-							<textarea class="form-control" id="definicion" name="definicion" rows="5" placeholder="${consulta.definicion}">${consulta.definicion}</textarea>
+							<textarea class="form-control" 
+							id="definicion" name="definicion" rows="5" 
+							placeholder="${consulta.definicion}">${consulta.definicion}</textarea>
 						</div> 
 					</div>
 

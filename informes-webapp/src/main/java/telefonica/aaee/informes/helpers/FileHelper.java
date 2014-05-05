@@ -37,4 +37,48 @@ public class FileHelper {
 		}
 		return tempDir;
 	}
+
+	public static String createUploadDirFor977rFiles(String tempDir) {
+		/**
+		 * Si no está la carpeta del día creada, se crea con el formato yyyy-MM-dd
+		 */
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		Date now = new Date();
+		String nowString = sdf.format(now);
+		nowString += System.getProperty("file.separator");
+		
+		logger.info(String.format("file.separator:[%s]", System.getProperty("file.separator")));
+		logger.info(String.format("nowString:[%s]", nowString));
+		
+		if (!tempDir.endsWith("/") || tempDir.endsWith("\\")){
+			tempDir.concat(System.getProperty("file.separator"));
+		}
+		logger.info(String.format("tempDir:[%s]",tempDir));
+		
+		tempDir += nowString;
+		
+		File dir = new File(tempDir);
+		if(!dir.exists()){
+			logger.info(String.format("Creando directorio [%s] ...",tempDir));
+			if(dir.mkdir()){
+				logger.info(String.format("Directorio [%s] creado!",tempDir));
+			}
+		}
+		
+		sdf = new SimpleDateFormat("HHmmss-SSS");
+		String prefijo = sdf.format(new Date());
+		
+		tempDir += "977r-" + prefijo;
+		tempDir += System.getProperty("file.separator");
+		
+		dir = new File(tempDir);
+		if(!dir.exists()){
+			logger.info(String.format("Creando directorio [%s] ...",tempDir));
+			if(dir.mkdir()){
+				logger.info(String.format("Directorio [%s] creado!",tempDir));
+			}
+		}
+
+		return tempDir;
+	}
 }

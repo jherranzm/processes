@@ -35,6 +35,10 @@ public class GenericUploadFormController {
 		return FileHelper.createUploadDirIfNotExists(tempDir);
 	}
 
+	protected String createUploadDirFor977rFiles(String tempDir) {
+		return FileHelper.createUploadDirFor977rFiles(tempDir);
+	}
+
 	protected int getLinesFromFile(String fileName) {
 		
 		BufferedReader buffReader;
@@ -81,6 +85,7 @@ public class GenericUploadFormController {
 				String prefijo = sdf.format(new Date());
 				
 				String fileName = tempDir + prefijo + multipartFile.getOriginalFilename();
+				logger.info(String.format("fileName.[%s]", fileName));
 				
 				OutputStream outputStream = null;
 				InputStream inputStream = null;

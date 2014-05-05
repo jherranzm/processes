@@ -49,7 +49,9 @@
 						</label>
 						<div class="col-lg-10">
 							<input id="nombre" name="nombre" type="text" 
-							class="form-control" placeholder="${consulta.nombre}" value="${consulta.nombre}">
+							class="form-control" 
+							placeholder="${consulta.nombre}" 
+							value="${consulta.nombre}">
 						</div> 
 					</div>
 		

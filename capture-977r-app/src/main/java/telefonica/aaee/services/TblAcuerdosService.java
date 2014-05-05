@@ -16,7 +16,7 @@ import telefonica.aaee.model.datos.TblAcuerdos;
 public class TblAcuerdosService 
 	extends GenericService{
 	
-	private static final String PU_977R = "977R";
+	private static final String PU_977R = "CAPTURE977R_977R";
 	private EntityManagerFactory factory;
 	private EntityManager em;
 

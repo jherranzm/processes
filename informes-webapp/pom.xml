@@ -238,11 +238,11 @@
 		</dependency>
 
 
-		<!-- <dependency> -->
-		<!-- <groupId>telefonica.aaee</groupId> -->
-		<!-- <artifactId>Capture977App</artifactId> -->
-		<!-- <version>1.1</version> -->
-		<!-- </dependency> -->
+		<dependency>
+			<groupId>telefonica.aaee</groupId>
+			<artifactId>Capture977App</artifactId>
+			<version>1.1</version>
+		</dependency>
 
 		<dependency>
 			<groupId>telefonica.aaee</groupId>

@@ -48,6 +48,9 @@
 							<spring:message code="ii.form.list.title" text="missing" /></a></li>
 						<li><a href="${pageContext.request.contextPath}/hz/muploadhzfiles-form.html">
 							<spring:message code="hz.form.list.title" text="missing" /></a></li>
+						<li class="divider"></li>
+						<li><a href="${pageContext.request.contextPath}/977r/mupload977rfiles-form.html">
+							<spring:message code="977r.form.list.title" text="missing" /></a></li>
 					</ul></li>
 
 				<li><a href="#about"> <spring:message code="go.about"

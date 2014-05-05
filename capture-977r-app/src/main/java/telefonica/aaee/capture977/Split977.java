@@ -87,6 +87,12 @@ public class Split977 {
 	
 	private long tiempoEmpleado = 0;
 	
+	
+	
+
+	public Split977() {
+		super();
+	}
 
 	/**
 	 * 
@@ -1771,6 +1777,8 @@ public class Split977 {
 
 	public void setConfig(Split977Config config) {
 		this.config = config;
+		
+		// Indicamos dónde está el directorio con los ficheros .zip
 		this.setFicherosZipPath(this.config.getDirectorioZipFiles());
 	}
 	

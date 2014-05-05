@@ -28,9 +28,10 @@ public class Unzip977RFile {
     	
     	String ret = "";
     	String extension = "   ";
+    	ZipFile zipFile = null;
 
         try {
-            ZipFile zipFile = new ZipFile(zipFileName);
+            zipFile = new ZipFile(zipFileName);
 
             //TODO: Comprobar que funciona...
             if(!outPathName.isEmpty()){
@@ -77,11 +78,15 @@ public class Unzip977RFile {
 
             }
             
+            if(zipFile != null) zipFile.close();
+            
         } catch (Exception e) {
         	LOGGER.severe("Se ha producido una excepción con el fichero:" + zipFileName);
             e.printStackTrace();
             System.exit(1);
-        } 
+        } finally{
+        	
+        }
         
         return ret;
     }

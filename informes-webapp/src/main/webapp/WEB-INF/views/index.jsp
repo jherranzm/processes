@@ -77,6 +77,13 @@
 						<spring:message code="escenario.form.list.title" text="missing" />
 					</a>
 				</p>
+				
+
+				<p>
+					<a href="${pageContext.request.contextPath}/977r/mupload977rfiles-form.html">
+						<spring:message code="977r.form.list.title" text="missing" />
+					</a>
+				</p>
 
 				<hr>
 

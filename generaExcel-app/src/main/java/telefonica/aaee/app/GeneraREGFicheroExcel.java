@@ -176,7 +176,7 @@ public class GeneraREGFicheroExcel {
 			 * Se genera el libro Excel con los parámetros proporcionados
 			 */
 			GeneradorExcelXlsx excelGen = new GeneradorExcelXlsx();
-			excelGen.setPrefijoFichero("REG_" + params[0] + "_");
+			excelGen.setPrefijoFichero(informe + "_" + params[0] + "_");
 			excelGen.setRealPath(ruta);
 
 			if (excelGen.export_v2(ache)) {
