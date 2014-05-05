@@ -94,7 +94,7 @@ public class ConceptoFacturableService {
 		if (original == null)
 			throw new ConceptoFacturableNotFoundException();
 		
-		ConceptoFacturable result = repo.saveAndFlush(original);
+		ConceptoFacturable result = repo.saveAndFlush(mod);
 		logger.info("ConceptoFacturable " + result.toString());
 		return result;
 	}

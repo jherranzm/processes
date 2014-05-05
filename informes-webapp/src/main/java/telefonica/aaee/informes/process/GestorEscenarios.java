@@ -514,6 +514,8 @@ public class GestorEscenarios {
 
 				// Recogemos los datos del Excel...
 				ConceptoFacturable condicion = fila2CF(row);
+				
+				logger.info("Localizada condicion:" + condicion.toString());
 
 				// Localizamos esa entidad en la tabla por el Id...
 				ConceptoFacturable cf = entityManager.find(ConceptoFacturable.class,
@@ -573,8 +575,7 @@ public class GestorEscenarios {
 				} else {
 					logger.info("Localizado CF:" + cf.toString());
 					cf.setPrecioEspecial(condicion.getPrecioEspecial());
-					cf.setTipoPrecioEspecial(condicion
-							.getTipoPrecioEspecial());
+					cf.setTipoPrecioEspecial(condicion.getTipoPrecioEspecial());
 					cf.setImporteAcuerdo(condicion.getImporteAcuerdo());
 					
 					ConceptoFacturable mod = cfService.update(cf);
