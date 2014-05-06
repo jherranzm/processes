@@ -30,7 +30,7 @@ public class AcuerdoServiceTest {
 
 		boolean ret = false;
 		
-		ret = acuerdoService.applyCondiciones("AJMOLLET_2013");
+		ret = acuerdoService.applyCondiciones("LHOSP_2012_1T");
 
 		assertTrue(ret);
 		

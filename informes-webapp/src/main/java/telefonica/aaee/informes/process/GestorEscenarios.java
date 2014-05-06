@@ -387,14 +387,27 @@ public class GestorEscenarios {
 			Cell cell = cells.next();
 			c = cell2String(cell).toLowerCase();
 			c = c.replaceAll("_", " ");
-			if (!obligatorias.contains(c)) {
-				logger.info("*" + c + "* OJO NO está!");
-				celdasOK = false;
-			} else {
-				logger.info("*" + c + "* está!");
-				existentes.add(c);
-			}
+			logger.info("*" + c + "* está!");
+			existentes.add(c);
+			
+//			if (!obligatorias.contains(c)) {
+//				logger.info("*" + c + "* OJO NO está!");
+//				celdasOK = false;
+//			} else {
+//				logger.info("*" + c + "* está!");
+//				existentes.add(c);
+//			}
 		}// while (cells.hasNext ())
+		
+		if(!existentes.containsAll(obligatorias)){
+			for(String o : obligatorias){
+				logger.info("obligatorias: *" + o + "*");
+				if(!existentes.contains(o)){
+					logger.info("obligatorias: *" + o + "* OJO NO está!");
+				}
+			}
+			celdasOK = false;
+		}
 		return celdasOK;
 	}
 

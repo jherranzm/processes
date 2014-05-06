@@ -40,6 +40,8 @@
 					<ul class="dropdown-menu">
 						<li><a href="${pageContext.request.contextPath}/generaInforme/new">
 							<spring:message code="genera.informe.form.list.title" text="missing" /></a></li>
+						<li><a href="${pageContext.request.contextPath}/generaInforme/apply">
+							<spring:message code="genera.informe.form.apply.title" text="missing" /></a></li>
 						<li class="divider"></li>
 						<li><a href="${pageContext.request.contextPath}/escenario/muploadescenariofiles-form.html">
 							<spring:message code="escenario.form.list.title" text="missing" /></a></li>

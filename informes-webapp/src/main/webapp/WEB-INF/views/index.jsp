@@ -92,6 +92,11 @@
 						<spring:message code="genera.informe.form.list.title" text="missing" />
 					</a>
 				</p>
+				<p>
+					<a href="${pageContext.request.contextPath}/generaInforme/apply">
+						<spring:message code="genera.informe.form.apply.title" text="missing" />
+					</a>
+				</p>
 			</div>
 
 		</div><!-- .container -->

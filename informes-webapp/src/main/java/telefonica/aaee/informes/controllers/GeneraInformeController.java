@@ -27,6 +27,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import telefonica.aaee.app.GeneraREGFicheroExcel;
+import telefonica.aaee.informes.form.AplicaCondicionesAcuerdoForm;
 import telefonica.aaee.informes.form.GeneraInformeForm;
 import telefonica.aaee.informes.helpers.FileHelper;
 import telefonica.aaee.informes.model.FileInfoDTO;
@@ -43,6 +44,7 @@ public class GeneraInformeController {
 	
 //	private static final String ENCODING = "ISO-8859-1";
 	private static final String GENERA_INFORME_FORM_NEW = "genera-informe-form-new";
+	private static final String GENERA_INFORME_FORM_APPLY = "genera-informe-form-apply";
 //	private static final String GENERA_INFORME_FORM_EDIT = "genera-informe-form-edit";
 	private static final String GENERA_INFORME_RESULT_PAGE = "genera-informe-result-page";
 
@@ -62,7 +64,6 @@ public class GeneraInformeController {
 	@PersistenceContext(unitName = "JPAInformesWebApp")
 	private EntityManager entityManager;	
 	
-	
 	@InitBinder
 	private void initBinder(WebDataBinder binder) {
 	}
@@ -78,6 +79,45 @@ public class GeneraInformeController {
 		model.setViewName(GENERA_INFORME_FORM_NEW);
 		model.addObject("generaInformeForm", new GeneraInformeForm());
 		model.addObject("informes", informes);
+		model.addObject("acuerdos", acuerdos);
+		
+		return model;
+	}
+	
+	@RequestMapping(value="/apply", method=RequestMethod.GET)
+	public ModelAndView getAplicarCondicionesPorAcuerdo() {
+		
+		List<Acuerdo> acuerdos = acuerdoService.findAll();
+		
+		ModelAndView model = new ModelAndView();
+		model.setViewName(GENERA_INFORME_FORM_APPLY);
+		model.addObject("generaInformeForm", new AplicaCondicionesAcuerdoForm());
+		model.addObject("acuerdos", acuerdos);
+		
+		return model;
+	}
+	
+	@RequestMapping(value="/apply", method=RequestMethod.POST)
+	public ModelAndView aplicarCondicionesPorAcuerdo(
+			@ModelAttribute(value="FORM") @Valid AplicaCondicionesAcuerdoForm generaInformeForm,
+			BindingResult result,
+            final RedirectAttributes redirectAttributes) {
+		
+		logger.info("Acuerdo:" + generaInformeForm.getAcuerdoId());
+		
+		Acuerdo acuerdo = acuerdoService.findById(generaInformeForm.getAcuerdoId());
+		
+		logger.info("Acuerdo:" + acuerdo.toString());
+		
+		
+		
+		boolean ret = acuerdoService.applyCondiciones(acuerdo.getAcuerdo());
+		
+		List<Acuerdo> acuerdos = acuerdoService.findAll();
+		
+		ModelAndView model = new ModelAndView();
+		model.setViewName(GENERA_INFORME_RESULT_PAGE);
+		model.addObject("generaInformeForm", new GeneraInformeForm());
 		model.addObject("acuerdos", acuerdos);
 		
 		return model;

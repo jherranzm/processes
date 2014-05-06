@@ -81,9 +81,7 @@ public class ConceptoFacturableService {
 	
 
 	public ConceptoFacturable findById(Long id) {
-		return 
-				//em.find(ConceptoFacturable.class, id);
-				repo.findOne(id);
+		return repo.findOne(id);
 	}
 
 

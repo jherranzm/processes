@@ -23,7 +23,6 @@ import telefonica.aaee.informes.helpers.Constants;
 import telefonica.aaee.informes.model.condiciones.Acuerdo;
 
 @Repository
-@Transactional
 public class AcuerdoService {
 	
 	private static final int PAGE_SIZE = 5;
@@ -33,7 +32,7 @@ public class AcuerdoService {
 
 	protected final Log logger = LogFactory.getLog(getClass());
 		
-	@PersistenceContext
+	@PersistenceContext(unitName = "JPAInformesWebApp")
 	private EntityManager em;
 	
 	private JpaRepository<Acuerdo, Long> repo;
@@ -56,7 +55,14 @@ public class AcuerdoService {
         logger.info(Constants.SEP_V + "Número de Acuerdo:[" + repo.findAll().size() + "]" + Constants.SEP_V);
 
         logger.info(Constants.SEP_V + "Número de Acuerdo por Página:[" + repo.findAll(new PageRequest(0, PAGE_SIZE)).getNumberOfElements() + "]" + Constants.SEP_V);
+        
+        logger.info(Constants.SEP_V + "Número de Acuerdos:[" + this.findAll().size() + "]" + Constants.SEP_V);
 	
+        List<Acuerdo> acuerdos = this.findAll();
+		boolean ret = this.applyCondiciones(acuerdos.get(0).getAcuerdo());
+
+        logger.info(Constants.SEP_V + "Aplicado:[" + ret + "]" + Constants.SEP_V);
+        
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -85,7 +91,9 @@ public class AcuerdoService {
 	    
 	    return lista ;
 	}
+
 	
+	@Transactional(value = "JPAInformesWebApp")
 	public boolean applyCondiciones(String elAcuerdo){
 		
 		boolean ret = false;
@@ -93,13 +101,22 @@ public class AcuerdoService {
 		logger.info("Inicio del Procedimiento...");
 		logger.info("Aplicar condiciones al acuerdo: ["+ elAcuerdo +"]");
 		
-		StoredProcedureQuery spq = em.createStoredProcedureQuery("977r.977r_SP_APPLY_COND_ALL");
+//		StoredProcedureQuery spq = em.createStoredProcedureQuery("977r.977r_SP_APPLY_COND_ALL");
+//		
+//		spq.registerStoredProcedureParameter("elAcuerdo", String.class, ParameterMode.IN);
+//		
+//		spq.setParameter("elAcuerdo", elAcuerdo);
+//		
+//		ret = spq.execute();
 		
-		spq.registerStoredProcedureParameter("elAcuerdo", String.class, ParameterMode.IN);
+		Query query = em.createNativeQuery("{call 977r.977r_SP_APPLY_COND_ALL (?)}")
+					.setParameter(1, elAcuerdo);
 		
-		spq.setParameter("elAcuerdo", elAcuerdo);
-		
-		ret = spq.execute();
+		@SuppressWarnings("unchecked")
+		List<String> res = (List<String>)query.getResultList();
+		for(String r : res){
+			logger.info("Resultados: " + r);
+		}
 		
 		logger.info("...fin del Procedimiento!");
 		
@@ -107,6 +124,7 @@ public class AcuerdoService {
 		
 	}
 
+	@Transactional
 	public boolean applyBusinessRulesAplicarPlantaPreciosEspeciales(String elAcuerdo){
 		
 		boolean ret = false;
@@ -128,6 +146,7 @@ public class AcuerdoService {
 		
 	}
 
+	@Transactional
 	public boolean applyBusinessRulesLineaSoporteVPNIPSinCoste(String elAcuerdo){
 		
 		boolean ret = false;
@@ -150,6 +169,7 @@ public class AcuerdoService {
 	}
 	
 	//CompensacionAumentoCuotaLineaBOE
+	@Transactional
 	public boolean applyBusinessRulesCompensacionAumentoCuotaLineaBOE(String elAcuerdo){
 		
 		boolean ret = false;

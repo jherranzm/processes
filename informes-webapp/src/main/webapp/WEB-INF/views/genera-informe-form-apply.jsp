@@ -41,7 +41,7 @@
 	        <div><!-- inicio contenido -->
 				<form:form method="POST" commandName="generaInformeForm"
 					 class="form-horizontal"
-					action="${pageContext.request.contextPath}/generaInforme/gen">
+					action="${pageContext.request.contextPath}/generaInforme/apply">
 		
 					<div class="form-group">
 						<label for="acuerdoId" class="col-lg-2 control-label">
