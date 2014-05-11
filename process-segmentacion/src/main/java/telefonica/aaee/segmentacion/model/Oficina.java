@@ -11,6 +11,8 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
+import telefonica.aaee.segmentacion.util.Constantes;
+
 @Entity
 @Table(name = "tbl_oficina")
 @NamedQueries({
@@ -26,7 +28,7 @@ import javax.persistence.Table;
 			+ " 1 = 1 "
 			+ " AND p.codOficina = :cod ") 
 })
-public class Oficina implements Serializable {
+public class Oficina implements Serializable, Exportable {
 
 	private static final long serialVersionUID = 1L;
 
@@ -152,5 +154,18 @@ public class Oficina implements Serializable {
 	private Oficina(Builder builder) {
 		this.codOficina = builder.codOficina;
 		this.nomOficina = builder.nomOficina;
+	}
+
+	public String toCSV(){
+		StringBuilder sb = new StringBuilder();
+		sb
+		.append(Constantes.COMILLAS_DOBLES)
+			.append(this.codOficina)
+		.append(Constantes.COMILLAS_DOBLES).append(";")
+		.append(Constantes.COMILLAS_DOBLES)
+			.append(this.nomOficina)
+		.append(Constantes.COMILLAS_DOBLES).append(";")
+			;
+		return sb.toString();
 	}
 }

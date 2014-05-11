@@ -18,6 +18,7 @@ import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import telefonica.aaee.segmentacion.exceptions.ClienteNotFoundException;
 import telefonica.aaee.segmentacion.helpers.Constants;
 import telefonica.aaee.segmentacion.model.Cliente;
 

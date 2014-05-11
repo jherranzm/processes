@@ -5,8 +5,10 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryMXBean;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -16,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import telefonica.aaee.segmentacion.model.Cliente;
+import telefonica.aaee.segmentacion.model.Exportable;
 import telefonica.aaee.segmentacion.model.Gerencia;
 import telefonica.aaee.segmentacion.model.Oficina;
 import telefonica.aaee.segmentacion.model.RedDeVentas;
@@ -29,6 +32,7 @@ import telefonica.aaee.segmentacion.services.RedDeVentasService;
 import telefonica.aaee.segmentacion.services.SectorService;
 import telefonica.aaee.segmentacion.services.SubSectorService;
 import telefonica.aaee.segmentacion.services.TerritorioService;
+import telefonica.aaee.segmentacion.util.writer.ToCSVFileWriter;
 
 import com.healthmarketscience.jackcess.Database;
 import com.healthmarketscience.jackcess.DatabaseBuilder;
@@ -142,7 +146,25 @@ public class SegmentacionProcessor {
 			actualizarRedDeVentas();
 			actualizarTerritorios();
 			
-			actualizarClientes();
+			// actualizarClientes();
+			
+			ToCSVFileWriter writer = new ToCSVFileWriter();
+			
+			List<Exportable> listaOficinas = new ArrayList<Exportable>(oficinas);
+			List<Exportable> listaSectores = new ArrayList<Exportable>(sectores);
+			List<Exportable> listaSubSectores = new ArrayList<Exportable>(subSectores);
+			List<Exportable> listaTerritorios = new ArrayList<Exportable>(territorios);
+			List<Exportable> listaRedDeVentas = new ArrayList<Exportable>(comerciales);
+			List<Exportable> listaClientes = new ArrayList<Exportable>(clientes.values());
+			
+			writer.setDir(this.dir);
+			
+			writer.printToCSVFile(listaOficinas, "oficinas");
+			writer.printToCSVFile(listaSectores, "sectores");
+			writer.printToCSVFile(listaSubSectores, "subSectores");
+			writer.printToCSVFile(listaTerritorios, "territorios");
+			writer.printToCSVFile(listaRedDeVentas, "comerciales");
+			writer.printToCSVFile(listaClientes, "clientes");
 
 //			showInfoGerencias();
 //

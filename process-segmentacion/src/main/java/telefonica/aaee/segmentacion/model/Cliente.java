@@ -11,6 +11,8 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
+import telefonica.aaee.segmentacion.util.Constantes;
+
 @Entity
 @Table(name = "tbl_cliente")
 @NamedQueries({
@@ -36,7 +38,7 @@ import javax.persistence.Table;
 			+ " 1 = 1 "
 			+ " AND p.cifCliente = :cod ")  
 })
-public class Cliente implements Serializable {
+public class Cliente implements Serializable, Exportable {
 
 	private static final long serialVersionUID = 1L;
 
@@ -229,5 +231,27 @@ public class Cliente implements Serializable {
 		this.cifCliente = builder.cifCliente;
 		this.nomCliente = builder.nomCliente;
 		this.cucClienteG = builder.cucClienteG;
+	}
+
+	public String toCSV(){
+		StringBuilder sb = new StringBuilder();
+		sb
+			.append(Constantes.COMILLAS_DOBLES)
+				.append(this.cucCliente)
+			.append(Constantes.COMILLAS_DOBLES).append(";")
+			.append(Constantes.COMILLAS_DOBLES)
+				.append(this.tipoDocCliente)
+			.append(Constantes.COMILLAS_DOBLES).append(";")
+			.append(Constantes.COMILLAS_DOBLES)
+				.append(this.cifCliente)
+			.append(Constantes.COMILLAS_DOBLES).append(";")
+			.append(Constantes.COMILLAS_DOBLES)
+				.append(this.nomCliente)
+			.append(Constantes.COMILLAS_DOBLES).append(";")
+			.append(Constantes.COMILLAS_DOBLES)
+				.append(this.cucClienteG)
+			.append(Constantes.COMILLAS_DOBLES).append(";")
+			;
+		return sb.toString();
 	}
 }

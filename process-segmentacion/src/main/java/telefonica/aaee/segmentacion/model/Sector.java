@@ -11,6 +11,8 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
+import telefonica.aaee.segmentacion.util.Constantes;
+
 @Entity
 @Table(name = "tbl_sector")
 @NamedQueries({
@@ -26,7 +28,7 @@ import javax.persistence.Table;
 			+ " 1 = 1 "
 			+ " AND p.codSector = :cod ") 
 })
-public class Sector implements Serializable {
+public class Sector implements Serializable, Exportable {
 
 	private static final long serialVersionUID = 1L;
 
@@ -152,5 +154,18 @@ public class Sector implements Serializable {
 	private Sector(Builder builder) {
 		this.codSector = builder.codSector;
 		this.nomSector = builder.nomSector;
+	}
+
+	public String toCSV(){
+		StringBuilder sb = new StringBuilder();
+		sb
+		.append(Constantes.COMILLAS_DOBLES)
+			.append(this.codSector)
+		.append(Constantes.COMILLAS_DOBLES).append(";")
+		.append(Constantes.COMILLAS_DOBLES)
+			.append(this.nomSector)
+		.append(Constantes.COMILLAS_DOBLES).append(";")
+			;
+		return sb.toString();
 	}
 }

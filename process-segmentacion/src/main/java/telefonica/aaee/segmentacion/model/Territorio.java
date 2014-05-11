@@ -11,6 +11,8 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
+import telefonica.aaee.segmentacion.util.Constantes;
+
 @Entity
 @Table(name = "tbl_territorio")
 @NamedQueries({
@@ -26,7 +28,7 @@ import javax.persistence.Table;
 			+ " 1 = 1 "
 			+ " AND p.codTerritorio = :cod ") 
 })
-public class Territorio implements Serializable {
+public class Territorio implements Serializable, Exportable {
 
 	private static final long serialVersionUID = 1L;
 
@@ -149,5 +151,18 @@ public class Territorio implements Serializable {
 		this.id = builder.id;
 		this.codTerritorio = builder.codTerritorio;
 		this.nomTerritorio = builder.nomTerritorio;
+	}
+
+	public String toCSV(){
+		StringBuilder sb = new StringBuilder();
+		sb
+		.append(Constantes.COMILLAS_DOBLES)
+			.append(this.codTerritorio)			
+		.append(Constantes.COMILLAS_DOBLES).append(";")
+		.append(Constantes.COMILLAS_DOBLES)
+			.append(this.nomTerritorio)
+		.append(Constantes.COMILLAS_DOBLES).append(";")
+			;
+		return sb.toString();
 	}
 }

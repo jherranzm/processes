@@ -9,9 +9,11 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import telefonica.aaee.segmentacion.util.Constantes;
+
 @Entity
 @Table(name = "tbl_gerencia")
-public class Gerencia implements Serializable {
+public class Gerencia implements Serializable, Exportable {
 
 	private static final long serialVersionUID = 1L;
 
@@ -134,5 +136,18 @@ public class Gerencia implements Serializable {
 		this.id = builder.id;
 		this.codGerencia = builder.codGerencia;
 		this.nomGerencia = builder.nomGerencia;
+	}
+
+	public String toCSV(){
+		StringBuilder sb = new StringBuilder();
+		sb
+		.append(Constantes.COMILLAS_DOBLES)
+			.append(this.codGerencia)
+		.append(Constantes.COMILLAS_DOBLES).append(";")
+		.append(Constantes.COMILLAS_DOBLES)
+			.append(this.nomGerencia)
+		.append(Constantes.COMILLAS_DOBLES).append(";")
+			;
+		return sb.toString();
 	}
 }

@@ -11,6 +11,8 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
+import telefonica.aaee.segmentacion.util.Constantes;
+
 @Entity
 @Table(name = "tbl_reddeventas")
 @NamedQueries({
@@ -26,7 +28,7 @@ import javax.persistence.Table;
 			+ " 1 = 1 "
 			+ " AND p.matricula = :mat ") 
 })
-public class RedDeVentas implements Serializable {
+public class RedDeVentas implements Serializable, Exportable {
 
 	private static final long serialVersionUID = 1L;
 
@@ -135,5 +137,18 @@ public class RedDeVentas implements Serializable {
 		this.id = builder.id;
 		this.matricula = builder.matricula;
 		this.nombre = builder.nombre;
+	}
+
+	public String toCSV(){
+		StringBuilder sb = new StringBuilder();
+		sb
+		.append(Constantes.COMILLAS_DOBLES)
+			.append(this.matricula)
+		.append(Constantes.COMILLAS_DOBLES).append(";")
+		.append(Constantes.COMILLAS_DOBLES)
+			.append(this.nombre)
+		.append(Constantes.COMILLAS_DOBLES).append(";")
+			;
+		return sb.toString();
 	}
 }
