@@ -7,12 +7,27 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
 import telefonica.aaee.segmentacion.util.Constantes;
 
 @Entity
 @Table(name = "tbl_gerencia")
+@NamedQueries({
+	@NamedQuery(name = "Gerencia.findAll", query = "SELECT c FROM Gerencia c"),
+	@NamedQuery(name = "Gerencia.findByNombre", query = "SELECT p "
+			+ "FROM Gerencia p " 
+			+ "WHERE " 
+			+ " 1 = 1 "
+			+ " AND p.nomGerencia = :nom "),
+	@NamedQuery(name = "Gerencia.findByCodigo", query = "SELECT p "
+			+ "FROM Gerencia p " 
+			+ "WHERE " 
+			+ " 1 = 1 "
+			+ " AND p.codGerencia = :cod ") 
+})
 public class Gerencia implements Serializable, Exportable {
 
 	private static final long serialVersionUID = 1L;

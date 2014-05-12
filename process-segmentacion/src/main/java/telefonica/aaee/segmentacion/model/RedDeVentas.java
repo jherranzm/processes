@@ -107,6 +107,23 @@ public class RedDeVentas implements Serializable, Exportable {
 			return false;
 		return true;
 	}
+	
+	
+
+	@Override
+	public String toString() {
+		StringBuilder builder2 = new StringBuilder();
+		builder2.append("RedDeVentas [id=");
+		builder2.append(id);
+		builder2.append(", matricula=");
+		builder2.append(matricula);
+		builder2.append(", nombre=");
+		builder2.append(nombre);
+		builder2.append("]");
+		return builder2.toString();
+	}
+
+
 
 	public static class Builder {
 		private Long id;
