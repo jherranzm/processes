@@ -381,11 +381,14 @@ public class Segmentacion implements Serializable, Exportable {
 		private Long idTerritorio;
 		private Long idGerencia;
 		private Long idOficina;
+		
 		private Long idSector;
 		private Long idSubSector;
+		
 		private Long idSegmento;
 		private Long idSubSegmento;
 		private Long idNivelDeAtencion;
+		
 		private Long idVendedor;
 		private Long idDesarrollador;
 		private Long idJVentas;

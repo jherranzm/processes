@@ -21,6 +21,7 @@ public class ToCSVFileWriter {
 	
 	private Hashtable<String, BufferedWriter> bwOut = new Hashtable<String, BufferedWriter>();
 	private Hashtable<String, File> filesOut = new Hashtable<String, File>();
+	private Hashtable<String, String> fileNames = new Hashtable<String, String>();
 	
 	private String dir = "";
 	
@@ -28,8 +29,9 @@ public class ToCSVFileWriter {
 		int numRows = 0;
 		
 		String fOutName = this.getDir() + File.separator + entidad;
-		fOutName = FilenameUtils.normalize(fOutName);
-		logger.info("Fichero normalizado:" + fOutName);
+		fOutName = FilenameUtils.normalize(fOutName + ".txt");
+		logger.info("Fichero CSV normalizado:" + fOutName);
+		fileNames.put(entidad, fOutName);
 		try {
 			BufferedWriter bwOut = getBROut(fOutName);
 			
@@ -51,8 +53,8 @@ public class ToCSVFileWriter {
 		int numRows = 0;
 		
 		String fOutName = this.getDir() + File.separator + entidad;
-		fOutName = FilenameUtils.normalize(fOutName);
-		logger.info("Fichero normalizado:" + fOutName);
+		fOutName = FilenameUtils.normalize(fOutName + ".txt");
+		logger.info("Fichero TXT normalizado:" + fOutName);
 		try {
 			BufferedWriter bwOut = getBROut(fOutName);
 			
@@ -82,7 +84,7 @@ public class ToCSVFileWriter {
 		try {
 			if (filesOut.get(fOutName) == null) {
 				// creamos un nuevo fOut
-				fileOut = new File(fOutName + ".txt");
+				fileOut = new File(fOutName);
 				out = new BufferedWriter(new OutputStreamWriter(
 						new FileOutputStream(fileOut),
 						Constantes.CODIFICACION_FICHERO_ORIGEN));
@@ -111,5 +113,13 @@ public class ToCSVFileWriter {
 
 	public void setDir(String dir) {
 		this.dir = dir;
+	}
+
+	public Hashtable<String, String> getFileNames() {
+		return fileNames;
+	}
+
+	public void setFileNames(Hashtable<String, String> fileNames) {
+		this.fileNames = fileNames;
 	}
 }

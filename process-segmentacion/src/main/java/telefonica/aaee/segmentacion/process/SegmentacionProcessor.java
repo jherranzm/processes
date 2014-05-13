@@ -8,6 +8,7 @@ import java.lang.management.MemoryMXBean;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -42,6 +43,7 @@ import telefonica.aaee.segmentacion.services.NivelDeAtencionService;
 import telefonica.aaee.segmentacion.services.OficinaService;
 import telefonica.aaee.segmentacion.services.RedDeVentasService;
 import telefonica.aaee.segmentacion.services.SectorService;
+import telefonica.aaee.segmentacion.services.SegmentacionService;
 import telefonica.aaee.segmentacion.services.SegmentoService;
 import telefonica.aaee.segmentacion.services.SubSectorService;
 import telefonica.aaee.segmentacion.services.SubSegmentoService;
@@ -119,6 +121,7 @@ public class SegmentacionProcessor {
 	private List<String> mensajes = new ArrayList<String>();
 	
 	private String dir = "/Users/jherranzm/dev/testFiles/";
+	private Hashtable<String, String> fileNames = new Hashtable<String, String>(); 
 	
 	@Autowired
 	private OficinaService oficinaService;
@@ -150,6 +153,9 @@ public class SegmentacionProcessor {
 	@Autowired
 	private ClienteService clienteService;
 
+	@Autowired
+	private SegmentacionService segmentacionService;
+
 	public void execute() {
 
 		String[] mdbs = { 
@@ -179,10 +185,10 @@ public class SegmentacionProcessor {
 			}
 			
 			
-			updateDataInDB();
-			
 			saveDataInCSVFile();
 
+			updateDataInDB();
+			
 
 			logger.info(String.format("Número de clientes:[%d]",
 					clientes.size()));
@@ -217,6 +223,9 @@ public class SegmentacionProcessor {
 		actualizarSubSectores();
 		actualizarRedDeVentas();
 		actualizarTerritorios();
+		
+		clienteService.loadDataInfile(fileNames.get("clientes"));
+		segmentacionService.loadDataInfile(fileNames.get("segmentaciones"));
 	}
 
 	private void saveDataInCSVFile() {
@@ -234,6 +243,9 @@ public class SegmentacionProcessor {
 		writer.printToCSVFile(new ArrayList<Exportable>(clientes.values()), "clientes");
 
 		writer.printToTXTFile(new ArrayList<String>(mensajes), "mensajes");
+		
+		fileNames = writer.getFileNames();
+		
 	}
 
 	private void loadDataFromDB() {
@@ -720,7 +732,8 @@ public class SegmentacionProcessor {
 		}else if(!comerciales.containsKey(mat)) {
 			RedDeVentas rdv = new RedDeVentas.Builder()
 					.matricula(mat)
-					.nombre(nom.replace("#", "Ñ")
+					.nombre(nom
+							.replace("#", "Ñ")
 							.replace("|", "Ñ")
 							.replace("š", "a")
 							.replace("•", "Í")

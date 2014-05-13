@@ -163,6 +163,20 @@ public class ClienteService {
 	public List<Cliente> saveAll(Set<Cliente> oficinas){
 		return repo.save(oficinas);
 	}
+	
+	@Transactional
+	public void loadDataInfile(String file){
+		String sql = "LOAD DATA LOCAL INFILE '"+ file +"' "
+				+ "into table maestras.tbl_cliente "
+				+ "fields terminated by ';' enclosed by '\"' "
+				+ "(Cod_Cliente, Tipo_Doc, CIF_Cliente, NOM_Cliente, Cod_Cliente_G); ";
+		
+		logger.info(sql);
+		Query query = em.createNativeQuery(sql);
+		logger.info("Inicio de carga masiva de clientes...");
+		long ret = query.executeUpdate();
+		logger.info(String.format("Fin de carga masiva! Se han cargado [%d] registros.", ret));
+	}
 
 
 	

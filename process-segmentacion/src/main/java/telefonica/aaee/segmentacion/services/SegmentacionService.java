@@ -127,5 +127,21 @@ public class SegmentacionService {
 	}
 
 
+	@Transactional
+	public void loadDataInfile(String file){
+		String sql = "LOAD DATA LOCAL INFILE '"+ file +"' "
+				+ "into table maestras.tbl_segmentacion "
+				+ "fields terminated by ';' enclosed by '\"' "
+				+ "(Cod_Cliente, Id_Territorio, Id_Gerencia, Id_Oficina, "
+				+ "Id_Sector, Id_SubSector, "
+				+ "Id_Segmento, Id_SubSegmento, Id_NivelDeAtencion, "
+				+ "Mat_Vendedor, Mat_Desarrollador, Mat_JVentas, Mat_JArea, Mat_Gerente); ";
+		
+		logger.info(sql);
+		Query query = em.createNativeQuery(sql);
+		logger.info("Inicio de carga masiva de segmentacion...");
+		long ret = query.executeUpdate();
+		logger.info(String.format("Fin de carga masiva! Se han cargado [%d] segmentacion.", ret));
+	}
 	
 }
