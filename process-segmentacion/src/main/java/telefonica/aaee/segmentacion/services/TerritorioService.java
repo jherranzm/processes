@@ -91,7 +91,7 @@ public class TerritorioService {
 			throw new TerritorioNotFoundException();
 
 		Territorio result = repo.saveAndFlush(modificada);
-		logger.info("Modificado : " + result.toString());
+		logger.info("Territorio actualizado : " + result.toString());
 		return result;
 	}
 
@@ -126,9 +126,9 @@ public class TerritorioService {
 	@Transactional
 	public Territorio create(Territorio nuevo) {
 		
-		logger.info("Guardamos el Territorio...");
+		logger.info("Incluimos el Territorio en la tabla...");
 		Territorio result = repo.saveAndFlush(nuevo);
-		logger.info("Territorio guardado con ID " + result.getId());
+		logger.info("Territorio creado con ID " + result.getId());
 		
 		return result;
 	}

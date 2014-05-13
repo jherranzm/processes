@@ -8,6 +8,7 @@ import java.lang.management.MemoryMXBean;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedMap;
@@ -18,6 +19,11 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import telefonica.aaee.segmentacion.exceptions.ClienteNotFoundException;
+import telefonica.aaee.segmentacion.exceptions.RedDeVentasNotFoundException;
+import telefonica.aaee.segmentacion.exceptions.SectorNotFoundException;
+import telefonica.aaee.segmentacion.exceptions.SubSectorNotFoundException;
+import telefonica.aaee.segmentacion.exceptions.TerritorioNotFoundException;
 import telefonica.aaee.segmentacion.model.Cliente;
 import telefonica.aaee.segmentacion.model.Exportable;
 import telefonica.aaee.segmentacion.model.Gerencia;
@@ -87,14 +93,13 @@ public class SegmentacionProcessor {
 	private static final String ERROR_CIF_ALREADY_IN_LIST = "ERROR: El tipoDoc+Cif [%s] ya estaba en la lista!";
 	private static final String ERROR_CUC_ALREADY_IN_LIST = "ERROR: El CUC [%s] ya estaba en la lista";
 	
-//	private Set<Oficina> oficinas = new HashSet<Oficina>();
 	private SortedMap<String, Oficina> oficinas = new TreeMap<String, Oficina>();
-
 	private SortedMap<String, Sector> sectores = new TreeMap<String, Sector>();
 	private SortedMap<String, SubSector> subSectores = new TreeMap<String, SubSector>();
 	private SortedMap<String, Territorio> territorios = new TreeMap<String, Territorio>();
 	private SortedMap<String, RedDeVentas> comerciales = new TreeMap<String, RedDeVentas>();
-	private Set<Gerencia> gerencias = new HashSet<Gerencia>();
+	private SortedMap<String, Gerencia> gerencias = new TreeMap<String, Gerencia>();
+	
 	private Set<Segmento> segmentos = new HashSet<Segmento>();
 	private Set<Segmentacion> segmentaciones = new HashSet<Segmentacion>();
 
@@ -103,6 +108,8 @@ public class SegmentacionProcessor {
 
 	private Map<String, Cliente> cifs = new HashMap<String, Cliente>();
 	private Map<String, Cliente> cifsDuplicados = new HashMap<String, Cliente>();
+	
+	private List<String> mensajes = new ArrayList<String>();
 	
 	private String dir = "/Users/jherranzm/dev/testFiles/";
 	
@@ -141,6 +148,8 @@ public class SegmentacionProcessor {
 
 		try {
 			
+			loadDataFromDB();
+			
 			for(String mdb : mdbs){
 				Database db = DatabaseBuilder.open(new File(this.dir + mdb));
 				
@@ -154,27 +163,9 @@ public class SegmentacionProcessor {
 			}
 			
 			
-			actualizarOficinas();
-			actualizarGerencias();
-			actualizarSectores();
-			actualizarSubSectores();
-			actualizarRedDeVentas();
-			actualizarTerritorios();
+			updateDataInDB();
 			
-			// actualizarClientes();
-			
-			ToCSVFileWriter writer = new ToCSVFileWriter();
-			
-			writer.setDir(this.dir);
-			
-			writer.printToCSVFile(new ArrayList<Exportable>(oficinas.values()), "oficinas");
-			writer.printToCSVFile(new ArrayList<Exportable>(gerencias), "gerencias");
-			writer.printToCSVFile(new ArrayList<Exportable>(sectores.values()), "sectores");
-			writer.printToCSVFile(new ArrayList<Exportable>(subSectores.values()), "subSectores");
-			writer.printToCSVFile(new ArrayList<Exportable>(territorios.values()), "territorios");
-			writer.printToCSVFile(new ArrayList<Exportable>(comerciales.values()), "comerciales");
-			writer.printToCSVFile(new ArrayList<Exportable>(segmentaciones), "segmentaciones");
-			writer.printToCSVFile(new ArrayList<Exportable>(clientes.values()), "clientes");
+			saveDataInCSVFile();
 
 
 			logger.info(String.format("Número de clientes:[%d]",
@@ -183,6 +174,10 @@ public class SegmentacionProcessor {
 			showInfoCucsDuplicados();
 
 			showInfoCifsDuplicados();
+			
+			for(String mensaje : mensajes){
+				logger.info(mensaje);
+			}
 
 		} catch (IOException e) {
 
@@ -199,93 +194,170 @@ public class SegmentacionProcessor {
 		}
 	}
 
+	private void updateDataInDB() {
+		actualizarOficinas();
+		actualizarGerencias();
+		actualizarSectores();
+		actualizarSubSectores();
+		actualizarRedDeVentas();
+		actualizarTerritorios();
+	}
+
+	private void saveDataInCSVFile() {
+		ToCSVFileWriter writer = new ToCSVFileWriter();
+		
+		writer.setDir(this.dir);
+		
+		writer.printToCSVFile(new ArrayList<Exportable>(oficinas.values()), "oficinas");
+		writer.printToCSVFile(new ArrayList<Exportable>(gerencias.values()), "gerencias");
+		writer.printToCSVFile(new ArrayList<Exportable>(sectores.values()), "sectores");
+		writer.printToCSVFile(new ArrayList<Exportable>(subSectores.values()), "subSectores");
+		writer.printToCSVFile(new ArrayList<Exportable>(territorios.values()), "territorios");
+		writer.printToCSVFile(new ArrayList<Exportable>(comerciales.values()), "comerciales");
+		writer.printToCSVFile(new ArrayList<Exportable>(segmentaciones), "segmentaciones");
+		writer.printToCSVFile(new ArrayList<Exportable>(clientes.values()), "clientes");
+
+		writer.printToTXTFile(new ArrayList<String>(mensajes), "mensajes");
+	}
+
+	private void loadDataFromDB() {
+		for(Oficina oficina : oficinaService.findAll()){
+			oficinas.put(oficina.getCodOficina(), oficina);
+		}
+		
+		for(Territorio territorio : territorioService.findAll()){
+			territorios.put(territorio.getCodTerritorio(), territorio);
+		}
+		
+		for(Sector sector : sectorService.findAll()){
+			sectores.put(sector.getCodSector(), sector);
+		}
+		
+		for(SubSector sector : subSectorService.findAll()){
+			subSectores.put(sector.getCodSubSector(), sector);
+		}
+		
+		for(Gerencia gerencia : gerenciaService.findAll()){
+			gerencias.put(gerencia.getCodGerencia(), gerencia);
+		}
+		
+		for(RedDeVentas rdv : redDeVentasService.findAll()){
+			comerciales.put(rdv.getMatricula(), rdv);
+		}
+		
+	}
+
 	private void actualizarOficinas() {
-		for(Oficina oficina : oficinas.values()){
-			Oficina oficinaExistente = oficinaService.findByCodigo(oficina.getCodOficina());
-			if(oficinaExistente == null){
-				oficina.setId(0L);
-				Oficina ret = oficinaService.create(oficina);
-				logger.info("Oficina guardada con Id: " + ret.getId());
+		for(Oficina elem : oficinas.values()){
+			Oficina existente = oficinaService.findByCodigo(elem.getCodOficina());
+			if(existente == null){
+				elem.setId(0L);
+				Oficina ret = oficinaService.create(elem);
+				logger.info("Oficina cread@ con Id: " + ret.getId());
 			}else{
-				oficinaExistente.setNomOficina(oficina.getNomOficina());
-				Oficina ret = oficinaService.create(oficinaExistente);
-				logger.info("Oficina modificada: " + ret.toString() );
+				existente.setNomOficina(elem.getNomOficina());
+				try {
+					Oficina ret = oficinaService.update(existente);
+					logger.info("Oficina modificada: " + ret.toString() );
+				} catch (Exception e) {
+					logger.error("No se ha encontrado el elemento [Oficina:"+elem.getCodOficina()+"]");
+				}
 			}
 		}
 	}
 
 	private void actualizarGerencias() {
-		for(Gerencia item : gerencias){
-			Gerencia existente = gerenciaService.findByCodigo(item.getCodGerencia());
+		for(Gerencia elem : gerencias.values()){
+			Gerencia existente = gerenciaService.findByCodigo(elem.getCodGerencia());
 			if(existente == null){
-				item.setId(0L);
-				Gerencia ret = gerenciaService.create(item);
-				logger.info("Gerencia guardada con Id: " + ret.getId());
+				elem.setId(0L);
+				Gerencia ret = gerenciaService.create(elem);
+				logger.info("Gerencia cread@ con Id: " + ret.getId());
 			}else{
-				existente.setNomGerencia(item.getNomGerencia());
-				Gerencia ret = gerenciaService.create(existente);
-				logger.info("Gerencia modificada: " + ret.toString() );
+				existente.setNomGerencia(elem.getNomGerencia());
+				try {
+					Gerencia ret = gerenciaService.create(existente);
+					logger.info("Gerencia modificada: " + ret.toString() );
+				} catch (Exception e) {
+					logger.error("No se ha encontrado el elemento [Gerencia:"+elem.getCodGerencia()+"]");
+				}
 			}
 		}
 	}
 
 	private void actualizarSectores() {
-		for(Sector sector : sectores.values()){
-			Sector existente = sectorService.findByCodigo(sector.getCodSector());
+		for(Sector elem : sectores.values()){
+			Sector existente = sectorService.findByCodigo(elem.getCodSector());
 			if(existente == null){
-				sector.setId(0L);
-				Sector ret = sectorService.create(sector);
-				logger.info("Sector guardado con Id: " + ret.getId());
+				elem.setId(0L);
+				Sector ret = sectorService.create(elem);
+				logger.info("Sector cread@ con Id: " + ret.getId());
 			}else{
-				existente.setNomSector(sector.getNomSector());
-				Sector ret = sectorService.create(existente);
-				logger.info("Sector modificado: " + ret.toString() );
+				existente.setNomSector(elem.getNomSector());
+				try {
+					Sector ret = sectorService.update(existente);
+					logger.info("Sector modificado: " + ret.toString() );
+				} catch (SectorNotFoundException e) {
+					logger.error("No se ha encontrado el elemento [Sector:"+elem.getCodSector()+"]");
+				}
 			}
 		}
 	}
 
 	private void actualizarSubSectores() {
-		for(SubSector sector : subSectores.values()){
-			SubSector existente = subSectorService.findByCodigo(sector.getCodSubSector());
+		for(SubSector elem : subSectores.values()){
+			SubSector existente = subSectorService.findByCodigo(elem.getCodSubSector());
 			if(existente == null){
-				sector.setId(0L);
-				SubSector ret = subSectorService.create(sector);
-				logger.info("SubSector guardado con Id: " + ret.getId());
+				elem.setId(0L);
+				SubSector ret = subSectorService.create(elem);
+				logger.info("SubSector cread@ con Id: " + ret.getId());
 			}else{
-				existente.setNomSubSector(sector.getNomSubSector());
-				SubSector ret = subSectorService.create(existente);
-				logger.info("SubSector modificado: " + ret.toString() );
+				existente.setNomSubSector(elem.getNomSubSector());
+				try {
+					SubSector ret = subSectorService.update(existente);
+					logger.info("SubSector modificado: " + ret.toString() );
+				} catch (SubSectorNotFoundException e) {
+					logger.error("No se ha encontrado el elemento [SubSector:"+elem.getCodSubSector()+"]");
+				}
 			}
 		}
 	}
 
 	private void actualizarTerritorios() {
-		for(Territorio item : territorios.values()){
-			Territorio existente = territorioService.findByCodigo(item.getCodTerritorio());
+		for(Territorio elem : territorios.values()){
+			Territorio existente = territorioService.findByCodigo(elem.getCodTerritorio());
 			if(existente == null){
-				item.setId(0L);
-				Territorio ret = territorioService.create(item);
-				logger.info("Territorio guardado con Id: " + ret.getId());
+				elem.setId(0L);
+				Territorio ret = territorioService.create(elem);
+				logger.info("Territorio cread@ con Id: " + ret.getId());
 			}else{
-				existente.setNomTerritorio(item.getNomTerritorio());
-				Territorio ret = territorioService.create(existente);
-				logger.info("Territorio modificado: " + ret.toString() );
+				existente.setNomTerritorio(elem.getNomTerritorio());
+				try {
+					Territorio ret = territorioService.update(existente);
+					logger.info("Territorio modificado: " + ret.toString() );
+				} catch (TerritorioNotFoundException e) {
+					logger.error("No se ha encontrado el elemento [Cliente:"+elem.getCodTerritorio()+"]");
+				}
 			}
 		}
 	}
 
 	private void actualizarClientes() {
-		for(Cliente item : clientes.values()){
-			Cliente existente = clienteService.findByCuc(item.getCucCliente());
+		for(Cliente elem : clientes.values()){
+			Cliente existente = clienteService.findByCuc(elem.getCucCliente());
 			if(existente == null){
-				item.setId(0L);
-				Cliente ret = clienteService.create(item);
-				logger.info("Cliente guardado con Id: " + ret.getId());
+				elem.setId(0L);
+				Cliente ret = clienteService.create(elem);
+				logger.info("Cliente cread@ con Id: " + ret.getId());
 			}else{
-				existente.setNomCliente(item.getNomCliente());
-				existente.setCucClienteG(item.getCucClienteG());
-				Cliente ret = clienteService.create(existente);
-				logger.info("Cliente modificado: " + ret.toString() );
+				existente.setNomCliente(elem.getNomCliente());
+				existente.setCucClienteG(elem.getCucClienteG());
+				try {
+					Cliente ret = clienteService.update(existente);
+					logger.info("Cliente modificado: " + ret.toString() );
+				} catch (ClienteNotFoundException e) {
+					logger.error("No se ha encontrado el elemento [Cliente:"+elem.getCucCliente()+"]");
+				}
 			}
 		}
 	}
@@ -296,11 +368,16 @@ public class SegmentacionProcessor {
 			if(existente == null){
 				elem.setId(0L);
 				RedDeVentas ret = redDeVentasService.create(elem);
-				logger.info("Sector guardado con Id: " + ret.getId());
+				logger.info("RedDeVentas cread@ con Id: " + ret.getId());
 			}else{
 				existente.setNombre(elem.getNombre());
-				RedDeVentas ret = redDeVentasService.create(existente);
-				logger.info("RedDeVentas modificado: " + ret.toString() );
+				RedDeVentas ret;
+				try {
+					ret = redDeVentasService.update(existente);
+					logger.info("RedDeVentas modificado: " + ret.toString() );
+				} catch (RedDeVentasNotFoundException e) {
+					logger.error("No se ha encontrado el elemento [RedDeVentas:"+elem.getMatricula()+"]");
+				}
 			}
 		}
 	}
@@ -387,7 +464,7 @@ public class SegmentacionProcessor {
 	}
 
 	private void showInfoGerencias() {
-		for (Gerencia gerencia : gerencias) {
+		for (Gerencia gerencia : gerencias.values()) {
 			logger.info(String.format("Gerencia:[%s]",
 					gerencia.toString()));
 		}
@@ -411,9 +488,10 @@ public class SegmentacionProcessor {
 					procesaFila(row);
 					count++;
 				} catch (Exception e) {
-					System.err.println("RuntimeIOException!!");
+					System.err.println("ProcesaFila:RuntimeIOException!!");
 					System.err.println("Número registro: " + index);
 					System.err.println("Total registros: " + numRows);
+					e.printStackTrace();
 				}
 				index++;
 			}
@@ -451,19 +529,19 @@ public class SegmentacionProcessor {
 	private void procesaFila(Row row) {
 		
 		// Datos 
-		captureGerencia(row);
-		captureSector(row);
-		captureSubSector(row);
-		captureTerritorio(row);
-		captureOficina(row);
+		long idGerencia = captureGerencia(row);
+		long idSector = captureSector(row);
+		long idSubSector = captureSubSector(row);
+		long idTerritorio = captureTerritorio(row);
+		long idOficina = captureOficina(row);
 		captureSegmento(row);
 
 		// RedDeVentas
-		captureRedDeVentas(row, MAT_VENDEDOR, NOM_VENDEDOR);
-		captureRedDeVentas(row, MAT_DESARROLLADOR, NOM_DESARROLLADOR);
-		captureRedDeVentas(row, MAT_J_VENTAS, NOM_J_VENTAS);
-		captureRedDeVentas(row, MAT_J_AREA, NOM_J_AREA);
-		captureRedDeVentas(row, MAT_GERENTE, NOM_GERENTE);
+		long idMatVendedor = captureRedDeVentas(row, MAT_VENDEDOR, NOM_VENDEDOR);
+		long idMatDesarrollador = captureRedDeVentas(row, MAT_DESARROLLADOR, NOM_DESARROLLADOR);
+		long idMatJVentas = captureRedDeVentas(row, MAT_J_VENTAS, NOM_J_VENTAS);
+		long idMatJArea = captureRedDeVentas(row, MAT_J_AREA, NOM_J_AREA);
+		long idMatGerente = captureRedDeVentas(row, MAT_GERENTE, NOM_GERENTE);
 
 		// cliente
 		captureCliente(row);
@@ -577,11 +655,13 @@ public class SegmentacionProcessor {
 		}
 	}
 
-	private void captureRedDeVentas(Row row, String matricula, String nombre) {
+	private long captureRedDeVentas(Row row, String matricula, String nombre) {
 		// Vendedor
 		String mat = (String) row.get(matricula);
 		String nom = (String) row.get(nombre);
-		if (mat != null && !comerciales.containsKey(mat)) {
+		if (mat == null){
+			return -1;
+		}else if(!comerciales.containsKey(mat)) {
 			RedDeVentas rdv = new RedDeVentas.Builder()
 					.matricula(mat)
 					.nombre(nom.replace("#", "Ñ")
@@ -591,23 +671,30 @@ public class SegmentacionProcessor {
 							.replace("Æ", "Í")
 							.replace("‘", "É"))
 					.build();
-
-			comerciales.put(mat, rdv);
+			RedDeVentas nuevo = redDeVentasService.create(rdv);
+			comerciales.put(mat, nuevo);
+			mensajes.add("Se ha creado un nuevo RedDeVentas: " + nuevo.toString());
 		}
+		return comerciales.get(mat).getId();
 	}
 
-	private void captureOficina(Row row) {
+	private long captureOficina(Row row) {
 		// Oficina
 		String codOficina = (String) row.get(COD_OFICINA);
 		String nomOficina = (String) row.get(NOM_OFICINA);
-		if (codOficina != null && !oficinas.containsKey(codOficina)) {
+		if (codOficina == null){
+			return -1;
+		}else if(!oficinas.containsKey(codOficina)) {
 			Oficina oficina = new Oficina.Builder()
 					.codOficina(codOficina)
 					.nomOficina(nomOficina)
 					.build();
-			//oficinas.add(oficina);
-			oficinas.put(codOficina, oficina);
+			Oficina nuevo = oficinaService.create(oficina);
+			oficinas.put(codOficina, nuevo);
+			mensajes.add("Se ha creado una nueva Oficina: " + nuevo.toString());
+			
 		}
+		return oficinas.get(codOficina).getId();
 	}
 
 	private void captureSegmento(Row row) {
@@ -624,56 +711,80 @@ public class SegmentacionProcessor {
 		}
 	}
 
-	private void captureTerritorio(Row row) {
+	private long captureTerritorio(Row row) {
 		// Territorio
 		String codTerritorio = (String) row.get(COD_TERRITORIO);
 		String nomTerritorio = (String) row.get(NOM_TERRITORIO);
-		if (codTerritorio != null && !territorios.containsKey(codTerritorio)) {
+		if (codTerritorio == null) {
+				return -1;
+		}else if(!territorios.containsKey(codTerritorio)){
 			Territorio territorio = new Territorio.Builder()
 				.codTerritorio(codTerritorio)
 				.nomTerritorio(nomTerritorio)
 				.build();
-			territorios.put(codTerritorio, territorio);
+			Territorio nuevo = territorioService.create(territorio);
+			territorios.put(codTerritorio, nuevo);
+			mensajes.add("Se ha creado un nuevo Territorio: " + nuevo.toString());
 		}
+		return territorios.get(codTerritorio).getId();
+		
 	}
 
-	private void captureSubSector(Row row) {
+	private long captureSubSector(Row row) {
 		// SubSector
 		String codSubSector = (String) row.get(COD_SUB_SECTOR);
 		String nomSubSector = (String) row.get(NOM_SUB_SECTOR);
-		if (codSubSector != null && !subSectores.containsKey(codSubSector)) {
+		if (codSubSector == null) {
+			return -1;
+		}else if(!subSectores.containsKey(codSubSector)){
 			SubSector subSector = new SubSector.Builder()
 				.codSubSector(codSubSector)
 				.nomSubSector(nomSubSector)
 				.build();
-			subSectores.put(codSubSector,subSector);
+			SubSector nuevo = subSectorService.create(subSector);
+			subSectores.put(codSubSector, nuevo);
+			mensajes.add("Se ha creado un nuevo SubSector: " + nuevo.toString());
 		}
+		return subSectores.get(codSubSector).getId();
+		
 	}
 
-	private void captureSector(Row row) {
+	private long captureSector(Row row) {
 		// Sector
 		String codSector = (String) row.get(COD_SECTOR);
 		String nomSector = (String) row.get(NOM_SECTOR);
-		if (codSector != null && !sectores.containsKey(codSector)) {
+		if (codSector != null) {
+			return -1;
+		}else if(!sectores.containsKey(codSector)){
 			Sector sector = new Sector.Builder()
 				.codSector(codSector)
 				.nomSector(nomSector)
 				.build();
-			sectores.put(codSector,sector);
+			Sector nuevo = sectorService.create(sector);
+			sectores.put(codSector, nuevo);
+			mensajes.add("Se ha creado un nuevo Sector: " + nuevo.toString());
 		}
+		return sectores.get(codSector).getId();
+		
+		
 	}
 
-	private void captureGerencia(Row row) {
+	private long captureGerencia(Row row) {
 		// Gerencia
 		String codGerencia = (String) row.get(COD_GERENCIA);
 		String nomGerencia = (String) row.get(NOM_GERENCIA);
-		if (codGerencia != null) {
+		if (codGerencia == null) {
+			return -1;
+		}else if(!gerencias.containsKey(codGerencia)){
 			Gerencia gerencia = new Gerencia.Builder()
 				.codGerencia(codGerencia)
 				.nomGerencia(nomGerencia)
 				.build();
-			gerencias.add(gerencia);
+			Gerencia nuevo = gerenciaService.create(gerencia);
+			gerencias.put(codGerencia, nuevo);
+			mensajes.add("Se ha creado una nueva Gerencia: " + nuevo.toString());
 		}
+		return gerencias.get(codGerencia).getId();
 	}
 
 	private void captureSegmentacion(Row row) {
@@ -732,6 +843,15 @@ public class SegmentacionProcessor {
 			segmentaciones.add(seg);
 		}
 	}
+	
+	
+	/**
+	 * 
+	 * 
+	 * Getters & Setters
+	 * 
+	 * 
+	 */
 
 	public String getDir() {
 		return dir;
@@ -739,6 +859,14 @@ public class SegmentacionProcessor {
 
 	public void setDir(String dir) {
 		this.dir = dir;
+	}
+
+	public List<String> getMensajes() {
+		return mensajes;
+	}
+
+	public void setMensajes(List<String> mensajes) {
+		this.mensajes = mensajes;
 	}
 
 }

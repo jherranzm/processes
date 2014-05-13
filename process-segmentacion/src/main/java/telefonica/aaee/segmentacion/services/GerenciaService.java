@@ -91,7 +91,7 @@ public class GerenciaService {
 			throw new GerenciaNotFoundException();
 
 		Gerencia result = repo.saveAndFlush(modificada);
-		logger.info("Modificado : " + result.toString());
+		logger.info("Gerencia actualizada : " + result.toString());
 		return result;
 	}
 
@@ -126,9 +126,9 @@ public class GerenciaService {
 	@Transactional
 	public Gerencia create(Gerencia nuevo) {
 		
-		logger.info("Guardamos el Gerencia...");
+		logger.info("Incluimos la Gerencia en la tabla...");
 		Gerencia result = repo.saveAndFlush(nuevo);
-		logger.info("Gerencia guardado con ID " + result.getId());
+		logger.info("Gerencia creada con ID " + result.getId());
 		
 		return result;
 	}

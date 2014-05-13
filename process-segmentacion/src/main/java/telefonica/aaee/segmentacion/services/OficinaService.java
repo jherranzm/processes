@@ -91,7 +91,7 @@ public class OficinaService {
 			throw new OficinaNotFoundException();
 
 		Oficina result = repo.saveAndFlush(modificada);
-		logger.info("Oficina " + result.toString());
+		logger.info("Oficina actualizada : " + result.toString());
 		return result;
 	}
 
@@ -126,9 +126,9 @@ public class OficinaService {
 	@Transactional
 	public Oficina create(Oficina nuevo) {
 		
-		logger.info("Guardamos la Oficina...");
+		logger.info("Incluimos la Oficina en la tabla...");
 		Oficina result = repo.saveAndFlush(nuevo);
-		logger.info("Oficina guardada con ID " + result.getId());
+		logger.info("Oficina creado con ID " + result.getId());
 		
 		return result;
 	}

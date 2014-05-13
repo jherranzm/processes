@@ -91,7 +91,7 @@ public class SectorService {
 			throw new SectorNotFoundException();
 
 		Sector result = repo.saveAndFlush(modificada);
-		logger.info("Modificado : " + result.toString());
+		logger.info("Sector actualizado : " + result.toString());
 		return result;
 	}
 
@@ -126,9 +126,9 @@ public class SectorService {
 	@Transactional
 	public Sector create(Sector nuevo) {
 		
-		logger.info("Guardamos el Sector...");
+		logger.info("Incluimos el Sector en la tabla...");
 		Sector result = repo.saveAndFlush(nuevo);
-		logger.info("Sector guardado con ID " + result.getId());
+		logger.info("Sector creado con ID " + result.getId());
 		
 		return result;
 	}

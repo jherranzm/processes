@@ -91,7 +91,7 @@ public class RedDeVentasService {
 			throw new RedDeVentasNotFoundException();
 
 		RedDeVentas result = repo.saveAndFlush(modificada);
-		logger.info("Modificado : " + result.toString());
+		logger.info("RedDeVentas actualizado : " + result.toString());
 		return result;
 	}
 
@@ -128,9 +128,9 @@ public class RedDeVentasService {
 	@Transactional
 	public RedDeVentas create(RedDeVentas nuevo) {
 		
-		logger.info("Guardamos el elemento RedDeVentas...");
+		logger.info("Incluimos RedDeVentas en la tabla...");
 		RedDeVentas result = repo.saveAndFlush(nuevo);
-		logger.info("RedDeVentas guardado con ID " + result.getId());
+		logger.info("RedDeVentas creado con ID " + result.getId());
 		
 		return result;
 	}

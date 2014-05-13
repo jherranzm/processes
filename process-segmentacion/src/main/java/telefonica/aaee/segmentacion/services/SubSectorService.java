@@ -91,7 +91,7 @@ public class SubSectorService {
 			throw new SubSectorNotFoundException();
 
 		SubSector result = repo.saveAndFlush(modificada);
-		logger.info("Modificado : " + result.toString());
+		logger.info("SubSector actualizado : " + result.toString());
 		return result;
 	}
 
@@ -126,9 +126,9 @@ public class SubSectorService {
 	@Transactional
 	public SubSector create(SubSector nuevo) {
 		
-		logger.info("Guardamos el SubSector...");
+		logger.info("Incluimos el SubSector en la tabla...");
 		SubSector result = repo.saveAndFlush(nuevo);
-		logger.info("SubSector guardado con ID " + result.getId());
+		logger.info("SubSector creado con ID " + result.getId());
 		
 		return result;
 	}

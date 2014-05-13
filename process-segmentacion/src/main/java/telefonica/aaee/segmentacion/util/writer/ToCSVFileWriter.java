@@ -47,6 +47,28 @@ public class ToCSVFileWriter {
 		return numRows;
 	}
 
+	public int printToTXTFile(List<String> lista, String entidad){
+		int numRows = 0;
+		
+		String fOutName = this.getDir() + File.separator + entidad;
+		fOutName = FilenameUtils.normalize(fOutName);
+		logger.info("Fichero normalizado:" + fOutName);
+		try {
+			BufferedWriter bwOut = getBROut(fOutName);
+			
+			for(String element : lista){
+				bwOut.write("" + element + Constantes.CRLF);
+			}
+			
+			bwOut.flush();
+			bwOut.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		return numRows;
+	}
+
 	private BufferedWriter getBROut(String fOutName) {
 
 		/**
