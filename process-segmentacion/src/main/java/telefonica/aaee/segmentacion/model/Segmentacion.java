@@ -18,11 +18,8 @@ import telefonica.aaee.segmentacion.util.Constantes;
 @NamedQueries({
 		@NamedQuery(name = "Segmentacion.findAll", query = "SELECT c FROM Segmentacion c"),
 		@NamedQuery(name = "Segmentacion.findByCuc", query = "SELECT p "
-				+ "FROM Segmentacion p "
-				+ "WHERE "
-				+ " 1 = 1 "
-				+ " AND p.cucCliente = :cod ")
-})
+				+ "FROM Segmentacion p " + "WHERE " + " 1 = 1 "
+				+ " AND p.cucCliente = :cod ") })
 public class Segmentacion implements Serializable, Exportable {
 
 	private static final long serialVersionUID = 1L;
@@ -34,35 +31,44 @@ public class Segmentacion implements Serializable, Exportable {
 	@Column(name = "Cod_Cliente")
 	private String cucCliente;
 
-	@Column(name = "Cod_Territorio")
-	private String codTerritorio;
+	@Column(name = "Id_Territorio")
+	private Long idTerritorio;
 
-	@Column(name = "Cod_Gerencia")
-	private String codGerencia;
+	@Column(name = "Id_Gerencia")
+	private Long idGerencia;
 
-	@Column(name = "Cod_Oficina")
-	private String codOficina;
+	@Column(name = "Id_Oficina")
+	private Long idOficina;
 
-	@Column(name = "Cod_Sector", nullable = true)
-	private String codSector;
+	@Column(name = "Id_Sector")
+	private Long idSector;
 
-	@Column(name = "Cod_SubSector", nullable = true)
-	private String codSubSector;
+	@Column(name = "Id_SubSector")
+	private Long idSubSector;
 
-	@Column(name = "Mat_Vendedor", nullable = true)
-	private String matVendedor;
+	@Column(name = "Id_Segmento")
+	private Long idSegmento;
 
-	@Column(name = "Mat_Desarrollador", nullable = true)
-	private String matDesarrollador;
+	@Column(name = "Id_SubSegmento")
+	private Long idSubSegmento;
 
-	@Column(name = "Mat_JVentas", nullable = true)
-	private String matJVentas;
+	@Column(name = "Id_NivelDeAtencion")
+	private Long idNivelDeAtencion;
 
-	@Column(name = "Mat_JArea", nullable = true)
-	private String matJArea;
+	@Column(name = "Mat_Vendedor")
+	private Long idVendedor;
 
-	@Column(name = "Mat_Gerente", nullable = true)
-	private String matGerente;
+	@Column(name = "Mat_Desarrollador")
+	private Long idDesarrollador;
+
+	@Column(name = "Mat_JVentas")
+	private Long idJVentas;
+
+	@Column(name = "Mat_JArea")
+	private Long idJArea;
+
+	@Column(name = "Mat_Gerente")
+	private Long idGerente;
 
 	public Segmentacion() {
 		super();
@@ -84,84 +90,108 @@ public class Segmentacion implements Serializable, Exportable {
 		this.cucCliente = cucCliente;
 	}
 
-	public String getCodTerritorio() {
-		return codTerritorio;
+	public Long getIdTerritorio() {
+		return idTerritorio;
 	}
 
-	public void setCodTerritorio(String codTerritorio) {
-		this.codTerritorio = codTerritorio;
+	public void setIdTerritorio(Long idTerritorio) {
+		this.idTerritorio = idTerritorio;
 	}
 
-	public String getCodGerencia() {
-		return codGerencia;
+	public Long getIdGerencia() {
+		return idGerencia;
 	}
 
-	public void setCodGerencia(String codGerencia) {
-		this.codGerencia = codGerencia;
+	public void setIdGerencia(Long idGerencia) {
+		this.idGerencia = idGerencia;
 	}
 
-	public String getCodOficina() {
-		return codOficina;
+	public Long getIdOficina() {
+		return idOficina;
 	}
 
-	public void setCodOficina(String codOficina) {
-		this.codOficina = codOficina;
+	public void setIdOficina(Long idOficina) {
+		this.idOficina = idOficina;
 	}
 
-	public String getCodSector() {
-		return codSector;
+	public Long getIdSector() {
+		return idSector;
 	}
 
-	public void setCodSector(String codSector) {
-		this.codSector = codSector;
+	public void setIdSector(Long idSector) {
+		this.idSector = idSector;
 	}
 
-	public String getCodSubSector() {
-		return codSubSector;
+	public Long getIdSubSector() {
+		return idSubSector;
 	}
 
-	public void setCodSubSector(String codSubSector) {
-		this.codSubSector = codSubSector;
+	public void setIdSubSector(Long idSubSector) {
+		this.idSubSector = idSubSector;
 	}
 
-	public String getMatVendedor() {
-		return matVendedor;
+	public Long getIdSegmento() {
+		return idSegmento;
 	}
 
-	public void setMatVendedor(String matVendedor) {
-		this.matVendedor = matVendedor;
+	public void setIdSegmento(Long idSegmento) {
+		this.idSegmento = idSegmento;
 	}
 
-	public String getMatDesarrollador() {
-		return matDesarrollador;
+	public Long getIdSubSegmento() {
+		return idSubSegmento;
 	}
 
-	public void setMatDesarrollador(String matDesarrollador) {
-		this.matDesarrollador = matDesarrollador;
+	public void setIdSubSegmento(Long idSubSegmento) {
+		this.idSubSegmento = idSubSegmento;
 	}
 
-	public String getMatJVentas() {
-		return matJVentas;
+	public Long getIdNivelDeAtencion() {
+		return idNivelDeAtencion;
 	}
 
-	public void setMatJVentas(String matJVentas) {
-		this.matJVentas = matJVentas;
+	public void setIdNivelDeAtencion(Long idNivelDeAtencion) {
+		this.idNivelDeAtencion = idNivelDeAtencion;
 	}
 
-	public String getMatJArea() {
-		return matJArea;
+	public Long getIdVendedor() {
+		return idVendedor;
 	}
 
-	public void setMatJArea(String matJArea) {
-		this.matJArea = matJArea;
+	public void setIdVendedor(Long idVendedor) {
+		this.idVendedor = idVendedor;
 	}
 
-	public String getMatGerente() {
-		return matGerente;
+	public Long getIdDesarrollador() {
+		return idDesarrollador;
 	}
 
-	public void setMatGerente(String matGerente) {
-		this.matGerente = matGerente;
+	public void setIdDesarrollador(Long idDesarrollador) {
+		this.idDesarrollador = idDesarrollador;
+	}
+
+	public Long getIdJVentas() {
+		return idJVentas;
+	}
+
+	public void setIdJVentas(Long idJVentas) {
+		this.idJVentas = idJVentas;
+	}
+
+	public Long getIdJArea() {
+		return idJArea;
+	}
+
+	public void setIdJArea(Long idJArea) {
+		this.idJArea = idJArea;
+	}
+
+	public Long getIdGerente() {
+		return idGerente;
+	}
+
+	public void setIdGerente(Long idGerente) {
+		this.idGerente = idGerente;
 	}
 
 	@Override
@@ -169,29 +199,35 @@ public class Segmentacion implements Serializable, Exportable {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result
-				+ ((codGerencia == null) ? 0 : codGerencia.hashCode());
-		result = prime * result
-				+ ((codOficina == null) ? 0 : codOficina.hashCode());
-		result = prime * result
-				+ ((codSector == null) ? 0 : codSector.hashCode());
-		result = prime * result
-				+ ((codSubSector == null) ? 0 : codSubSector.hashCode());
-		result = prime * result
-				+ ((codTerritorio == null) ? 0 : codTerritorio.hashCode());
-		result = prime * result
 				+ ((cucCliente == null) ? 0 : cucCliente.hashCode());
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		result = prime * result
+				+ ((idDesarrollador == null) ? 0 : idDesarrollador.hashCode());
+		result = prime * result
+				+ ((idGerencia == null) ? 0 : idGerencia.hashCode());
+		result = prime * result
+				+ ((idGerente == null) ? 0 : idGerente.hashCode());
+		result = prime * result + ((idJArea == null) ? 0 : idJArea.hashCode());
+		result = prime * result
+				+ ((idJVentas == null) ? 0 : idJVentas.hashCode());
 		result = prime
 				* result
-				+ ((matDesarrollador == null) ? 0 : matDesarrollador.hashCode());
+				+ ((idNivelDeAtencion == null) ? 0 : idNivelDeAtencion
+						.hashCode());
 		result = prime * result
-				+ ((matGerente == null) ? 0 : matGerente.hashCode());
+				+ ((idOficina == null) ? 0 : idOficina.hashCode());
 		result = prime * result
-				+ ((matJArea == null) ? 0 : matJArea.hashCode());
+				+ ((idSector == null) ? 0 : idSector.hashCode());
 		result = prime * result
-				+ ((matJVentas == null) ? 0 : matJVentas.hashCode());
+				+ ((idSegmento == null) ? 0 : idSegmento.hashCode());
 		result = prime * result
-				+ ((matVendedor == null) ? 0 : matVendedor.hashCode());
+				+ ((idSubSector == null) ? 0 : idSubSector.hashCode());
+		result = prime * result
+				+ ((idSubSegmento == null) ? 0 : idSubSegmento.hashCode());
+		result = prime * result
+				+ ((idTerritorio == null) ? 0 : idTerritorio.hashCode());
+		result = prime * result
+				+ ((idVendedor == null) ? 0 : idVendedor.hashCode());
 		return result;
 	}
 
@@ -204,31 +240,6 @@ public class Segmentacion implements Serializable, Exportable {
 		if (getClass() != obj.getClass())
 			return false;
 		Segmentacion other = (Segmentacion) obj;
-		if (codGerencia == null) {
-			if (other.codGerencia != null)
-				return false;
-		} else if (!codGerencia.equals(other.codGerencia))
-			return false;
-		if (codOficina == null) {
-			if (other.codOficina != null)
-				return false;
-		} else if (!codOficina.equals(other.codOficina))
-			return false;
-		if (codSector == null) {
-			if (other.codSector != null)
-				return false;
-		} else if (!codSector.equals(other.codSector))
-			return false;
-		if (codSubSector == null) {
-			if (other.codSubSector != null)
-				return false;
-		} else if (!codSubSector.equals(other.codSubSector))
-			return false;
-		if (codTerritorio == null) {
-			if (other.codTerritorio != null)
-				return false;
-		} else if (!codTerritorio.equals(other.codTerritorio))
-			return false;
 		if (cucCliente == null) {
 			if (other.cucCliente != null)
 				return false;
@@ -239,30 +250,70 @@ public class Segmentacion implements Serializable, Exportable {
 				return false;
 		} else if (!id.equals(other.id))
 			return false;
-		if (matDesarrollador == null) {
-			if (other.matDesarrollador != null)
+		if (idDesarrollador == null) {
+			if (other.idDesarrollador != null)
 				return false;
-		} else if (!matDesarrollador.equals(other.matDesarrollador))
+		} else if (!idDesarrollador.equals(other.idDesarrollador))
 			return false;
-		if (matGerente == null) {
-			if (other.matGerente != null)
+		if (idGerencia == null) {
+			if (other.idGerencia != null)
 				return false;
-		} else if (!matGerente.equals(other.matGerente))
+		} else if (!idGerencia.equals(other.idGerencia))
 			return false;
-		if (matJArea == null) {
-			if (other.matJArea != null)
+		if (idGerente == null) {
+			if (other.idGerente != null)
 				return false;
-		} else if (!matJArea.equals(other.matJArea))
+		} else if (!idGerente.equals(other.idGerente))
 			return false;
-		if (matJVentas == null) {
-			if (other.matJVentas != null)
+		if (idJArea == null) {
+			if (other.idJArea != null)
 				return false;
-		} else if (!matJVentas.equals(other.matJVentas))
+		} else if (!idJArea.equals(other.idJArea))
 			return false;
-		if (matVendedor == null) {
-			if (other.matVendedor != null)
+		if (idJVentas == null) {
+			if (other.idJVentas != null)
 				return false;
-		} else if (!matVendedor.equals(other.matVendedor))
+		} else if (!idJVentas.equals(other.idJVentas))
+			return false;
+		if (idNivelDeAtencion == null) {
+			if (other.idNivelDeAtencion != null)
+				return false;
+		} else if (!idNivelDeAtencion.equals(other.idNivelDeAtencion))
+			return false;
+		if (idOficina == null) {
+			if (other.idOficina != null)
+				return false;
+		} else if (!idOficina.equals(other.idOficina))
+			return false;
+		if (idSector == null) {
+			if (other.idSector != null)
+				return false;
+		} else if (!idSector.equals(other.idSector))
+			return false;
+		if (idSegmento == null) {
+			if (other.idSegmento != null)
+				return false;
+		} else if (!idSegmento.equals(other.idSegmento))
+			return false;
+		if (idSubSector == null) {
+			if (other.idSubSector != null)
+				return false;
+		} else if (!idSubSector.equals(other.idSubSector))
+			return false;
+		if (idSubSegmento == null) {
+			if (other.idSubSegmento != null)
+				return false;
+		} else if (!idSubSegmento.equals(other.idSubSegmento))
+			return false;
+		if (idTerritorio == null) {
+			if (other.idTerritorio != null)
+				return false;
+		} else if (!idTerritorio.equals(other.idTerritorio))
+			return false;
+		if (idVendedor == null) {
+			if (other.idVendedor != null)
+				return false;
+		} else if (!idVendedor.equals(other.idVendedor))
 			return false;
 		return true;
 	}
@@ -274,26 +325,32 @@ public class Segmentacion implements Serializable, Exportable {
 		builder.append(id);
 		builder.append(", cucCliente=");
 		builder.append(cucCliente);
-		builder.append(", codTerritorio=");
-		builder.append(codTerritorio);
-		builder.append(", codGerencia=");
-		builder.append(codGerencia);
-		builder.append(", codOficina=");
-		builder.append(codOficina);
-		builder.append(", codSector=");
-		builder.append(codSector);
-		builder.append(", codSubSector=");
-		builder.append(codSubSector);
-		builder.append(", matVendedor=");
-		builder.append(matVendedor);
-		builder.append(", matDesarrollador=");
-		builder.append(matDesarrollador);
-		builder.append(", matJVentas=");
-		builder.append(matJVentas);
-		builder.append(", matJArea=");
-		builder.append(matJArea);
-		builder.append(", matGerente=");
-		builder.append(matGerente);
+		builder.append(", idTerritorio=");
+		builder.append(idTerritorio);
+		builder.append(", idGerencia=");
+		builder.append(idGerencia);
+		builder.append(", idOficina=");
+		builder.append(idOficina);
+		builder.append(", idSector=");
+		builder.append(idSector);
+		builder.append(", idSubSector=");
+		builder.append(idSubSector);
+		builder.append(", idSegmento=");
+		builder.append(idSegmento);
+		builder.append(", idSubSegmento=");
+		builder.append(idSubSegmento);
+		builder.append(", idNivelDeAtencion=");
+		builder.append(idNivelDeAtencion);
+		builder.append(", idVendedor=");
+		builder.append(idVendedor);
+		builder.append(", idDesarrollador=");
+		builder.append(idDesarrollador);
+		builder.append(", idJVentas=");
+		builder.append(idJVentas);
+		builder.append(", idJArea=");
+		builder.append(idJArea);
+		builder.append(", idGerente=");
+		builder.append(idGerente);
 		builder.append("]");
 		return builder.toString();
 	}
@@ -301,56 +358,39 @@ public class Segmentacion implements Serializable, Exportable {
 	@Override
 	public String toCSV() {
 		StringBuilder sb = new StringBuilder();
-		sb.append(
-				Constantes.COMILLAS_DOBLES)
-					.append(this.cucCliente)
+		sb.append(Constantes.COMILLAS_DOBLES).append(this.cucCliente)
 				.append(Constantes.COMILLAS_DOBLES).append(";")
-				.append(Constantes.COMILLAS_DOBLES)
-					.append(this.codTerritorio)
-				.append(Constantes.COMILLAS_DOBLES).append(";")
-				.append(Constantes.COMILLAS_DOBLES)
-					.append(this.codGerencia)
-				.append(Constantes.COMILLAS_DOBLES).append(";")
-				.append(Constantes.COMILLAS_DOBLES)
-					.append(this.codOficina)
-				.append(Constantes.COMILLAS_DOBLES).append(";")
-				.append(Constantes.COMILLAS_DOBLES)
-					.append(this.codSector)
-				.append(Constantes.COMILLAS_DOBLES).append(";")
-				.append(Constantes.COMILLAS_DOBLES)
-					.append(this.codSubSector)
-				.append(Constantes.COMILLAS_DOBLES).append(";")
-				.append(Constantes.COMILLAS_DOBLES)
-					.append(this.matVendedor)
-				.append(Constantes.COMILLAS_DOBLES).append(";")
-				.append(Constantes.COMILLAS_DOBLES)
-					.append(this.matDesarrollador)
-				.append(Constantes.COMILLAS_DOBLES).append(";")
-				.append(Constantes.COMILLAS_DOBLES)
-					.append(this.matJVentas)
-				.append(Constantes.COMILLAS_DOBLES).append(";")
-				.append(Constantes.COMILLAS_DOBLES)
-					.append(this.matJArea)
-				.append(Constantes.COMILLAS_DOBLES).append(";")
-				.append(Constantes.COMILLAS_DOBLES)
-					.append(this.matGerente)
-				.append(Constantes.COMILLAS_DOBLES).append(";");
+				.append(this.idTerritorio).append(";").append(this.idGerencia)
+				.append(";").append(this.idOficina).append(";")
+				.append(this.idSector).append(";").append(this.idSubSector)
+				.append(";").append(this.idSegmento).append(";")
+				.append(this.idSubSegmento).append(";")
+				.append(this.idNivelDeAtencion).append(";")
+				.append(this.idVendedor).append(";")
+				.append(this.idDesarrollador).append(";")
+				.append(this.idJVentas).append(";").append(this.idJArea)
+				.append(";").append(this.idGerente).append(";")
+
+		;
 		return sb.toString();
 	}
 
 	public static class Builder {
 		private Long id;
 		private String cucCliente;
-		private String codTerritorio;
-		private String codGerencia;
-		private String codOficina;
-		private String codSector;
-		private String codSubSector;
-		private String matVendedor;
-		private String matDesarrollador;
-		private String matJVentas;
-		private String matJArea;
-		private String matGerente;
+		private Long idTerritorio;
+		private Long idGerencia;
+		private Long idOficina;
+		private Long idSector;
+		private Long idSubSector;
+		private Long idSegmento;
+		private Long idSubSegmento;
+		private Long idNivelDeAtencion;
+		private Long idVendedor;
+		private Long idDesarrollador;
+		private Long idJVentas;
+		private Long idJArea;
+		private Long idGerente;
 
 		public Builder id(Long id) {
 			this.id = id;
@@ -362,53 +402,68 @@ public class Segmentacion implements Serializable, Exportable {
 			return this;
 		}
 
-		public Builder codTerritorio(String codTerritorio) {
-			this.codTerritorio = codTerritorio;
+		public Builder idTerritorio(Long idTerritorio) {
+			this.idTerritorio = idTerritorio;
 			return this;
 		}
 
-		public Builder codGerencia(String codGerencia) {
-			this.codGerencia = codGerencia;
+		public Builder idGerencia(Long idGerencia) {
+			this.idGerencia = idGerencia;
 			return this;
 		}
 
-		public Builder codOficina(String codOficina) {
-			this.codOficina = codOficina;
+		public Builder idOficina(Long idOficina) {
+			this.idOficina = idOficina;
 			return this;
 		}
 
-		public Builder codSector(String codSector) {
-			this.codSector = codSector;
+		public Builder idSector(Long idSector) {
+			this.idSector = idSector;
 			return this;
 		}
 
-		public Builder codSubSector(String codSubSector) {
-			this.codSubSector = codSubSector;
+		public Builder idSubSector(Long idSubSector) {
+			this.idSubSector = idSubSector;
 			return this;
 		}
 
-		public Builder matVendedor(String matVendedor) {
-			this.matVendedor = matVendedor;
+		public Builder idSegmento(Long idSegmento) {
+			this.idSegmento = idSegmento;
 			return this;
 		}
 
-		public Builder matDesarrollador(String matDesarrollador) {
-			this.matDesarrollador = matDesarrollador;
+		public Builder idSubSegmento(Long idSubSegmento) {
+			this.idSubSegmento = idSubSegmento;
 			return this;
 		}
 
-		public Builder matJVentas(String matJVentas) {
-			this.matJVentas = matJVentas;
+		public Builder idNivelDeAtencion(Long idNivelDeAtencion) {
+			this.idNivelDeAtencion = idNivelDeAtencion;
 			return this;
 		}
 
-		public Builder matJArea(String matJArea) {
-			this.matJArea = matJArea;
+		public Builder idVendedor(Long idVendedor) {
+			this.idVendedor = idVendedor;
 			return this;
 		}
 
-		public Builder matGerente(String matGerente) {
-			this.matGerente = matGerente;
+		public Builder idDesarrollador(Long idDesarrollador) {
+			this.idDesarrollador = idDesarrollador;
+			return this;
+		}
+
+		public Builder idJVentas(Long idJVentas) {
+			this.idJVentas = idJVentas;
+			return this;
+		}
+
+		public Builder idJArea(Long idJArea) {
+			this.idJArea = idJArea;
+			return this;
+		}
+
+		public Builder idGerente(Long idGerente) {
+			this.idGerente = idGerente;
 			return this;
 		}
 
@@ -420,15 +475,18 @@ public class Segmentacion implements Serializable, Exportable {
 	private Segmentacion(Builder builder) {
 		this.id = builder.id;
 		this.cucCliente = builder.cucCliente;
-		this.codTerritorio = builder.codTerritorio;
-		this.codGerencia = builder.codGerencia;
-		this.codOficina = builder.codOficina;
-		this.codSector = builder.codSector;
-		this.codSubSector = builder.codSubSector;
-		this.matVendedor = builder.matVendedor;
-		this.matDesarrollador = builder.matDesarrollador;
-		this.matJVentas = builder.matJVentas;
-		this.matJArea = builder.matJArea;
-		this.matGerente = builder.matGerente;
+		this.idTerritorio = builder.idTerritorio;
+		this.idGerencia = builder.idGerencia;
+		this.idOficina = builder.idOficina;
+		this.idSector = builder.idSector;
+		this.idSubSector = builder.idSubSector;
+		this.idSegmento = builder.idSegmento;
+		this.idSubSegmento = builder.idSubSegmento;
+		this.idNivelDeAtencion = builder.idNivelDeAtencion;
+		this.idVendedor = builder.idVendedor;
+		this.idDesarrollador = builder.idDesarrollador;
+		this.idJVentas = builder.idJVentas;
+		this.idJArea = builder.idJArea;
+		this.idGerente = builder.idGerente;
 	}
 }

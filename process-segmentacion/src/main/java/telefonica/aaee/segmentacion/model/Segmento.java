@@ -7,10 +7,20 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
 @Entity
 @Table(name = "tbl_segmento")
+@NamedQueries({
+		@NamedQuery(name = "Segmento.findAll", query = "SELECT c FROM Segmento c"),
+		@NamedQuery(name = "Segmento.findByNombre", query = "SELECT p "
+				+ "FROM Segmento p " + "WHERE " + " 1 = 1 "
+				+ " AND p.nomSegmento = :nom "),
+		@NamedQuery(name = "Segmento.findByCodigo", query = "SELECT p "
+				+ "FROM Segmento p " + "WHERE " + " 1 = 1 "
+				+ " AND p.codSegmento = :cod ") })
 public class Segmento implements Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -19,14 +29,11 @@ public class Segmento implements Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(name = "Segmento")
-	private String segmento;
+	@Column(name = "Cod_Segmento")
+	private String codSegmento;
 
-	@Column(name = "Subsegmento")
-	private String subSegmento;
-
-	@Column(name = "Nivel_de_Atencion")
-	private String nivelDeAtencion;
+	@Column(name = "Nom_Segmento")
+	private String nomSegmento;
 
 	public Segmento() {
 		super();
@@ -40,41 +47,31 @@ public class Segmento implements Serializable {
 		this.id = id;
 	}
 
-	public String getSegmento() {
-		return segmento;
+	public String getCodSegmento() {
+		return codSegmento;
 	}
 
-	public void setSegmento(String segmento) {
-		this.segmento = segmento;
+	public void setCodSegmento(String codSegmento) {
+		this.codSegmento = codSegmento;
 	}
 
-	public String getSubSegmento() {
-		return subSegmento;
+	public String getNomSegmento() {
+		return nomSegmento;
 	}
 
-	public void setSubSegmento(String subSegmento) {
-		this.subSegmento = subSegmento;
-	}
-
-	public String getNivelDeAtencion() {
-		return nivelDeAtencion;
-	}
-
-	public void setNivelDeAtencion(String nivelDeAtencion) {
-		this.nivelDeAtencion = nivelDeAtencion;
+	public void setNomSegmento(String nomSegmento) {
+		this.nomSegmento = nomSegmento;
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
+		result = prime * result
+				+ ((codSegmento == null) ? 0 : codSegmento.hashCode());
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		result = prime * result
-				+ ((nivelDeAtencion == null) ? 0 : nivelDeAtencion.hashCode());
-		result = prime * result
-				+ ((segmento == null) ? 0 : segmento.hashCode());
-		result = prime * result
-				+ ((subSegmento == null) ? 0 : subSegmento.hashCode());
+				+ ((nomSegmento == null) ? 0 : nomSegmento.hashCode());
 		return result;
 	}
 
@@ -87,25 +84,20 @@ public class Segmento implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		Segmento other = (Segmento) obj;
+		if (codSegmento == null) {
+			if (other.codSegmento != null)
+				return false;
+		} else if (!codSegmento.equals(other.codSegmento))
+			return false;
 		if (id == null) {
 			if (other.id != null)
 				return false;
 		} else if (!id.equals(other.id))
 			return false;
-		if (nivelDeAtencion == null) {
-			if (other.nivelDeAtencion != null)
+		if (nomSegmento == null) {
+			if (other.nomSegmento != null)
 				return false;
-		} else if (!nivelDeAtencion.equals(other.nivelDeAtencion))
-			return false;
-		if (segmento == null) {
-			if (other.segmento != null)
-				return false;
-		} else if (!segmento.equals(other.segmento))
-			return false;
-		if (subSegmento == null) {
-			if (other.subSegmento != null)
-				return false;
-		} else if (!subSegmento.equals(other.subSegmento))
+		} else if (!nomSegmento.equals(other.nomSegmento))
 			return false;
 		return true;
 	}
@@ -115,39 +107,31 @@ public class Segmento implements Serializable {
 		StringBuilder builder = new StringBuilder();
 		builder.append("Segmento [id=");
 		builder.append(id);
-		builder.append(", segmento=");
-		builder.append(segmento);
-		builder.append(", subSegmento=");
-		builder.append(subSegmento);
-		builder.append(", nivelDeAtencion=");
-		builder.append(nivelDeAtencion);
+		builder.append(", codSegmento=");
+		builder.append(codSegmento);
+		builder.append(", nomSegmento=");
+		builder.append(nomSegmento);
 		builder.append("]");
 		return builder.toString();
 	}
 
 	public static class Builder {
 		private Long id;
-		private String segmento;
-		private String subSegmento;
-		private String nivelDeAtencion;
+		private String codSegmento;
+		private String nomSegmento;
 
 		public Builder id(Long id) {
 			this.id = id;
 			return this;
 		}
 
-		public Builder segmento(String segmento) {
-			this.segmento = segmento;
+		public Builder codSegmento(String codSegmento) {
+			this.codSegmento = codSegmento;
 			return this;
 		}
 
-		public Builder subSegmento(String subSegmento) {
-			this.subSegmento = subSegmento;
-			return this;
-		}
-
-		public Builder nivelDeAtencion(String nivelDeAtencion) {
-			this.nivelDeAtencion = nivelDeAtencion;
+		public Builder nomSegmento(String nomSegmento) {
+			this.nomSegmento = nomSegmento;
 			return this;
 		}
 
@@ -158,8 +142,7 @@ public class Segmento implements Serializable {
 
 	private Segmento(Builder builder) {
 		this.id = builder.id;
-		this.segmento = builder.segmento;
-		this.subSegmento = builder.subSegmento;
-		this.nivelDeAtencion = builder.nivelDeAtencion;
+		this.codSegmento = builder.codSegmento;
+		this.nomSegmento = builder.nomSegmento;
 	}
 }

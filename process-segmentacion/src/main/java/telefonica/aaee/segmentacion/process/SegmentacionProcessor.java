@@ -27,19 +27,24 @@ import telefonica.aaee.segmentacion.exceptions.TerritorioNotFoundException;
 import telefonica.aaee.segmentacion.model.Cliente;
 import telefonica.aaee.segmentacion.model.Exportable;
 import telefonica.aaee.segmentacion.model.Gerencia;
+import telefonica.aaee.segmentacion.model.NivelDeAtencion;
 import telefonica.aaee.segmentacion.model.Oficina;
 import telefonica.aaee.segmentacion.model.RedDeVentas;
 import telefonica.aaee.segmentacion.model.Sector;
 import telefonica.aaee.segmentacion.model.Segmentacion;
 import telefonica.aaee.segmentacion.model.Segmento;
 import telefonica.aaee.segmentacion.model.SubSector;
+import telefonica.aaee.segmentacion.model.SubSegmento;
 import telefonica.aaee.segmentacion.model.Territorio;
 import telefonica.aaee.segmentacion.services.ClienteService;
 import telefonica.aaee.segmentacion.services.GerenciaService;
+import telefonica.aaee.segmentacion.services.NivelDeAtencionService;
 import telefonica.aaee.segmentacion.services.OficinaService;
 import telefonica.aaee.segmentacion.services.RedDeVentasService;
 import telefonica.aaee.segmentacion.services.SectorService;
+import telefonica.aaee.segmentacion.services.SegmentoService;
 import telefonica.aaee.segmentacion.services.SubSectorService;
+import telefonica.aaee.segmentacion.services.SubSegmentoService;
 import telefonica.aaee.segmentacion.services.TerritorioService;
 import telefonica.aaee.segmentacion.util.writer.ToCSVFileWriter;
 
@@ -99,8 +104,10 @@ public class SegmentacionProcessor {
 	private SortedMap<String, Territorio> territorios = new TreeMap<String, Territorio>();
 	private SortedMap<String, RedDeVentas> comerciales = new TreeMap<String, RedDeVentas>();
 	private SortedMap<String, Gerencia> gerencias = new TreeMap<String, Gerencia>();
-	
-	private Set<Segmento> segmentos = new HashSet<Segmento>();
+	private SortedMap<String, Segmento> segmentos = new TreeMap<String, Segmento>();
+	private SortedMap<String, SubSegmento> subSegmentos = new TreeMap<String, SubSegmento>();
+	private SortedMap<String, NivelDeAtencion> nivelesDeAtencion = new TreeMap<String, NivelDeAtencion>();
+
 	private Set<Segmentacion> segmentaciones = new HashSet<Segmentacion>();
 
 	private Map<String, Cliente> clientes = new HashMap<String, Cliente>();
@@ -115,6 +122,15 @@ public class SegmentacionProcessor {
 	
 	@Autowired
 	private OficinaService oficinaService;
+
+	@Autowired
+	private SegmentoService segmentoService;
+
+	@Autowired
+	private SubSegmentoService subSegmentoService;
+
+	@Autowired
+	private NivelDeAtencionService nivelDeAtencionService;
 
 	@Autowired
 	private GerenciaService gerenciaService;
@@ -138,9 +154,9 @@ public class SegmentacionProcessor {
 
 		String[] mdbs = { 
 				
-//				"NP.mdb",
-//				"Pymes.mdb",
-//				"Operadoras.mdb",
+				"NP.mdb",
+				"Pymes.mdb",
+				"Operadoras.mdb",
 				"Empresas.mdb"
 				};
 
@@ -243,6 +259,18 @@ public class SegmentacionProcessor {
 		
 		for(RedDeVentas rdv : redDeVentasService.findAll()){
 			comerciales.put(rdv.getMatricula(), rdv);
+		}
+		
+		for(Segmento rdv : segmentoService.findAll()){
+			segmentos.put(rdv.getCodSegmento(), rdv);
+		}
+		
+		for(SubSegmento rdv : subSegmentoService.findAll()){
+			subSegmentos.put(rdv.getCodSubSegmento(), rdv);
+		}
+		
+		for(NivelDeAtencion rdv : nivelDeAtencionService.findAll()){
+			nivelesDeAtencion.put(rdv.getCodNivelDeAtencion(), rdv);
 		}
 		
 	}
@@ -401,7 +429,7 @@ public class SegmentacionProcessor {
 	}
 
 	private void showInfoSegmentos() {
-		for (Segmento segmento : segmentos) {
+		for (Segmento segmento : segmentos.values()) {
 			logger.info(String.format("Segmento:[%s]",
 					segmento.toString()));
 		}
@@ -534,7 +562,9 @@ public class SegmentacionProcessor {
 		long idSubSector = captureSubSector(row);
 		long idTerritorio = captureTerritorio(row);
 		long idOficina = captureOficina(row);
-		captureSegmento(row);
+		long idSegmento = captureSegmento(row);
+		long idSubSegmento = captureSubSegmento(row);
+		long idNivelDeAtencion = captureNivelDeAtencion(row);
 
 		// RedDeVentas
 		long idMatVendedor = captureRedDeVentas(row, MAT_VENDEDOR, NOM_VENDEDOR);
@@ -544,15 +574,40 @@ public class SegmentacionProcessor {
 		long idMatGerente = captureRedDeVentas(row, MAT_GERENTE, NOM_GERENTE);
 
 		// cliente
-		captureCliente(row);
+		String codCliente = captureCliente(row);
 		
 		// Segmentación: la relación entre todos
-		captureSegmentacion(row);
+		Segmentacion seg = new Segmentacion.Builder()
+			.cucCliente(codCliente)
+			
+			.idVendedor(idMatVendedor)
+			.idDesarrollador(idMatDesarrollador)
+			.idJVentas(idMatJVentas)
+			.idJArea(idMatJArea)
+			.idGerente(idMatGerente)
+			
+			.idTerritorio(idTerritorio)
+			
+			.idOficina(idOficina)
+			.idGerencia(idGerencia)
+			
+			.idSector(idSector)
+			.idSubSector(idSubSector)
+			
+			.idSegmento(idSegmento)
+			.idSubSegmento(idSubSegmento)
+			.idNivelDeAtencion(idNivelDeAtencion)
+			
+			.build();
+		segmentaciones.add(seg);
+
 	}
 
-	private void captureCliente(Row row) {
+	private String captureCliente(Row row) {
 		
-		String codCliente = (String) row.get(COD_CLIENTE);
+		String codCliente = null;
+		
+		codCliente = (String) row.get(COD_CLIENTE);
 		String tipoDocCliente = (String) row.get(TIPO_DOC);
 		String cifCliente = (String) row.get(CIF);
 		String nomCliente = (String) row.get(CLIENTE);
@@ -600,6 +655,7 @@ public class SegmentacionProcessor {
 			
 		}// if(codCliente != null){
 
+		return codCliente;
 	}
 
 	private void addListaClientesPorTipoDocCif(
@@ -697,18 +753,54 @@ public class SegmentacionProcessor {
 		return oficinas.get(codOficina).getId();
 	}
 
-	private void captureSegmento(Row row) {
+	private long captureSegmento(Row row) {
 		// Oficina
-		String segmento = (String) row.get(SEGMENTO);
-		String subSegmento = (String) row.get(SUBSEGMENTO);
-		String nivelDeAtencion = (String) row.get(NIVEL_DE_ATENCION);
-		Segmento seg;
-		if (segmento != null) {
-			seg = new Segmento.Builder().segmento(segmento)
-					.subSegmento(subSegmento).nivelDeAtencion(nivelDeAtencion)
+		String codSegmento = (String) row.get(SEGMENTO);
+		if (codSegmento == null){
+			return -1;
+		}else if(!segmentos.containsKey(codSegmento)) {
+			Segmento segmento = new Segmento.Builder()
+					.codSegmento(codSegmento)
 					.build();
-			segmentos.add(seg);
+			Segmento nuevo = segmentoService.create(segmento);
+			segmentos.put(codSegmento, nuevo);
+			mensajes.add("Se ha creado un nuevo Segmento: " + nuevo.toString());
 		}
+		return segmentos.get(codSegmento).getId();
+	}
+
+	private long captureSubSegmento(Row row) {
+		// Oficina
+		String codSubSegmento = (String) row.get(SUBSEGMENTO);
+		if (codSubSegmento == null){
+			return -1;
+		}else if(!subSegmentos.containsKey(codSubSegmento)) {
+			SubSegmento segmento = new SubSegmento.Builder()
+					.codSubSegmento(codSubSegmento)
+					.build();
+			SubSegmento nuevo = subSegmentoService.create(segmento);
+			subSegmentos.put(codSubSegmento, nuevo);
+			mensajes.add("Se ha creado un nuevo SubSegmento: " + nuevo.toString());
+			
+		}
+		return subSegmentos.get(codSubSegmento).getId();
+	}
+
+	private long captureNivelDeAtencion(Row row) {
+		// NivelDeAtencion
+		String codNivelDeAtencion = (String) row.get(NIVEL_DE_ATENCION);
+		if (codNivelDeAtencion == null){
+			return -1;
+		}else if(!nivelesDeAtencion.containsKey(codNivelDeAtencion)) {
+			NivelDeAtencion segmento = new NivelDeAtencion.Builder()
+					.codNivelDeAtencion(codNivelDeAtencion)
+					.build();
+			NivelDeAtencion nuevo = nivelDeAtencionService.create(segmento);
+			nivelesDeAtencion.put(codNivelDeAtencion, nuevo);
+			mensajes.add("Se ha creado un nuevo NivelDeAtencion: " + nuevo.toString());
+			
+		}
+		return nivelesDeAtencion.get(codNivelDeAtencion).getId();
 	}
 
 	private long captureTerritorio(Row row) {
@@ -753,7 +845,7 @@ public class SegmentacionProcessor {
 		// Sector
 		String codSector = (String) row.get(COD_SECTOR);
 		String nomSector = (String) row.get(NOM_SECTOR);
-		if (codSector != null) {
+		if (codSector == null) {
 			return -1;
 		}else if(!sectores.containsKey(codSector)){
 			Sector sector = new Sector.Builder()
@@ -789,59 +881,7 @@ public class SegmentacionProcessor {
 
 	private void captureSegmentacion(Row row) {
 
-		// Cliente : CUC
-		String codCliente = (String) row.get(COD_CLIENTE);
-		// Territorio
-		String codTerritorio = (String) row.get(COD_TERRITORIO);
-		codTerritorio = (codTerritorio == null ? "" : codTerritorio);
-		// Gerencia
-		String codGerencia = (String) row.get(COD_GERENCIA);
-		codGerencia = (codGerencia == null ? "" : codGerencia);
-		// Sector
-		String codSector = (String) row.get(COD_SECTOR);
-		codSector = (codSector == null ? "" : codSector);
-		// SubSector
-		String codSubSector = (String) row.get(COD_SUB_SECTOR);
-		codSubSector = (codSubSector == null ? "" : codSubSector);
-		// Oficina
-		String codOficina = (String) row.get(COD_OFICINA);
-		codOficina = (codOficina == null ? "" : codOficina);
-		// Segmento
-		String segmento = (String) row.get(SEGMENTO);
-//		segmento = (segmento == null ? "" : segmento);
-		String subSegmento = (String) row.get(SUBSEGMENTO);
-//		subSegmento = (subSegmento == null ? "" : subSegmento);
-		String nivelDeAtencion = (String) row.get(NIVEL_DE_ATENCION);
-//		nivelDeAtencion = (nivelDeAtencion == null ? "" : nivelDeAtencion);
-		// RedDeVentas
-		String matVendedor 		= (String) row.get(MAT_VENDEDOR);
-		matVendedor = (matVendedor == null ? "" : matVendedor);
-		String matDesarrollador = (String) row.get(MAT_DESARROLLADOR);
-		matDesarrollador = (matDesarrollador == null ? "" : matDesarrollador);
-		String matJVentas		= (String) row.get(MAT_J_VENTAS);
-		matJVentas = (matJVentas == null ? "" : matJVentas);
-		String matJArea			= (String) row.get(MAT_J_AREA);
-		matJArea = (matJArea == null ? "" : matJArea);
-		String matGerente		= (String) row.get(MAT_GERENTE);
-		matGerente = (matGerente == null ? "" : matGerente);
 		
-		Segmentacion seg;
-		if (segmento != null) {
-			seg = new Segmentacion.Builder()
-				.cucCliente(codCliente)
-				.codTerritorio(codTerritorio)
-				.codGerencia(codGerencia)
-				.codOficina(codOficina)
-				.codSector(codSector)
-				.codSubSector(codSubSector)
-				.matVendedor(matVendedor)
-				.matDesarrollador(matDesarrollador)
-				.matJVentas(matJVentas)
-				.matJArea(matJArea)
-				.matGerente(matGerente)
-				.build();
-			segmentaciones.add(seg);
-		}
 	}
 	
 	
