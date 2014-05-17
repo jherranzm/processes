@@ -21,6 +21,7 @@ public class MainApp {
 		processor.setDir("/Users/jherranzm/dev/testFiles/");
 		processor.execute();
 		
+		
 		long fin = System.currentTimeMillis();
 		
 		System.out.println("Tiempo invertido:" + ((fin-ini)/1000) + " seg.");
