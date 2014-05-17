@@ -1,0 +1,123 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+  		http://maven.apache.org/POM/4.0.0 
+  		http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>telefonica.aaee.dao</groupId>
+	<artifactId>model-services-977r</artifactId>
+	<version>1.0</version>
+	<packaging>jar</packaging>
+
+	<name>model-services-977r</name>
+	<url>http://maven.apache.org</url>
+
+	<properties>
+		<spring.version>4.0.2.RELEASE</spring.version>
+
+		<mysql.connector.version>5.1.18</mysql.connector.version>
+
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+		<slf4j.version>1.6.1</slf4j.version>
+		<validation.version>1.1.0.Final</validation.version>
+		<hibernate.validator.version>5.0.1.Final</hibernate.validator.version>
+		<poi.version>3.9</poi.version>
+
+		<javax.persistence.version>2.1.0</javax.persistence.version>
+		<eclipselink>2.2.0</eclipselink>
+
+		<jdk.version>1.7</jdk.version>
+		<maven.compiler.version>3.1</maven.compiler.version>
+
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.11</version>
+			<scope>test</scope>
+		</dependency>
+		<!-- MySQL -->
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>${mysql.connector.version}</version>
+		</dependency>
+
+		<!-- JPA -->
+		<dependency>
+			<groupId>org.eclipse.persistence</groupId>
+			<artifactId>eclipselink</artifactId>
+			<version>${eclipselink}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.eclipse.persistence</groupId>
+			<artifactId>javax.persistence</artifactId>
+			<version>${javax.persistence.version}</version>
+		</dependency>
+
+
+
+
+		<!-- Spring dependencies -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-core</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-web</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-webmvc</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+
+		<!-- @EnableTransactionManagement -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-tx</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+
+		<!-- @EnableJpaRepositories -->
+		<dependency>
+			<groupId>org.springframework.data</groupId>
+			<artifactId>spring-data-jpa</artifactId>
+			<version>1.5.0.RELEASE</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>telefonica.aaee.util</groupId>
+			<artifactId>aaee-helpers</artifactId>
+			<version>1.0</version>
+		</dependency>
+
+
+	</dependencies>
+
+
+	<repositories>
+
+		<repository>
+			<id>EclipseLink Repo</id>
+			<url>http://download.eclipse.org/rt/eclipselink/maven.repo</url>
+		</repository>
+
+	</repositories>
+</project>
