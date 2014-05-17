@@ -191,6 +191,11 @@ public class Capture977rProcessor {
 		} finally {
 			HelperFile.cleandirs(getConfig().getDirectorioOut());
 
+			Calendar fin = Calendar.getInstance();
+			long lFin = fin.getTimeInMillis();
+			sb.append((lFin - lIni) + Split977Config.CRLF);
+
+			setTiempoEmpleado(lFin - lIni);
 			
 			logger.info("Se han tratado " + listaFicheros.size() + " ficheros.");
 			resultados.add("Se han tratado " + listaFicheros.size() + " ficheros.");
@@ -199,15 +204,12 @@ public class Capture977rProcessor {
 				resultados.add(fichero);
 			}
 			for(String tipoRegistro : numRegistros.keySet()){
-				logger.info(tipoRegistro + " - " + numRegistros.get(tipoRegistro) + " registros : " + tipoRegistrosFactel5.get(tipoRegistro).getDescripcion());
-				resultados.add(tipoRegistro + " - " + numRegistros.get(tipoRegistro) + " registros : " + tipoRegistrosFactel5.get(tipoRegistro).getDescripcion());
+				logger.info(numRegistros.get(tipoRegistro) + " registros : " + tipoRegistro + ":" + tipoRegistrosFactel5.get(tipoRegistro).getDescripcion());
+				resultados.add(numRegistros.get(tipoRegistro) + " registros : " + tipoRegistro + ":" + tipoRegistrosFactel5.get(tipoRegistro).getDescripcion());
 			}
 
-			Calendar fin = Calendar.getInstance();
-			long lFin = fin.getTimeInMillis();
-			sb.append((lFin - lIni) + Split977Config.CRLF);
-
-			setTiempoEmpleado(lFin - lIni);
+			resultados.add(String.format("Tiempo total de proceso:[%d] segundos.", (lFin-lIni)/1000));
+			
 
 		}
 
@@ -1210,7 +1212,7 @@ public class Capture977rProcessor {
 		if (elFichero != null) {
 			// el fichero YA existe en la tabla
 			
-			if(false){
+			if(!getConfig().isRecargaFicheros()){
 				throw new ElFicheroYaExisteException(nombreFicheroOriginal,
 						fechaFactura, cifActual000000);
 			}else{

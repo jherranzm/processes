@@ -1,5 +1,6 @@
 package telefonica.aaee.capture977r.process;
 
+
 public class Split977Config {
 
 	/** Es el valor del CIF del registro 100000 */
@@ -9,6 +10,7 @@ public class Split977Config {
 	private boolean borrarAcuerdo;
 	private boolean detalleLlamadas;
 	private boolean detalleLlamadasRI;
+	private boolean recargaFicheros;
 
 	private String directorioOut;
 	private String directorioZipFiles;
@@ -80,12 +82,21 @@ public class Split977Config {
 		this.directorioZipFiles = directorioZipFiles;
 	}
 
+	public boolean isRecargaFicheros() {
+		return recargaFicheros;
+	}
+
+	public void setRecargaFicheros(boolean recargaFicheros) {
+		this.recargaFicheros = recargaFicheros;
+	}
+
 	public static class Builder {
 		private String acuerdo;
 		private boolean borrarTablas;
 		private boolean borrarAcuerdo;
 		private boolean detalleLlamadas;
 		private boolean detalleLlamadasRI;
+		private boolean recargaFicheros;
 		private String directorioOut;
 		private String directorioZipFiles;
 
@@ -127,6 +138,11 @@ public class Split977Config {
 		public Split977Config build() {
 			return new Split977Config(this);
 		}
+
+		public Builder recargaFicheros(boolean recargaFicheros) {
+			this.recargaFicheros = recargaFicheros;
+			return this;
+		}
 	}
 
 	private Split977Config(Builder builder) {
@@ -135,6 +151,7 @@ public class Split977Config {
 		this.borrarAcuerdo = builder.borrarAcuerdo;
 		this.detalleLlamadas = builder.detalleLlamadas;
 		this.detalleLlamadasRI = builder.detalleLlamadasRI;
+		this.setRecargaFicheros(builder.recargaFicheros);
 		this.directorioOut = builder.directorioOut;
 		this.directorioZipFiles = builder.directorioZipFiles;
 	}
