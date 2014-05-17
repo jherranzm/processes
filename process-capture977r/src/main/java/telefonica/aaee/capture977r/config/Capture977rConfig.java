@@ -8,7 +8,7 @@ import telefonica.aaee.capture977r.process.Capture977rProcessor;
 
 @Configuration
 //Specifies which package to scan
-@ComponentScan("telefonica.aaee.capture977r")
+@ComponentScan(value={"telefonica.aaee.capture977r","telefonica.aaee.dao"})
 public class Capture977rConfig {
 	@Bean
 	public Capture977rProcessor processor() {

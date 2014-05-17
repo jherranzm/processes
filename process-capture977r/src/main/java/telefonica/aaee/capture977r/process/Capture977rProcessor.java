@@ -9,28 +9,23 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Hashtable;
-import java.util.InvalidPropertiesFormatException;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Properties;
 import java.util.Set;
+import java.util.SortedMap;
 import java.util.StringTokenizer;
+import java.util.TreeMap;
 import java.util.Vector;
-
-import javax.persistence.EntityManager;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.ArrayUtils;
@@ -42,13 +37,16 @@ import org.springframework.stereotype.Service;
 import telefonica.aaee.capture977r.exceptions.ElFicheroYaExisteException;
 import telefonica.aaee.capture977r.exceptions.ErrorEnLaInicializacionException;
 import telefonica.aaee.capture977r.exceptions.NoSeHaPodidoGuardarElFichero;
-import telefonica.aaee.capture977r.model.Acuerdo;
-import telefonica.aaee.capture977r.model.Fichero;
-import telefonica.aaee.capture977r.services.AcuerdoService;
-import telefonica.aaee.capture977r.services.FicheroService;
-import telefonica.aaee.capture977r.util.JPAUtil;
-import telefonica.aaee.capture977r.util.UtilNombre;
-import telefonica.aaee.capture977r.util.zip.Unzip977RFile;
+import telefonica.aaee.capture977r.util.Mensajes;
+import telefonica.aaee.dao.model.Acuerdo;
+import telefonica.aaee.dao.model.Fichero;
+import telefonica.aaee.dao.model.TipoRegistroFactel5;
+import telefonica.aaee.dao.service.AcuerdoService;
+import telefonica.aaee.dao.service.FicheroService;
+import telefonica.aaee.dao.service.TipoRegistroFactel5Service;
+import telefonica.aaee.util.UtilNombre;
+import telefonica.aaee.util.file.HelperFile;
+import telefonica.aaee.util.zip.Unzip977RFile;
 
 /**
  * @author t130796
@@ -59,10 +57,6 @@ public class Capture977rProcessor {
 
 	protected final Log logger = LogFactory.getLog(getClass());
 
-	private static final String SQL_FILE_ADD_DATA = "incorporarDatos.sql";
-	private static final String SQL_FILE_CREATE_TABLES = "createTables.sql";
-
-	final private static String SQL_QUERIES = "/Capture977R.SQLQueries.xml";
 	private int[] posiciones = { 25, 1, 15, 4, 3, 1, 3 };
 
 	private Hashtable<String, TipoRegistro> registros = new Hashtable<String, TipoRegistro>();
@@ -70,6 +64,9 @@ public class Capture977rProcessor {
 	private Hashtable<String, BufferedWriter> bwOut = new Hashtable<String, BufferedWriter>();
 	private Hashtable<String, String> codigoRegistroExistente = new Hashtable<String, String>();
 	private Hashtable<String, Vector<String>> camposPorTabla = new Hashtable<String, Vector<String>>();
+
+	private SortedMap<String, Long> numRegistros = new TreeMap<String, Long>();
+	private Hashtable<String, TipoRegistroFactel5> tipoRegistrosFactel5 = new Hashtable<String, TipoRegistroFactel5>();
 
 	/*
 	 * private int[][] pos_000000 = { {6,8,8,12,12,12,20,20,20,4},
@@ -84,19 +81,20 @@ public class Capture977rProcessor {
 	private String[] ficheros = {};
 
 	private List<String> sqlQueries = new ArrayList<String>();
+	private List<String> resultados = new ArrayList<String>();
 
 	private Split977Config config = null; // new Split977Config("", false, true,
 											// false, false, null);
-
-	private Properties sqlStatements = null;
-
 	private long tiempoEmpleado = 0;
 
 	@Autowired
-	private AcuerdoService acService;
+	private AcuerdoService acuerdoService;
 
 	@Autowired
 	private FicheroService ficheroService;
+
+	@Autowired
+	private TipoRegistroFactel5Service tipoRegistroService;
 
 	public Capture977rProcessor() {
 		super();
@@ -112,6 +110,8 @@ public class Capture977rProcessor {
 		Calendar ini = Calendar.getInstance();
 		long lIni = ini.getTimeInMillis();
 		sb.append(lIni);
+		
+		List<String> listaFicheros = new ArrayList<String>();
 
 		try {
 
@@ -129,7 +129,7 @@ public class Capture977rProcessor {
 			creaAcuerdo();
 
 			// Descomprime los ficheros que hay en el directorio
-			List<String> listaFicheros = descomprimirFicheros();
+			listaFicheros = descomprimirFicheros();
 
 			logger.info(String.format("Número de ficheros a tratar: [%d]",
 					listaFicheros.size()));
@@ -172,6 +172,7 @@ public class Capture977rProcessor {
 
 				getInfoTablas(sb);
 				
+				
 			}
 
 		} catch (FileNotFoundException e) {
@@ -181,9 +182,6 @@ public class Capture977rProcessor {
 		} catch (IOException e) {
 			sb.append("Error de Entrada/Salida: " + e.getMessage());
 			e.printStackTrace();
-			// } catch (SQLException e) {
-			// sb.append("Error SQL: " + e.getMessage());
-			// e.printStackTrace();
 		} catch (ErrorEnLaInicializacionException e) {
 			sb.append("Error En La Inicialización: " + e.getMessage());
 			e.printStackTrace();
@@ -191,7 +189,19 @@ public class Capture977rProcessor {
 			sb.append("Exception:" + e.getMessage());
 			e.printStackTrace();
 		} finally {
-			// HelperFile.cleandirs(getConfig().getDirectorioOut());
+			HelperFile.cleandirs(getConfig().getDirectorioOut());
+
+			
+			logger.info("Se han tratado " + listaFicheros.size() + " ficheros.");
+			resultados.add("Se han tratado " + listaFicheros.size() + " ficheros.");
+			for(String fichero : listaFicheros){
+				logger.info(fichero);
+				resultados.add(fichero);
+			}
+			for(String tipoRegistro : numRegistros.keySet()){
+				logger.info(tipoRegistro + " - " + numRegistros.get(tipoRegistro) + " registros : " + tipoRegistrosFactel5.get(tipoRegistro).getDescripcion());
+				resultados.add(tipoRegistro + " - " + numRegistros.get(tipoRegistro) + " registros : " + tipoRegistrosFactel5.get(tipoRegistro).getDescripcion());
+			}
 
 			Calendar fin = Calendar.getInstance();
 			long lFin = fin.getTimeInMillis();
@@ -208,11 +218,11 @@ public class Capture977rProcessor {
 	private void creaAcuerdo() {
 		Acuerdo elAcuerdo = new Acuerdo();
 		elAcuerdo.setAcuerdo(getConfig().getAcuerdo());
-		Acuerdo elAcuerdoGuardado = acService.findByNombre(getConfig()
+		Acuerdo elAcuerdoGuardado = acuerdoService.findByNombre(getConfig()
 				.getAcuerdo());
 		if (elAcuerdoGuardado == null) {
 			elAcuerdo.setId(0L);
-			elAcuerdoGuardado = acService.create(elAcuerdo);
+			elAcuerdoGuardado = acuerdoService.create(elAcuerdo);
 			logger.info(String.format("Se ha creado el acuerdo : %s",
 					elAcuerdoGuardado.toString()));
 		}
@@ -220,6 +230,15 @@ public class Capture977rProcessor {
 		idAcuerdo = elAcuerdoGuardado.getId();
 	}
 
+	/**
+	 * 
+	 * Lee los ficheros que se quieren tratar, localiza el nombre, y 
+	 * en caso de que el fichero no esté tratado, guarda el registro para 
+	 * procesarlo.
+	 * 
+	 * @param listaFicheros
+	 * @return lista de ficheros 
+	 */
 	private List<String> obtieneInformacionFicheros(List<String> listaFicheros){
 		
 		List<String> ficherosDefinitivos = new ArrayList<String>();
@@ -247,19 +266,21 @@ public class Capture977rProcessor {
 						break;
 					}
 				}
+				
+				in.close();
 			} catch(ElFicheroYaExisteException e){
-				logger.error("El fichero ya existe y no se tratará...");
+				logger.error(String.format(Mensajes.FILE_ALREADY_PROCESSED, fichero));
 			} catch (NoSeHaPodidoGuardarElFichero e) {
-				// TODO Auto-generated catch block
+				logger.error(String.format(Mensajes.FILE_NOT_SAVED, fichero));
 				e.printStackTrace();
 			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
+				logger.error(String.format(Mensajes.FILE_NOT_EXISTS, fichero));
 				e.printStackTrace();
 			} catch (UnsupportedEncodingException e) {
-				// TODO Auto-generated catch block
+				logger.error(String.format(Mensajes.FILE_UNSUPORTED_ENCODING, fichero));
 				e.printStackTrace();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
+				logger.error(String.format(Mensajes.FILE_IO_ERROR, fichero));
 				e.printStackTrace();
 			}
 
@@ -328,7 +349,7 @@ public class Capture977rProcessor {
 		
 		
 		for(String sql : sqlQueries){
-			acService.executeSQLQuery(sql);
+			acuerdoService.executeSQLQuery(sql);
 		}
 
 	}
@@ -352,35 +373,6 @@ public class Capture977rProcessor {
 		}
 	}
 
-	/**
-	 * 
-	 * Se recuperan las consultas SQL a ejecutar del un fichero de configuración
-	 * 
-	 * @param sb
-	 * @throws FileNotFoundException
-	 * @throws IOException
-	 * @throws InvalidPropertiesFormatException
-	 */
-	private void getConsultasSQLAEjecutar(StringBuilder sb)
-			throws FileNotFoundException, IOException,
-			InvalidPropertiesFormatException {
-
-		sqlStatements = new Properties();
-
-		logger.info(SQL_QUERIES);
-		sb.append(SQL_QUERIES);
-		InputStream XMLstream = getClass().getResourceAsStream(SQL_QUERIES);
-		if (XMLstream == null) {
-			throw new FileNotFoundException(
-					"No se ha encontrado el fichero en el JAR: " + SQL_QUERIES);
-		} else {
-			logger.info("XMLStream no es nulo...!");
-			sb.append("XMLStream no es nulo...!");
-		}
-		sqlStatements.loadFromXML(XMLstream);
-		logger.info("Elementos en Consultas a Ejecutar: "
-				+ sqlStatements.size());
-	}
 
 	/**
 	 * @param sb
@@ -429,6 +421,11 @@ public class Capture977rProcessor {
 					.println("No se han especificado las condiciones iniciales: ACUERDO, etc...");
 			ret = false;
 		}
+		
+		for(TipoRegistroFactel5 tr : tipoRegistroService.findAll()){
+			tipoRegistrosFactel5.put(tr.getTipoRegistro(), tr);
+		}
+		
 		return ret;
 	}
 
@@ -533,7 +530,7 @@ public class Capture977rProcessor {
 
 					StringBuilder SQLCreateTableDefCampos = new StringBuilder();
 
-					int ocurrencias = 0;
+//					int ocurrencias = 0;
 					for (int k = 0; k < bloque.getNumEstructuras(); k++) {
 
 						/**
@@ -554,7 +551,7 @@ public class Capture977rProcessor {
 						} else if ("SECUENCIAL".equals(nombreCampo)) {
 						} else if (nombreCampo.startsWith("OCURR")) {
 
-							ocurrencias++;
+//							ocurrencias++;
 						} else {
 
 							// Guardamos el campo en caso de que no esté en
@@ -567,8 +564,8 @@ public class Capture977rProcessor {
 								camposEnTabla.add(nombreCampo);
 							}
 
-							SQLCreateTableDefCampos.append(", ").append(
-									nombreCampo);
+							SQLCreateTableDefCampos
+								.append(", ").append(nombreCampo);
 
 							/**
 							 * Añadimos la longitud y características en función
@@ -713,7 +710,7 @@ public class Capture977rProcessor {
 						Bloque bloque = tr.getBloques()[iBloque];
 						EstructuraCampo[] estructura = bloque.getEstructuras();
 
-						int ocurrencias = 0;
+//						int ocurrencias = 0;
 						for (int k = 0; k < bloque.getNumEstructuras(); k++) {
 
 							String nombreCampo = estructura[k].getNombreCampo()
@@ -721,7 +718,7 @@ public class Capture977rProcessor {
 									.replace(".", "");
 
 							if (nombreCampo.startsWith("OCURR")) {
-								ocurrencias++;
+//								ocurrencias++;
 							} else {
 
 								// Guardamos el campo en caso de que no esté en
@@ -923,21 +920,16 @@ public class Capture977rProcessor {
 										.append(Split977Config.COMILLAS_DOBLES)
 										.append(";").append("")
 										.append(idAcuerdo).append(";")
-										// .append(COMILLAS_DOBLES).append(codigoRegistro).append("_").append((iBloque
-										// +
-										// 1)).append(COMILLAS_DOBLES).append(";")
 										.append("");
 
-								// String fOutName = codigoRegistro
-								// +"_"+(iBloque+1);
 								String fOutName = getConfig()
 										.getDirectorioOut()
 										+ File.separator
 										+ codigoRegistro + "_" + (iBloque + 1);
 								fOutName = FilenameUtils.normalize(fOutName);
-								// logger.info("Fichero normalizado:" +
-								// fOutName);
+
 								BufferedWriter bwOut = getBROut(fOutName);
+								
 								for (int k = 0; k < bloque.getNumEstructuras(); k++) {
 									int offset = (new Integer(
 											estructuras[k].getLongitudCampo()))
@@ -945,25 +937,16 @@ public class Capture977rProcessor {
 
 									if ("CODIGO REGISTRO".equals(estructuras[k]
 											.getNombreCampo().trim())) {
-										// logger.info("**" +
-										// estructuras[k].getNombreCampo() +
-										// "**");
 										if (offset > 0)
 											pos += offset;
 									} else if ("SECUENCIAL"
 											.equals(estructuras[k]
 													.getNombreCampo().trim())) {
-										// logger.info("**" +
-										// estructuras[k].getNombreCampo() +
-										// "**");
 										if (offset > 0)
 											pos += offset;
 									} else if ("LONGITUD REGISTRO"
 											.equals(estructuras[k]
 													.getNombreCampo().trim())) {
-										// logger.info("**" +
-										// estructuras[k].getNombreCampo() +
-										// "**");
 										if (offset > 0)
 											pos += offset;
 									} else if (offset > 0) {
@@ -982,10 +965,6 @@ public class Capture977rProcessor {
 										} else {
 											campo = line.substring(pos);
 										}
-										// logger.info(campo);
-										/**
-        									 * 
-        									 */
 										campo = correccionCamposNumericos(
 												tipoCampo, campo);
 										if (tipoCampo.equals("I")) {
@@ -1018,7 +997,6 @@ public class Capture977rProcessor {
 									}
 
 								}
-								// logger.info(resultLine);
 								bwOut.write("" + resultLine.toString()
 										+ Split977Config.CRLF);
 								bwOut.flush();
@@ -1031,7 +1009,6 @@ public class Capture977rProcessor {
 									.append(nombreFicheroOriginal)
 									.append(Split977Config.COMILLAS_DOBLES)
 									.append(";")
-									// .append("\"").append(secuencial).append(COMILLAS_DOBLES).append(";")
 									.append("").append(secuencial).append(";")
 									.append(Split977Config.COMILLAS_DOBLES)
 									.append(fechaFactura)
@@ -1046,15 +1023,12 @@ public class Capture977rProcessor {
 									.append(Split977Config.COMILLAS_DOBLES)
 									.append(";").append("").append(idAcuerdo)
 									.append(";")
-									// .append(COMILLAS_DOBLES).append(codigoRegistro).append("_").append((iBloque
-									// + 1)).append(COMILLAS_DOBLES).append(";")
 									.append("");
 							String fOutName = getConfig().getDirectorioOut()
 									+ File.separator + codigoRegistro + "_"
 									+ (iBloque + 1);
 
 							fOutName = FilenameUtils.normalize(fOutName);
-							// logger.info("Fichero normalizado:" + fOutName);
 
 							BufferedWriter bwOut = getBROut(fOutName);
 							for (int k = 0; k < bloque.getNumEstructuras(); k++) {
@@ -1065,21 +1039,15 @@ public class Capture977rProcessor {
 
 								if ("CODIGO REGISTRO".equals(estructuras[k]
 										.getNombreCampo().trim())) {
-									// logger.info("**" +
-									// estructuras[k].getNombreCampo() + "**");
 									if (offset > 0)
 										pos += offset;
 								} else if ("SECUENCIAL".equals(estructuras[k]
 										.getNombreCampo().trim())) {
-									// logger.info("**" +
-									// estructuras[k].getNombreCampo() + "**");
 									if (offset > 0)
 										pos += offset;
 								} else if ("LONGITUD REGISTRO"
 										.equals(estructuras[k].getNombreCampo()
 												.trim())) {
-									// logger.info("**" +
-									// estructuras[k].getNombreCampo() + "**");
 									if (offset > 0)
 										pos += offset;
 								} else if (offset > 0) {
@@ -1132,21 +1100,22 @@ public class Capture977rProcessor {
 							bwOut.flush();
 
 						}
+						
+						if(iBloque == 1){
+							//Bloque de detalle
+							if(!numRegistros.containsKey(codigoRegistro)){
+								numRegistros.put(codigoRegistro, 0L);
+							}
+							numRegistros.put(codigoRegistro, numRegistros.get(codigoRegistro)+1);
+						}
 
-					}// for(int iBloque = 0; iBloque < tr.getNumBloques();
-						// iBloque++){
+					}// for(int iBloque = 0; iBloque < tr.getNumBloques(); // iBloque++){
+					
 				}// if(tr == null){
 
-				// numLinea++;
 				line = in.readLine();
 
 			}// while(true){
-
-			// logger.info("numLinea:" + numLinea);
-
-//		} catch (ElFicheroYaExisteException e) {
-//			throw new ElFicheroYaExisteException(nombreFicheroOriginal,
-//					fechaFactura, "");
 
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -1240,8 +1209,13 @@ public class Capture977rProcessor {
 
 		if (elFichero != null) {
 			// el fichero YA existe en la tabla
-			throw new ElFicheroYaExisteException(nombreFicheroOriginal,
-					fechaFactura, cifActual000000);
+			
+			if(false){
+				throw new ElFicheroYaExisteException(nombreFicheroOriginal,
+						fechaFactura, cifActual000000);
+			}else{
+				ficheroService.deleteByFichero(nombreFicheroOriginal);
+			}
 		} else {
 			Fichero nuevoFichero = new Fichero();
 			nuevoFichero.setFichero(nombreFicheroOriginal);
@@ -1937,6 +1911,14 @@ public class Capture977rProcessor {
 
 		// Indicamos dónde está el directorio con los ficheros .zip
 		this.setFicherosZipPath(this.config.getDirectorioZipFiles());
+	}
+
+	public List<String> getResultados() {
+		return resultados;
+	}
+
+	public void setResultados(List<String> resultados) {
+		this.resultados = resultados;
 	}
 
 }

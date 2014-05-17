@@ -16,6 +16,7 @@ public class Procesa977RApp {
 		System.out.println("Procesa 977R App!");
 		long ini = System.currentTimeMillis();
 
+		@SuppressWarnings("resource")
 		ApplicationContext ctx = new AnnotationConfigApplicationContext(
 				Capture977rConfig.class);
 

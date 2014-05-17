@@ -23,12 +23,12 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @Configuration //Specifies the class as configuration
 @EnableTransactionManagement
 @EnableJpaRepositories(
-        entityManagerFactoryRef = "977rEntityManagerFactory", 
-        transactionManagerRef = "977rTransactionManager",
-        basePackages = {"telefonica.aaee.segmentacion"}
+        entityManagerFactoryRef = "capture977rEntityManagerFactory", 
+        transactionManagerRef = "capture977rTransactionManager",
+        basePackages = {"telefonica.aaee.capture977r"}
         )
 //@EnableWebMvc //Enables to use Spring's annotations in the code
-@ComponentScan("telefonica.aaee.segmentacion") //Specifies which package to scan
+@ComponentScan("telefonica.aaee.capture977r") //Specifies which package to scan
 @PropertySource("classpath:application.properties")
 public class JPA977rConfig
 	{
@@ -44,7 +44,7 @@ public class JPA977rConfig
     private Environment environment;
 	
 	
-	@Bean(name = "977rDataSource")
+	@Bean(name = "capture977rDataSource")
 	   public DataSource dataSource(){
 		
 	      DriverManagerDataSource dataSource = new DriverManagerDataSource();
@@ -57,33 +57,33 @@ public class JPA977rConfig
 	      return dataSource;
 	   }
 
-    @Bean(name = "977rEntityManagerFactory")
+    @Bean(name = "capture977rEntityManagerFactory")
     public LocalContainerEntityManagerFactoryBean entityManagerFactoryBean() 
     		throws ClassNotFoundException {
     	
         LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
 
         em.setDataSource(dataSource());
-        em.setPackagesToScan("telefonica.aaee.capture977r.model");
+        em.setPackagesToScan("telefonica.aaee.capture977r", "telefonica.aaee.dao");
         em.setJpaProperties(additionalProperties());
-        em.setPersistenceUnitName("JPA977rApp");
+        em.setPersistenceUnitName("JPACapture977rApp");
         
         JpaVendorAdapter vendorAdapter = new EclipseLinkJpaVendorAdapter();
         em.setJpaVendorAdapter(vendorAdapter);
         
-        logger.info("***** 977rEntityManagerFactory!");
+        logger.info("***** capture977rEntityManagerFactory!");
         
         return em;
     }
     
-    @Bean(name = "977rTransactionManager")
+    @Bean(name = "capture977rTransactionManager")
     public JpaTransactionManager transactionManager() throws ClassNotFoundException {
     	
         JpaTransactionManager transactionManager = new JpaTransactionManager();
 
         transactionManager.setEntityManagerFactory(entityManagerFactoryBean().getObject());
 
-		logger.info("***** 977rTransactionManager!");
+		logger.info("***** capture977rTransactionManager!");
 
         return transactionManager;
     }
