@@ -3,6 +3,8 @@
 	<name>process-capture977r</name>
 	<comment></comment>
 	<projects>
+		<project>aaee-helpers</project>
+		<project>model-services-977r</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

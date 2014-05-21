@@ -15,11 +15,12 @@ public class App {
 		System.out.println("Genera Excel App!");
 		long ini = System.currentTimeMillis();
 
+		@SuppressWarnings("resource")
 		ApplicationContext ctx = new AnnotationConfigApplicationContext(
 				GeneraExcelConfig.class);
 
 		GeneraREGFicheroExcel processor2 = (GeneraREGFicheroExcel) ctx
-				.getBean("processor2");
+				.getBean("generaInformeExcel");
 
 		String informe = "acuerdoAplicado";
 		String acuerdo = "LHOSP_2012_1T";

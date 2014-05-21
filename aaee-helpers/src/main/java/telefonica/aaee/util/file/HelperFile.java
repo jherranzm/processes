@@ -1,13 +1,16 @@
 package telefonica.aaee.util.file;
 
 import java.io.File;
-import java.util.logging.Logger;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 
 
 public class HelperFile {
 
 
-	private static final Logger LOGGER = Logger.getLogger(HelperFile.class.getCanonicalName());
+	protected final static Log logger = LogFactory.getLog(HelperFile.class);
 	
 	
 	public static boolean cleandirs(String dirName) {
@@ -24,10 +27,10 @@ public class HelperFile {
 			for(String file : children){
 				boolean success = deleteDir(new File(dir, file));
 				if(!success){
-					LOGGER.warning("No se puede borrar el fichero " + dir + File.separator + file);
+					logger.fatal("No se puede borrar el fichero " + dir + File.separator + file);
 					return false;
 				}else{
-					LOGGER.info("Borrado el fichero: " + dir + File.separator + file);
+					logger.fatal("Borrado el fichero: " + dir + File.separator + file);
 				}
 			}
 		}

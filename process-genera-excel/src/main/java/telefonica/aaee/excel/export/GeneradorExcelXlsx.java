@@ -163,7 +163,7 @@ public class GeneradorExcelXlsx {
 		final SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd-HHmmss-SSS");
 		final String sDate = formatter.format(new Date());
 	
-		setFile(getPrefijoFichero()  +  sDate  +  ".xls");
+		setFile(getPrefijoFichero()  +  sDate  +  ".xlsx");
 		setFullFile(getRealPath()  +  getFile());
 	
 		logger.info("Fichero temporal:"  +  getFullFile());

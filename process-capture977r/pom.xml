@@ -1,4 +1,6 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project 
+	xmlns="http://maven.apache.org/POM/4.0.0" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="
   		http://maven.apache.org/POM/4.0.0 
   		http://maven.apache.org/xsd/maven-4.0.0.xsd">
@@ -121,9 +123,12 @@
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>4.8.2</version>
+			<version>4.11</version>
 			<scope>test</scope>
 		</dependency>
+		
+		
+		
 		<!-- Spring dependencies -->
 		<dependency>
 			<groupId>org.springframework</groupId>
@@ -213,12 +218,20 @@
 			<version>${slf4j.version}</version>
 		</dependency>
 
+
+		<!-- Modelo de Datos y Servicios -->
 		<dependency>
 			<groupId>telefonica.aaee.dao</groupId>
 			<artifactId>model-services-977r</artifactId>
 			<version>1.0</version>
 		</dependency>
 
+		<!-- Utilidades comunes -->
+		<dependency>
+			<groupId>telefonica.aaee.util</groupId>
+			<artifactId>aaee-helpers</artifactId>
+			<version>1.0</version>
+		</dependency>
 	</dependencies>
 
 

@@ -8,10 +8,13 @@ import telefonica.aaee.excel.export.GeneraREGFicheroExcel;
 
 @Configuration
 //Specifies which package to scan
-@ComponentScan(value={"telefonica.aaee.excel","telefonica.aaee.dao"})
+@ComponentScan(value={
+		"telefonica.aaee.excel"
+		,"telefonica.aaee.dao"
+		,"telefonica.aaee.util"})
 public class GeneraExcelConfig {
 	@Bean
-	public GeneraREGFicheroExcel processor() {
+	public GeneraREGFicheroExcel generaInformeExcel() {
 		return new GeneraREGFicheroExcel();
 	}
 

@@ -56,6 +56,7 @@ public class GeneraREGFicheroExcel {
 		Set<InformePestanya> pestanyes = acuerdoAplicado.getPestanyes();
 		
 		for(InformePestanya pestanya : pestanyes){
+			logger.info("Pestanya:" + pestanya.getPestanya().getNombre());
 			ContenidoHojaExcel che = new ContenidoHojaExcel(
 					pestanya.getPestanya().getConsulta().getNombre(), 
 					pestanya.getPestanya().getRango(), 
@@ -77,6 +78,7 @@ public class GeneraREGFicheroExcel {
 				Consulta consulta = consultaService.findByNombre(temp_che.getConsulta()).get(0);
 						//.getConsultaSQLByNombre(temp_che.getConsulta());
 				String sql = consulta.getDefinicion();
+				logger.debug("SQL:" + sql);
 				if(sql == null){
 					
 				}else{
@@ -86,10 +88,17 @@ public class GeneraREGFicheroExcel {
 					if(sql.toUpperCase().indexOf("SELECT") > 0){
 						
 						String temp_sql = sql;
+						logger.info(temp_sql);
 						temp_sql = temp_sql.toUpperCase();
 						int pos = temp_sql.indexOf("FROM ");
 						temp_sql = temp_sql.substring(pos);
 						temp_sql = "SELECT COUNT(*) " + temp_sql;
+						logger.info(temp_sql);
+						pos = temp_sql.indexOf("ORDER BY ");
+						if(pos>0){
+							temp_sql = temp_sql.substring(0,pos);
+						}
+						logger.info(temp_sql);
 						
 						
 						long numRegs = acuerdoService.getNumRegistros(
