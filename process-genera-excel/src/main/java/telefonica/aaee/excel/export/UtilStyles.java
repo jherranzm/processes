@@ -41,7 +41,10 @@ public class UtilStyles {
 		LOGGER.setLevel(Level.INFO);
 		
 		DataFormat format = theWorkbook.createDataFormat();
-		Font fontBlanca;
+		
+		Font fontBlanca = theWorkbook.createFont();
+		fontBlanca.setColor(HSSFColor.WHITE.index);
+		fontBlanca.setBoldweight(XSSFFont.BOLDWEIGHT_BOLD);
 		
 		estilos.put(UtilStyles.GENERIC_HEADER, theWorkbook.createCellStyle());
 		estilos.put(UtilStyles.SPECIAL_PRICE, theWorkbook.createCellStyle());
@@ -56,9 +59,7 @@ public class UtilStyles {
 		estilos.put(UtilStyles.GENERIC_OTHER, theWorkbook.createCellStyle());
 		estilos.put(UtilStyles.GENERIC_DATE, theWorkbook.createCellStyle());
 
-		fontBlanca = theWorkbook.createFont();
-		fontBlanca.setColor(HSSFColor.WHITE.index);
-		fontBlanca.setBoldweight(XSSFFont.BOLDWEIGHT_BOLD);
+		
 	
 		estilos.get(UtilStyles.GENERIC_HEADER).setFillBackgroundColor(HSSFColor.GREEN.index);
 		estilos.get(UtilStyles.GENERIC_HEADER).setFillForegroundColor(HSSFColor.GREEN.index);

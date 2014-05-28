@@ -85,7 +85,9 @@ public class GeneraREGFicheroExcel {
 					
 					CachedRowSet crs = null;
 					
+					
 					if(sql.toUpperCase().indexOf("SELECT") > 0){
+						logger.info("Tenemos un SELECT...");
 						
 						String temp_sql = sql;
 						logger.info(temp_sql);
@@ -104,6 +106,8 @@ public class GeneraREGFicheroExcel {
 						long numRegs = acuerdoService.getNumRegistros(
 								temp_sql.toLowerCase(), 
 								params);
+						
+						logger.info("Número de registros:" + numRegs);
 						
 						if(numRegs > 0 && numRegs < MAX_REGS){
 							crs = acuerdoService.getCachedRowSetFromSQL(

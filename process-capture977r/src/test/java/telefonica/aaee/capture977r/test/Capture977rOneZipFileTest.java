@@ -15,17 +15,18 @@ public class Capture977rOneZipFileTest {
 			Capture977rProcessor sp = new Capture977rProcessor();
 			
 			Split977Config config = new Split977Config.Builder()
-			.acuerdo("TEST2")
+			.acuerdo("RACC_2013")
 			.detalleLlamadas(false)
 			.detalleLlamadasRI(false)
-			.directorioZipFiles("/Users/jherranzm/dev/2014-05-04/")
-			.directorioOut("/Users/jherranzm/dev/2014-05-04/")
+			.directorioZipFiles("/Users/jherranzm/dev/testFiles/RACC/")
+			.directorioOut("/Users/jherranzm/dev/testFiles/RACC/")
+			.borrarAcuerdo(true)
 			.build();
 		
 		sp.setConfig(config);
 			
 
-			assertTrue(sp.getFicheros().length == 1);
+			assertTrue(sp.getFicheros().length == 6);
 		
 			if(sp.getFicheros().length > 0 ){
 				sp.execute();

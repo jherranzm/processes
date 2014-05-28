@@ -189,7 +189,7 @@ public class Capture977rProcessor {
 			sb.append("Exception:" + e.getMessage());
 			e.printStackTrace();
 		} finally {
-			HelperFile.cleandirs(getConfig().getDirectorioOut());
+			//HelperFile.cleandirs(getConfig().getDirectorioOut());
 
 			Calendar fin = Calendar.getInstance();
 			long lFin = fin.getTimeInMillis();
@@ -865,6 +865,7 @@ public class Capture977rProcessor {
 				if (codigoRegistro.equals("100000")) {
 					// Extraemos el CIF
 					cifActual = line.substring(129, 129 + 18);
+					logger.info("cifActual:" + cifActual);
 				}
 				// Recuperamos la estructura de la línea
 
@@ -873,7 +874,7 @@ public class Capture977rProcessor {
 					// la primera linea es el registro 000000 y no esta
 					// contemplado en los registros 903000
 					if (codigoRegistro.equals("000000")) {
-						//tratarRegistro000000(line);
+						tratarRegistro000000(line);
 					} else {
 						// logger.info("procesaFichero:codigoRegistro:" +
 						// codigoRegistro+" y TipoRegistro tr == null");
