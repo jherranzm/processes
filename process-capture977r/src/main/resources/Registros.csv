@@ -1,35 +1,38 @@
-"000000";"Registro de etiqueta"
-"100000";"Registro de Supracliente"
-"200000";"Registro de Cliente"
-"300000";"Registro de Factura"
-"500000";"Registro de Agrupación por Tipo de Servicio"
-"600000";"Registro de Multiconexión"
-"700000";"Resumen por Línea"
-"600040";"Rango de numeración contratado"
-"702001";"Resumen de tráfico estándar"
-"702002";"Resumen de tráfico con locuciones (Red Inteligente)"
-"702003";"Resumen de tráfico de Servicios de Transmisión de Datos"
-"702004";"Resumen de otros tipos de tráfico"
-"702005";"Resumen de Tráfico Estándar Internacional"
-"702009";"Resumen de estado de llamadas incobradas para Servicios de Valor Añadido"
-"702010";"Detalle de Tráfico Estándar"
-"702015";"Detalle de Otros Tráficos"
-"702017";"Detalle de Multiconferencias y Multivideoconferencias"
-"702020";"Detalle de Tráfico de Red Inteligente"
-"702025";"Detalle de Tráfico a retribuir de Red Inteligente"
-"702030";"Detalle de Tráfico Globalizado de Servicios de Transmisión de Datos"
-"702032";"Detalle de Tráfico Individualizado de Servicios de Transmisión de Datos"
-"702034";"Detalle de Servicio Medido Datos. Conexiones dedicadas"
-"702036";"Detalle de Tráfico de Retransmisiones y Gastos Especiales"
-"702038";"Detalle de Tráfico del Servicio Gigacom"
-"702040";"Detalle de Tráfico Universal"
-"703020";"Detalle de Descuentos por Concentración"
-"601010";"Detalle de Cuotas"
-"701010";"Detalle de Cuotas"
-"601020";"Detalle de Cuotas (Servicios OBA y Facturación Diferenciada Mayorista)"
-"701020";"Detalle de Cuotas (Servicios OBA y Facturación Diferenciada Mayorista)"
-"603010";"Detalle de Descuentos Globales"
-"703010";"Detalle de Descuentos Globales"
-"604010";"Registro de Detalles de Cargos/Promociones asociados a esta factura"
-"704010";"Registro de Detalles de Cargos/Promociones asociados a esta factura"
-"700005";"Coubicación OBA (Ampliación de información)"
+use 977r;
+insert into 977r.tbl_tipo_registro
+(tipo_registro, descripcion) values
+('000000', 'Registro de etiqueta'),
+('100000', 'Registro de Supracliente'),
+('200000', 'Registro de Cliente'),
+('300000', 'Registro de Factura'),
+('500000', 'Registro de Agrupación por Tipo de Servicio'),
+('600000', 'Registro de Multiconexión'),
+('700000', 'Resumen por Línea'),
+('600040', 'Rango de numeración contratado'),
+('702001', 'Resumen de tráfico estándar'),
+('702002', 'Resumen de tráfico con locuciones (Red Inteligente)'),
+('702003', 'Resumen de tráfico de Servicios de Transmisión de Datos'),
+('702004', 'Resumen de otros tipos de tráfico'),
+('702005', 'Resumen de Tráfico Estándar Internacional'),
+('702009', 'Resumen de estado de llamadas incobradas para Servicios de Valor Añadido'),
+('702010', 'Detalle de Tráfico Estándar'),
+('702015', 'Detalle de Otros Tráficos'),
+('702017', 'Detalle de Multiconferencias y Multivideoconferencias'),
+('702020', 'Detalle de Tráfico de Red Inteligente'),
+('702025', 'Detalle de Tráfico a retribuir de Red Inteligente'),
+('702030', 'Detalle de Tráfico Globalizado de Servicios de Transmisión de Datos'),
+('702032', 'Detalle de Tráfico Individualizado de Servicios de Transmisión de Datos'),
+('702034', 'Detalle de Servicio Medido Datos. Conexiones dedicadas'),
+('702036', 'Detalle de Tráfico de Retransmisiones y Gastos Especiales'),
+('702038', 'Detalle de Tráfico del Servicio Gigacom'),
+('702040', 'Detalle de Tráfico Universal'),
+('703020', 'Detalle de Descuentos por Concentración'),
+('601010', 'Detalle de Cuotas'),
+('701010', 'Detalle de Cuotas'),
+('601020', 'Detalle de Cuotas (Servicios OBA y Facturación Diferenciada Mayorista)'),
+('701020', 'Detalle de Cuotas (Servicios OBA y Facturación Diferenciada Mayorista)'),
+('603010', 'Detalle de Descuentos Globales'),
+('703010', 'Detalle de Descuentos Globales'),
+('604010', 'Registro de Detalles de Cargos/Promociones asociados a esta factura'),
+('704010', 'Registro de Detalles de Cargos/Promociones asociados a esta factura'),
+('700005', 'Coubicación OBA (Ampliación de información)');

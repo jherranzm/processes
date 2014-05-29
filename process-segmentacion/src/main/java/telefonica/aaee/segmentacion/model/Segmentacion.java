@@ -355,7 +355,6 @@ public class Segmentacion implements Serializable, Exportable {
 		return builder.toString();
 	}
 
-	@Override
 	public String toCSV() {
 		StringBuilder sb = new StringBuilder();
 		sb.append(Constantes.COMILLAS_DOBLES).append(this.cucCliente)

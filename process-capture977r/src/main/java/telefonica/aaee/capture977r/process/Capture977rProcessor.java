@@ -45,7 +45,6 @@ import telefonica.aaee.dao.service.AcuerdoService;
 import telefonica.aaee.dao.service.FicheroService;
 import telefonica.aaee.dao.service.TipoRegistroFactel5Service;
 import telefonica.aaee.util.UtilNombre;
-import telefonica.aaee.util.file.HelperFile;
 import telefonica.aaee.util.zip.Unzip977RFile;
 
 /**
@@ -104,6 +103,9 @@ public class Capture977rProcessor {
 	 * 
 	 */
 	public String execute() {
+		
+		resultados = new ArrayList<String>();
+		numRegistros = new TreeMap<String, Long>();
 
 		StringBuilder sb = new StringBuilder();
 
@@ -263,7 +265,8 @@ public class Capture977rProcessor {
 					}
 
 					if (line.startsWith("000000")) {
-						tratarRegistro000000(line);
+						//tratarRegistro000000(line);
+						obtieneInfoRegistro000000(line);
 						ficherosDefinitivos.add(fichero);
 						break;
 					}
@@ -1174,6 +1177,29 @@ public class Capture977rProcessor {
 				posicionCIFActual + 18);
 		logger.info("CIF Supracliente:[" + cifActual000000 + "]");
 
+	}
+
+	private void obtieneInfoRegistro000000(String line)
+			throws ElFicheroYaExisteException, NoSeHaPodidoGuardarElFichero {
+
+		int posicionFechaFactura = 305;
+		int posicionFicheroOriginal = 577;
+		int posicionCIFActual = 162;
+
+		// Extraemos los datos necesarios de 000000
+		// La fecha
+		fechaFactura = line.substring(posicionFechaFactura,
+				posicionFechaFactura + 8);
+		logger.info("Fecha Factura:[" + fechaFactura + "]");
+		// nombre del fichero
+		nombreFicheroOriginal = line.substring(posicionFicheroOriginal,
+				posicionFicheroOriginal + 12);
+		logger.info("Nombre del fichero:[" + nombreFicheroOriginal + "]");
+		// cif actual
+		String cifActual000000 = line.substring(posicionCIFActual,
+				posicionCIFActual + 18);
+		logger.info("CIF Supracliente:[" + cifActual000000 + "]");
+
 		try {
 			guardarFichero(cifActual000000);
 
@@ -1207,17 +1233,21 @@ public class Capture977rProcessor {
 
 	private void guardarFichero(String cifActual000000)
 			throws ElFicheroYaExisteException, NoSeHaPodidoGuardarElFichero {
+		
+		logger.info("Guardando fichero:" + nombreFicheroOriginal + ":" + fechaFactura + ":" + cifActual000000  );
 		Fichero elFichero = ficheroService.findByNombreFechaFacturaCif(
 				nombreFicheroOriginal, fechaFactura, cifActual000000);
 
 		if (elFichero != null) {
 			// el fichero YA existe en la tabla
+			logger.info("Existe el fichero "+ elFichero.getId() +":" + nombreFicheroOriginal + ":" + fechaFactura + ":" + cifActual000000  );
 			
 			if(!getConfig().isRecargaFicheros()){
 				throw new ElFicheroYaExisteException(nombreFicheroOriginal,
 						fechaFactura, cifActual000000);
 			}else{
-				ficheroService.deleteByFichero(nombreFicheroOriginal);
+				logger.info("Borramos el fichero "+ elFichero.getId() +":" + nombreFicheroOriginal + ":" + fechaFactura + ":" + cifActual000000  );
+				ficheroService.deleteByFichero(nombreFicheroOriginal, fechaFactura, cifActual000000);
 			}
 		} else {
 			Fichero nuevoFichero = new Fichero();
@@ -1346,7 +1376,7 @@ public class Capture977rProcessor {
 			fOutName = getConfig().getDirectorioOut() + "/" + codigoRegistro
 					+ "_" + (2);
 			fOutName = FilenameUtils.normalize(fOutName);
-			// logger.info("Fichero normalizado:" + fOutName);
+			logger.info("Fichero normalizado:" + fOutName);
 			bwOut2 = getBROut(fOutName);
 			for (int i = 0; i < repeticionesBloque2; i++) {
 				resultLine = new StringBuilder();

@@ -22,6 +22,10 @@
 
 		<javax.persistence.version>2.1.0</javax.persistence.version>
 		<eclipselink.version>2.2.0</eclipselink.version>
+
+		<jdk.version>1.7</jdk.version>
+		<maven.compiler.version>3.1</maven.compiler.version>
+
 	</properties>
 
 
@@ -127,6 +131,45 @@
 		</dependency>
 
 	</dependencies>
+
+
+	<build>
+
+		<plugins>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>${maven.compiler.version}</version>
+				<configuration>
+					<source>${jdk.version}</source>
+					<target>${jdk.version}</target>
+					<encoding>${project.build.sourceEncoding}</encoding> <!-- si no da error de codificación -->
+				</configuration>
+			</plugin>
+
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-jar-plugin</artifactId>
+						<version>2.3.2</version>
+						<configuration>
+							<archive>
+								<manifest>
+									<addClasspath>true</addClasspath>
+									<mainClass>${project.mainclass}</mainClass>
+								</manifest>
+							</archive>
+						</configuration>
+					</plugin>
+
+
+
+		</plugins>
+
+		<finalName>${project.artifactId}</finalName>
+	</build>
+
+
 
 
 	<repositories>
