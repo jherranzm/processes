@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.SortedMap;
@@ -79,7 +80,8 @@ public class Capture977rProcessor {
 	private long idFichero = -1;
 	private String[] ficheros = {};
 
-	private List<String> sqlQueries = new ArrayList<String>();
+	//private List<String> sqlQueries = new ArrayList<String>();
+	private LinkedHashSet<String> sqlQueries = new LinkedHashSet<String>();
 	private List<String> resultados = new ArrayList<String>();
 
 	private Split977Config config = null; // new Split977Config("", false, true,

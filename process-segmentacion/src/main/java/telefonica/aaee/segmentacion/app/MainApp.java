@@ -8,6 +8,7 @@ import telefonica.aaee.segmentacion.process.SegmentacionProcessor;
 
 public class MainApp {
 	
+	@SuppressWarnings("resource")
 	public static void main(String[] args) {
 
 		System.out.println("App!");	  
@@ -18,7 +19,8 @@ public class MainApp {
 		
 		SegmentacionProcessor processor = (SegmentacionProcessor) ctx.getBean("processor");
 		
-		processor.setDir("/Users/jherranzm/dev/testFiles/");
+		//processor.setDir("/Users/jherranzm/dev/testFiles/");
+		processor.setDir("/var/tmp/Segmentacion/Semana_23/");
 		processor.execute();
 		
 		
