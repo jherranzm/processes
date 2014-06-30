@@ -60,10 +60,21 @@ public class RangoTest
 		System.out.println("");
 		System.out.println("Fila:"+_f);
 		System.out.println("Columna:"+_c);
-		final String nomColumnes = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-		final StringBuffer nomColumna = new StringBuffer();
+		
 		long maxFila = _f;
 		int indexCol = _c;
+
+		final String nomColumna = getLastColumn(_c, indexCol);
+	
+	
+		String res = "" + nomColumna + "2:"  +  nomColumna  + "" +  maxFila;
+		System.out.println(res);
+		return res;
+	}
+
+	private String getLastColumn(int _c, int indexCol) {
+		final String nomColumnes = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+		final StringBuffer nomColumna = new StringBuffer();
 		if(indexCol > nomColumnes.length()){
 			int pos1 = indexCol % nomColumnes.length();
 			System.out.println("Posición:"+pos1);
@@ -79,11 +90,7 @@ public class RangoTest
 		} else {
 			nomColumna.append("A");
 		}
-	
-	
-		String res = "" + nomColumna + "2:"  +  nomColumna  + "" +  maxFila;
-		System.out.println(res);
-		return res;
+		return nomColumna.toString();
 	}
 
 }

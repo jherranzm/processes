@@ -106,8 +106,7 @@ public class Capture977rProcessor {
 	 */
 	public String execute() {
 		
-		resultados = new ArrayList<String>();
-		numRegistros = new TreeMap<String, Long>();
+		inicializar();
 
 		StringBuilder sb = new StringBuilder();
 
@@ -219,6 +218,17 @@ public class Capture977rProcessor {
 
 		return sb.toString();
 
+	}
+
+	private void inicializar() {
+		resultados = new ArrayList<String>();
+		numRegistros = new TreeMap<String, Long>();
+		registros = new Hashtable<String, TipoRegistro>();
+		filesOut = new Hashtable<String, File>();
+		bwOut = new Hashtable<String, BufferedWriter>();
+		codigoRegistroExistente = new Hashtable<String, String>();
+		camposPorTabla = new Hashtable<String, Vector<String>>();
+		tipoRegistrosFactel5 = new Hashtable<String, TipoRegistroFactel5>();
 	}
 
 	private void creaAcuerdo() {

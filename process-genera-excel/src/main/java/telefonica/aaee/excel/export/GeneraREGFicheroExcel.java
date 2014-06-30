@@ -21,7 +21,7 @@ import telefonica.aaee.excel.model.ContenidoHojaExcel;
 @Service
 public class GeneraREGFicheroExcel {
 	
-	private static final long MAX_REGS = 65000;
+	private static final long MAX_REGS = 650000;
 
 	protected final Log logger = LogFactory.getLog(getClass());
 	

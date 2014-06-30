@@ -45,7 +45,7 @@ public class GeneradorExcelXlsx {
 
 	protected final Log logger = LogFactory.getLog(getClass());
 	
-	final private static long MAX_FILAS_EXCEL = 65530;
+	final private static long MAX_FILAS_EXCEL = 1000000;
 
 	private static Map<String, CellStyle> estilos = new HashMap<String, CellStyle>();
 
@@ -197,59 +197,58 @@ public class GeneradorExcelXlsx {
 		
 		}
 
-
-	private String getRango(CachedRowSet crs) {
-		final String nomColumnes = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-		final StringBuffer nomColumna = new StringBuffer();
-		long maxFila = 1;
-		try {
-			int indexCol = crs.getMetaData().getColumnCount();
-			if (indexCol > 0) {
+	private String getLastColumn(int indexCol) {
+			final String nomColumnes = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+			final StringBuffer nomColumna = new StringBuffer();
+			if(indexCol > nomColumnes.length()){
 				int pos1 = indexCol % nomColumnes.length();
-	
+				System.out.println("Posición:"+pos1);
 				int fl = (int) (indexCol / nomColumnes.length());
-				if (fl > 0) nomColumna.append(nomColumnes.charAt(fl));
+				System.out.println("fl:"+fl);
+				if (fl > 0) nomColumna.append(nomColumnes.charAt(fl -1));
+				System.out.println(nomColumna);
 				if (pos1 > 0) nomColumna.append(nomColumnes.charAt(pos1 - 1));
+				System.out.println(nomColumna);
+			}else if (indexCol > 0) {
+				nomColumna.append(nomColumnes.charAt(indexCol -1));
+				System.out.println(nomColumna);
 			} else {
 				nomColumna.append("A");
 			}
-	
-			if (crs.size() > maxFila)
-				maxFila = crs.size()  +  1;
-	
+			return nomColumna.toString();
+		}
+
+		
+	private String getRango(CachedRowSet crs) {
+		
+		long maxFila = 1;
+		int indexCol = 1;
+		try {
+			indexCol = crs.getMetaData().getColumnCount();
 		} catch (SQLException e) {
-			e.printStackTrace();
-		} catch (Exception e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	
+		if (crs.size() > maxFila){
+			maxFila = crs.size()  +  1;
+		}
+		String nomColumna = getLastColumn(indexCol);
+
 		return "$A$1:$"  +  nomColumna  + "$" +  maxFila;
 	}
 
 	private String getRangoAutoFilter(CachedRowSet crs) {
-		final String nomColumnes = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-		final StringBuffer nomColumna = new StringBuffer();
+
 		long maxFila = 1;
+		int indexCol = 1;
 		try {
-			int indexCol = crs.getMetaData().getColumnCount();
-			if (indexCol > 0) {
-				int pos1 = indexCol % nomColumnes.length();
-	
-				int fl = (int) (indexCol / nomColumnes.length());
-				if (fl > 0) nomColumna.append(nomColumnes.charAt(fl));
-				if (pos1 > 0) nomColumna.append(nomColumnes.charAt(pos1 - 1));
-			} else {
-				nomColumna.append("A");
-			}
-	
-			if (crs.size() > maxFila)
-				maxFila = crs.size()  +  1;
-	
+			indexCol = crs.getMetaData().getColumnCount();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		String nomColumna = getLastColumn(indexCol);
 	
 		return "$A$1:$"  +  nomColumna  + "$" +  maxFila;
 	}
