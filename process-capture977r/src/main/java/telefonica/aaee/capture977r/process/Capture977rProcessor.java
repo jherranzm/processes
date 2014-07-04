@@ -339,13 +339,18 @@ public class Capture977rProcessor {
 
 			if (extension.toLowerCase().equals("zip")) {
 				Unzip977RFile uz = new Unzip977RFile();
-				String ficheroDescomprimido = uz.unzip(fichero, getConfig()
-						.getDirectorioOut());
-				ficheroDescomprimido = FilenameUtils
-						.normalize(ficheroDescomprimido);
-				logger.info(String.format("Fichero descomprimido:[%s]",
-						ficheroDescomprimido));
-				listaFicheros.add(ficheroDescomprimido);
+				try {
+					String ficheroDescomprimido = uz.unzip(fichero, getConfig()
+							.getDirectorioOut());
+					ficheroDescomprimido = FilenameUtils
+							.normalize(ficheroDescomprimido);
+					logger.info(String.format("Fichero descomprimido:[%s]",
+							ficheroDescomprimido));
+					listaFicheros.add(ficheroDescomprimido);
+				} catch (Exception e) {
+					logger.error(String.format("Se ha producido un error al descomprimir el fichero [%s]", fichero));
+					e.printStackTrace();
+				}
 			} else {
 				logger.error(String.format(
 						"El fichero [%s] NO es un fichero .ZIP!!", fichero));
